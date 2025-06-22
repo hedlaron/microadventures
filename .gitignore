@@ -1,2 +1,9 @@
 bin/
 **/.DS_STORE
+
+.vscode
+node_modules/
+/test-results/
+/playwright-report/
+/blob-report/
+/playwright/.cache/

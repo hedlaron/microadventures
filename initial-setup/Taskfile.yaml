@@ -16,6 +16,8 @@ tasks:
       - gcloud init
     desc: "Authenticate and configure the gcloud CLI"
 
+  # 🚨 you need set up billing account in GCP console manually
+
   gcp:02-enable-apis:
     cmds:
       - |
@@ -31,8 +33,7 @@ tasks:
 
   gcp:03-set-region-and-zone:
     cmds:
-      - gcloud config set compute/region ${GCP_REGION}
-      - gcloud config set compute/zone ${GCP_ZONE}
+      - gcloud compute project-info add-metadata --metadata google-compute-default-region=${GCP_REGION},google-compute-default-zone=${GCP_ZONE}
     desc: "Set default region and zone"
 
   gcp:04-create-vpc:
@@ -49,12 +50,11 @@ tasks:
           --range=10.0.0.0/20
     desc: "Create subnet"
 
-  # TODO get GCP_PROJECT_ID from the GCP console and set it as an env variable
   gcp:06-create-cluster:
     desc: "Create GKE cluster"
     vars:
       # set the project id to the one you created in the GCP console
-      GCP_PROJECT_ID: kubernetes-course-462512
+      GCP_PROJECT_ID: microadventures
     cmds:
       - |
         gcloud container clusters create ${CLUSTER_NAME} \

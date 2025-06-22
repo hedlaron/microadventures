@@ -17,19 +17,18 @@
     "kubent@latest",
     "kubernetes-helm@latest",
     "kustomize@latest",
-    "nodejs_24@latest",
+    "nodejs_23@latest",
     "oras@latest",
     "path:gcloud#google-cloud-sdk",
-    "python313@latest",
     "tilt@latest",
     "yq-go@latest",
-    "uv@latest"
+    "uv@latest",
+    "python@3.13"
   ],
   "shell": {
     "init_hook": [
-      "export GOBIN=$(git rev-parse --show-toplevel)/bin",
-      "export PATH=$GOBIN:$PATH",
-      "go install sigs.k8s.io/cloud-provider-kind@v0.6.0"
+      "go install sigs.k8s.io/cloud-provider-kind@v0.6.0",
+      "source .venv/bin/activate"
     ],
     "scripts": {
       "test": ["echo \"Error: no test specified\" && exit 1"]
