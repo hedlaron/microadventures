@@ -1,8 +1,13 @@
 from sqlalchemy.orm import Mapped, mapped_column
-from sqlalchemy import Integer, String, Boolean, DateTime
+from sqlalchemy import Integer, String, Boolean, DateTime, Enum
 from core.database import Base
 from datetime import datetime, timezone
+from enum import Enum as PyEnum
 
+class Role(str, PyEnum):
+    USER = "User"
+    MANAGER = "Manager"
+    ADMIN = "Admin"
 
 class User(Base):
     __tablename__ = 'users'
@@ -14,3 +19,4 @@ class User(Base):
     is_active: Mapped[bool] = mapped_column(Boolean, default=True)
     created_at: Mapped[DateTime] = mapped_column(DateTime, default=datetime.now(timezone.utc), nullable=False)
     updated_at: Mapped[DateTime] = mapped_column(DateTime, default=datetime.now(timezone.utc), onupdate=datetime.now(timezone.utc))
+    role: Mapped[str] = mapped_column(String, default=Role.USER, nullable=False)

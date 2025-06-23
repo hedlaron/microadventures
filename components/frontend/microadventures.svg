@@ -1,0 +1,35 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48">
+  <defs>
+    <filter id="glow" x="-100%" y="-100%" width="300%" height="300%">
+      <feGaussianBlur stdDeviation="6" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+
+  <!-- Yellow glowing segment -->
+  <path
+    d="
+      M24,24
+      L39.426,34.971
+      A18,18 0 0,1 6.343,24
+      Z
+    "
+    fill="yellow"
+    filter="url(#glow)"
+    fill-opacity="0.9"
+  />
+
+  <!-- Black 9:00–5:00 segment -->
+  <path
+    d="
+      M24,24
+      L6.343,24
+      A18,18 0 1,1 39.426,34.971
+      Z
+    "
+    fill="black"
+  />
+</svg>
