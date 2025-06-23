@@ -5,9 +5,16 @@ description = "Add your description here"
 readme = "README.md"
 requires-python = ">=3.13"
 dependencies = [
+    "alembic>=1.16.2",
+    "bcrypt>=4.3.0",
     "clerk-backend-api>=3.0.3",
     "fastapi[standard]>=0.115.13",
     "openai>=1.90.0",
+    "psycopg>=3.2.9",
+    "psycopg2-binary==2.9.10",
+    "pydantic>=2.11.7",
+    "pydantic-settings>=2.10.0",
+    "pyjwt>=2.10.1",
     "python-dotenv>=1.1.0",
     "sqlalchemy>=2.0.41",
     "svix>=1.67.0",
