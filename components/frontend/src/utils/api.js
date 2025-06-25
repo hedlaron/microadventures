@@ -5,10 +5,11 @@ const API_URL = 'http://localhost:8000/api';
 
 const loginUser = async (credentials) => {
     try {
+        console.log('Making request to:', `${API_URL}/auth/token`);
+        
         const params = new URLSearchParams();
-        for (const key in credentials) {
-            params.append(key, credentials[key]);
-        }
+        params.append('username', credentials.username);
+        params.append('password', credentials.password);
 
         const response = await axios.post(
             `${API_URL}/auth/token`,
@@ -19,18 +20,38 @@ const loginUser = async (credentials) => {
                 },
             }
         );
+        console.log('Response received:', response);
         return response.data;
     } catch (error) {
-        console.error("Login error:", error);
+        console.error("Login request failed:", {
+            url: `${API_URL}/auth/token`,
+            error: error.message,
+            response: error.response?.data
+        });
         throw error;
     }
 };
 
 const registerUser = async (userData) => {
     try {
-        await axios.post(`${API_URL}/auth/register`, userData);
+        console.log('Making registration request to:', `${API_URL}/users/register`);
+        
+        const response = await axios.post(
+            `${API_URL}/users/register`,
+            userData,
+            {
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+            }
+        );
+        console.log('Registration response:', response);
+        return response.data;
     } catch (error) {
-        console.error("Registration error:", error);
+        console.error("Registration failed:", {
+            error: error.message,
+            response: error.response?.data
+        });
         throw error;
     }
 };

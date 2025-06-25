@@ -1,52 +1,100 @@
-import React, { createContext, useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { loginUser, fetchUserProfile, registerUser } from '../utils/api';
+import React, { createContext, useState, useContext } from 'react';
 
-const AuthContext = createContext({});
+const AuthContext = createContext();
 
-const AuthProvider = ({ children }) => {
-    const [token, setToken] = useState(localStorage.getItem('token'));
-    const [user, setUser] = useState(null);
-    const navigate = useNavigate();
+export function AuthProvider({ children }) {
+  const [currentUser, setCurrentUser] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
-    useEffect(() => {
-        if (token) {
-            const getUser = async () => {
-                const user = await fetchUserProfile(token);
-                setUser(user);
-            };
-            getUser();
-        }
-    }, [token]);
+  async function login(email, password) {
+    try {
+      setError(null);
+      const response = await fetch('/api/auth/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password })
+      });
 
-    const login = async (username, password) => {
-        const response = await loginUser({ username, password });
-        if (response?.access_token) {
-            setToken(response.access_token);
-            localStorage.setItem('token', response.access_token);
-            const userProfile = await fetchUserProfile(response.access_token);
-            setUser(userProfile);
-            navigate('/profile');
-        }
-    };
+      if (!response.ok) {
+        throw new Error('Invalid email or password');
+      }
 
-    const register = async (username, email, password) => {
-        await registerUser({ username, email, password });
-        navigate('/login');
-    };
+      const data = await response.json();
+      setCurrentUser(data.user);
+      return data.user;
+    } catch (err) {
+      setError(err.message);
+      setCurrentUser(null);
+      throw err;
+    }
+  }
 
-    const logout = () => {
-        setToken(null);
-        setUser(null);
-        localStorage.removeItem('token');
-        navigate('/login');
-    };
+  const logout = () => {
+    setCurrentUser(null);
+    localStorage.removeItem('token');
+  };
 
-    return (
-        <AuthContext.Provider value={{ token, user, login, register, logout }}>
-            {children}
-        </AuthContext.Provider>
-    );
+  const toggleModal = () => {
+    setIsModalOpen(!isModalOpen);
+  };
+
+  const getUserName = () => {
+    return currentUser ? currentUser.username : null;
+  };
+
+  return (
+    <AuthContext.Provider 
+      value={{ 
+        currentUser, 
+        login, 
+        logout,
+        toggleModal,
+        isAuthenticated: !!currentUser,
+        getUserName,
+        error,
+        loading
+      }}
+    >
+      {children}
+    </AuthContext.Provider>
+  );
+}
+
+export const useAuth = () => {
+  const context = useContext(AuthContext);
+  if (!context) {
+    throw new Error('useAuth must be used within an AuthProvider');
+  }
+  return context;
 };
 
-export {AuthProvider, AuthContext}
+export default AuthContext;
+
+const HomePage = () => {
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState('');
+  const { login } = useAuth();
+
+  const handleLogin = async (e) => {
+    e.preventDefault();
+    setIsLoading(true);
+    setError('');
+    
+    try {
+      await login(email, password);
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  return (
+    <>
+      {/* ...existing code... */}
+      {error && <p className="text-red-500 text-sm mt-2">{error}</p>}
+      {/* ...existing code... */}
+    </>
+  );
+};
