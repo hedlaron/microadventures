@@ -7,7 +7,7 @@ const Footer = () => {
   return (
     <footer className="w-full bg-white border-t border-[#ebefed]">
       <div className="max-w-screen-xl mx-auto px-4">
-        <div className="flex flex-col gap-4 items-center justify-center py-8 text-sm text-gray-500">
+        <div className="flex flex-col gap-2 items-center justify-center py-4 text-xs text-gray-500">
           <div className="flex gap-4">
             <Link to="/privacy" className="hover:text-gray-700 transition-colors">
               Privacy

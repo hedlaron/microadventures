@@ -1,4 +1,5 @@
-import React, { createContext, useState, useContext } from 'react';
+import React, { createContext, useState, useContext, useEffect } from 'react';
+import { loginUser, registerUser, fetchUserProfile } from '../utils/api';
 
 const AuthContext = createContext();
 
@@ -6,27 +7,57 @@ export function AuthProvider({ children }) {
   const [currentUser, setCurrentUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
+  const [showLoginForm, setShowLoginForm] = useState(true);
+  const [showSignUpForm, setShowSignUpForm] = useState(false);
+
+  // Check if user is already logged in on component mount
+  useEffect(() => {
+    const checkLoggedIn = async () => {
+      try {
+        const token = localStorage.getItem('token');
+        if (token) {
+          const userProfile = await fetchUserProfile(token);
+          setCurrentUser(userProfile);
+        }
+      } catch (error) {
+        console.error('Failed to restore session:', error);
+        // If token is invalid or expired, clear it
+        localStorage.removeItem('token');
+      } finally {
+        setLoading(false);
+      }
+    };
+    
+    checkLoggedIn();
+  }, []);
 
   async function login(email, password) {
     try {
-      setError(null);
-      const response = await fetch('/api/auth/login', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, password })
-      });
-
-      if (!response.ok) {
-        throw new Error('Invalid email or password');
-      }
-
-      const data = await response.json();
-      setCurrentUser(data.user);
-      return data.user;
-    } catch (err) {
-      setError(err.message);
-      setCurrentUser(null);
-      throw err;
+      const formData = new URLSearchParams();
+      formData.append('username', email);
+      formData.append('password', password);
+      
+      const { access_token } = await loginUser({ username: email, password });
+      localStorage.setItem('token', access_token);
+      
+      const userProfile = await fetchUserProfile(access_token);
+      setCurrentUser(userProfile);
+      return userProfile;
+    } catch (error) {
+      // Set a context error but let the original error propagate
+      setError(error.userMessage || error.message);
+      throw error;
+    }
+  }
+  
+  async function register(userData) {
+    try {
+      await registerUser(userData);
+      return true;
+    } catch (error) {
+      setError(error.response?.data?.detail || 'Registration failed');
+      throw error;
     }
   }
 
@@ -35,8 +66,31 @@ export function AuthProvider({ children }) {
     localStorage.removeItem('token');
   };
 
-  const toggleModal = () => {
-    setIsModalOpen(!isModalOpen);
+  const openLoginModal = () => {
+    setIsLoginModalOpen(true);
+    setShowLoginForm(true);
+    setShowSignUpForm(false);
+  };
+  
+  const openSignUpModal = () => {
+    setIsLoginModalOpen(true);
+    setShowLoginForm(false);
+    setShowSignUpForm(true);
+  };
+  
+  const closeLoginModal = () => {
+    setIsLoginModalOpen(false);
+    setError('');
+  };
+  
+  const switchToSignUp = () => {
+    setShowLoginForm(false);
+    setShowSignUpForm(true);
+  };
+  
+  const switchToLogin = () => {
+    setShowLoginForm(true);
+    setShowSignUpForm(false);
   };
 
   const getUserName = () => {
@@ -48,12 +102,21 @@ export function AuthProvider({ children }) {
       value={{ 
         currentUser, 
         login, 
+        register,
         logout,
-        toggleModal,
         isAuthenticated: !!currentUser,
         getUserName,
         error,
-        loading
+        loading,
+        isLoginModalOpen,
+        showLoginForm,
+        showSignUpForm,
+        openLoginModal,
+        openSignUpModal,
+        closeLoginModal,
+        switchToLogin,
+        switchToSignUp,
+        setError
       }}
     >
       {children}
@@ -70,31 +133,3 @@ export const useAuth = () => {
 };
 
 export default AuthContext;
-
-const HomePage = () => {
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState('');
-  const { login } = useAuth();
-
-  const handleLogin = async (e) => {
-    e.preventDefault();
-    setIsLoading(true);
-    setError('');
-    
-    try {
-      await login(email, password);
-    } catch (err) {
-      setError(err.message);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  return (
-    <>
-      {/* ...existing code... */}
-      {error && <p className="text-red-500 text-sm mt-2">{error}</p>}
-      {/* ...existing code... */}
-    </>
-  );
-};

@@ -23,11 +23,21 @@ const loginUser = async (credentials) => {
         console.log('Response received:', response);
         return response.data;
     } catch (error) {
-        console.error("Login request failed:", {
+        let message = 'Login request failed.';
+        if (error.response) {
+            if (error.response.status === 401) {
+                message = 'Invalid username or password. Please try again.';
+            } else if (error.response.data && error.response.data.detail) {
+                message = error.response.data.detail;
+            }
+        }
+        console.error(message, {
             url: `${API_URL}/auth/token`,
             error: error.message,
             response: error.response?.data
         });
+        // Attach the user-friendly message to the error object
+        error.userMessage = message;
         throw error;
     }
 };
@@ -66,6 +76,10 @@ const fetchUserProfile = async (token) => {
         return response.data;
     } catch (error) {
         console.error("Fetch user profile error:", error);
+        // Add more specific error handling for token issues
+        if (error.response && error.response.status === 401) {
+            error.userMessage = "Your session has expired. Please log in again.";
+        }
         throw error;
     }
 };

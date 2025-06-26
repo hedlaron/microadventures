@@ -1,11 +1,12 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from './contexts/AuthContext';
 
 const Navbar = () => {
-  const { isAuthenticated, getUserName, logout } = useAuth();
+  const { isAuthenticated, getUserName, logout, openLoginModal } = useAuth();
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const dropdownRef = useRef(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -19,7 +20,7 @@ const Navbar = () => {
   }, []);
 
   return (
-    <nav className="fixed top-0 left-0 right-0 z-50 bg-transparent">
+    <nav className="fixed top-0 left-0 right-0 z-50 bg-white shadow">
       <div className="layout-container flex h-full grow flex-col">
         <header className="flex items-center justify-between whitespace-nowrap border-b border-solid border-b-[#ebefed] px-10 py-3">
           <div className="flex items-center gap-4 text-[#121714]">
@@ -36,15 +37,20 @@ const Navbar = () => {
           </div>
           
           <div className="flex items-center gap-8">
-            <Link to="/" className="text-[#121714] text-sm font-medium hover:text-gray-600 transition-colors">
-              Home
-            </Link>
             <Link to="/about" className="text-[#121714] text-sm font-medium hover:text-gray-600 transition-colors">
               About
             </Link>
             <Link to="/contact" className="text-[#121714] text-sm font-medium hover:text-gray-600 transition-colors">
               Contact
             </Link>
+            {!isAuthenticated && (
+              <button 
+                onClick={openLoginModal}
+                className="px-4 py-1 bg-[#FFD166] text-black rounded-lg hover:bg-[#F4A261] font-medium transition-colors"
+              >
+                Login
+              </button>
+            )}
             {isAuthenticated && (
               <div className="relative" ref={dropdownRef}>
                 <button 
@@ -66,7 +72,11 @@ const Navbar = () => {
                       <span className="font-medium">{getUserName()}</span>
                     </div>
                     <button
-                      onClick={logout}
+                      onClick={() => {
+                        logout();
+                        setIsDropdownOpen(false);
+                        navigate('/');
+                      }}
                       className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
                     >
                       Sign out

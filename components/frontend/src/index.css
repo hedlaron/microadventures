@@ -11,9 +11,10 @@
 }
 
 html, body, #root {
-  min-height: 100vh;
+  height: 100vh;
   margin: 0;
   padding: 0;
+  overflow-x: hidden;
 }
 
 body {
@@ -23,7 +24,8 @@ body {
 #root {
   display: flex;
   flex-direction: column;
-  min-height: 100vh;
+  height: 100%;
+  overflow: auto;
 }
 
 nav {
