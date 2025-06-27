@@ -1,4 +1,4 @@
-from sqlalchemy.orm import Mapped, mapped_column
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 from sqlalchemy import Integer, String, Boolean, DateTime, Enum
 from core.database import Base
 from datetime import datetime, timezone
@@ -20,3 +20,7 @@ class User(Base):
     created_at: Mapped[DateTime] = mapped_column(DateTime, default=datetime.now(timezone.utc), nullable=False)
     updated_at: Mapped[DateTime] = mapped_column(DateTime, default=datetime.now(timezone.utc), onupdate=datetime.now(timezone.utc))
     role: Mapped[str] = mapped_column(String, default=Role.USER, nullable=False)
+    
+    # Relationships
+    adventures = relationship("Adventure", back_populates="creator")
+    adventure_quota = relationship("AdventureQuota", back_populates="user", uselist=False)

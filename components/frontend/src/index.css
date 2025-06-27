@@ -89,3 +89,39 @@ footer {
 .animate-fade-in {
     animation: fadeIn 0.3s ease-in-out;
 }
+
+/* Line clamp utility for text truncation */
+.line-clamp-2 {
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    line-clamp: 2;
+    overflow: hidden;
+}
+
+.line-clamp-3 {
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 3;
+    line-clamp: 3;
+    overflow: hidden;
+}
+
+/* Custom scrollbar for adventure result */
+.adventure-scroll::-webkit-scrollbar {
+    width: 8px;
+}
+
+.adventure-scroll::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 4px;
+}
+
+.adventure-scroll::-webkit-scrollbar-thumb {
+    background: #46a080;
+    border-radius: 4px;
+}
+
+.adventure-scroll::-webkit-scrollbar-thumb:hover {
+    background: #019863;
+}

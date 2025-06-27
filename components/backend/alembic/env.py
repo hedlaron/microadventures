@@ -6,6 +6,7 @@ from sqlalchemy import pool
 from core.config_loader import settings
 from core.database import Base
 from user.models import user
+from adventure.models import adventure
 
 from alembic import context
 

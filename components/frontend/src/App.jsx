@@ -3,8 +3,10 @@ import { BrowserRouter as Router, Routes, Route, useLocation, Navigate } from 'r
 import { AuthProvider } from './contexts/AuthContext';
 import HomePage from './HomePage';
 import Navbar from './Navbar';
-import Footer from './components/Footer';
+// import Footer from './components/Footer'; // Removed Footer import
 import Plan from './components/Plan';
+import HistoryPage from './components/HistoryPage';
+import SharedAdventure from './components/SharedAdventure';
 import ProtectedRoute from './components/ProtectedRoute';
 
 // For debugging
@@ -16,13 +18,11 @@ console.log("App.jsx loading components:", {
 
 const AppContent = () => {
   const location = useLocation();
-  // Only show footer on homepage
-  const showFooter = location.pathname === '/';
   
   return (
-    <div className="min-h-screen flex flex-col">
+    <div className="h-screen flex flex-col overflow-hidden">
       <Navbar />
-      <main className="flex-1">
+      <main className="flex-1 min-h-0 overflow-hidden">
         <Routes>
           <Route path="/" element={
             <React.Suspense fallback={<div>Loading HomePage...</div>}>
@@ -37,11 +37,24 @@ const AppContent = () => {
               </ProtectedRoute>
             } 
           />
+          <Route 
+            path="/history" 
+            element={
+              <ProtectedRoute>
+                <HistoryPage />
+              </ProtectedRoute>
+            } 
+          />
+          {/* Public shared adventure route - no auth required */}
+          <Route 
+            path="/shared/:shareToken" 
+            element={<SharedAdventure />} 
+          />
           {/* Catch all route - redirect to home */}
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </main>
-      {showFooter && <Footer />}
+      {/* Footer completely removed */}
     </div>
   );
 };

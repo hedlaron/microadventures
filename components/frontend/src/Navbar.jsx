@@ -43,6 +43,11 @@ const Navbar = () => {
             <Link to="/contact" className="text-[#121714] text-sm font-medium hover:text-gray-600 transition-colors">
               Contact
             </Link>
+            {isAuthenticated && (
+              <Link to="/history" className="text-[#121714] text-sm font-medium hover:text-gray-600 transition-colors">
+                History
+              </Link>
+            )}
             {!isAuthenticated && (
               <button 
                 onClick={openLoginModal}

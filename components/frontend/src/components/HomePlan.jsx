@@ -19,7 +19,7 @@ const HomePlanWrapper = styled.div`
 
 const HomePlan = () => {
   return (
-    <HomePlanWrapper>
+    <HomePlanWrapper className="home-embedded">
       <Plan />
     </HomePlanWrapper>
   );

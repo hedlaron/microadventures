@@ -49,6 +49,9 @@ class Settings(BaseSettings):
     POSTGRESQL_PORT: int
     POSTGRESQL_DATABASE: str
 
+    # OpenAI Configuration
+    OPENAI_API_KEY: str
+
     @computed_field  # type: ignore[misc]
     @property
     def SQLALCHEMY_DATABASE_URI(self) -> PostgresDsn:
