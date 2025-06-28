@@ -25,17 +25,18 @@ body {
   display: flex;
   flex-direction: column;
   height: 100%;
-  overflow: auto;
 }
 
 nav {
-  height: 4rem; /* Fixed navbar height */
+  height: 3rem; /* Reduced navbar height */
+  flex-shrink: 0; /* Prevent navbar from shrinking */
 }
 
 .layout-container {
   flex: 1;
   display: flex;
   flex-direction: column;
+  min-height: 0; /* Important for flexbox scrolling */
 }
 
 main {
@@ -43,8 +44,23 @@ main {
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 4rem 2rem; /* Equal padding for spacing from navbar and footer */
-  min-height: 0;
+  padding: 1rem; /* Reduced padding */
+  min-height: 0; /* Important for flexbox scrolling */
+  overflow-y: auto; /* Allow main to scroll if needed */
+}
+
+/* Responsive adjustments */
+@media (max-width: 640px) {
+  main {
+    padding: 0.5rem;
+  }
+}
+
+@media (max-height: 600px) {
+  main {
+    padding: 0.5rem;
+    align-items: flex-start; /* Align to top on very short screens */
+  }
 }
 
 .hero-container {
@@ -107,7 +123,7 @@ footer {
     overflow: hidden;
 }
 
-/* Custom scrollbar for adventure result */
+/* Custom scrollbar for adventure result and forms */
 .adventure-scroll::-webkit-scrollbar {
     width: 8px;
 }
@@ -118,10 +134,47 @@ footer {
 }
 
 .adventure-scroll::-webkit-scrollbar-thumb {
-    background: #46a080;
+    background: #FFD166;
     border-radius: 4px;
 }
 
 .adventure-scroll::-webkit-scrollbar-thumb:hover {
-    background: #019863;
+    background: #F4A261;
+}
+
+/* Global scrollbar styling for better consistency */
+*::-webkit-scrollbar {
+    width: 8px;
+}
+
+*::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 4px;
+}
+
+*::-webkit-scrollbar-thumb {
+    background: #cde9df;
+    border-radius: 4px;
+}
+
+*::-webkit-scrollbar-thumb:hover {
+    background: #46a080;
+}
+
+/* Enhanced form scrollability */
+.form-container {
+    max-height: calc(100vh - 140px);
+    overflow-y: auto;
+}
+
+@media (max-width: 640px) {
+    .form-container {
+        max-height: calc(100vh - 120px);
+    }
+}
+
+@media (max-height: 600px) {
+    .form-container {
+        max-height: calc(100vh - 80px);
+    }
 }

@@ -1,7 +1,7 @@
 const LoginCard = ({ onSubmit, error, isLoading, onClose }) => {
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-      <div className="bg-white p-8 rounded-lg shadow-lg w-96">
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4 overflow-y-auto">
+      <div className="bg-white p-8 rounded-lg shadow-lg w-full max-w-md mx-auto my-auto">
         <form onSubmit={onSubmit}>
           {/* ...existing form fields... */}
           

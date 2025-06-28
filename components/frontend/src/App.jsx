@@ -20,9 +20,9 @@ const AppContent = () => {
   const location = useLocation();
   
   return (
-    <div className="h-screen flex flex-col overflow-hidden">
+    <div className="h-screen flex flex-col">
       <Navbar />
-      <main className="flex-1 min-h-0 overflow-hidden">
+      <main className="flex-1 min-h-0 overflow-auto">
         <Routes>
           <Route path="/" element={
             <React.Suspense fallback={<div>Loading HomePage...</div>}>

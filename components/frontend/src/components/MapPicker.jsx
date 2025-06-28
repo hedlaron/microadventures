@@ -112,10 +112,10 @@ const MapPicker = ({ isOpen, onClose, onLocationSelect, title = "Select Location
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-      <div className="bg-white rounded-lg shadow-xl w-full max-w-4xl h-5/6 flex flex-col">
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+      <div className="bg-white rounded-lg shadow-xl w-full max-w-4xl h-full max-h-[90vh] flex flex-col">
         {/* Header */}
-        <div className="flex items-center justify-between p-4 border-b">
+        <div className="flex items-center justify-between p-4 border-b flex-shrink-0">
           <h2 className="text-lg font-semibold text-gray-900">{title}</h2>
           <button
             onClick={handleClose}
@@ -126,7 +126,7 @@ const MapPicker = ({ isOpen, onClose, onLocationSelect, title = "Select Location
         </div>
 
         {/* Map Container */}
-        <div className="flex-1 relative">
+        <div className="flex-1 relative min-h-0">
           <div ref={mapRef} className="w-full h-full" />
           
           {/* Instructions */}
@@ -142,7 +142,7 @@ const MapPicker = ({ isOpen, onClose, onLocationSelect, title = "Select Location
             <div className="absolute bottom-4 left-4 bg-white p-3 rounded-lg shadow-md max-w-md">
               <div className="text-sm text-gray-700">
                 <div className="font-medium">Selected Location:</div>
-                <div className="text-xs mt-1 text-gray-600">{selectedLocation.address}</div>
+                <div className="text-xs mt-1 text-gray-600 break-words">{selectedLocation.address}</div>
                 <div className="text-xs text-gray-500">
                   {selectedLocation.lat.toFixed(4)}, {selectedLocation.lng.toFixed(4)}
                 </div>
@@ -152,7 +152,7 @@ const MapPicker = ({ isOpen, onClose, onLocationSelect, title = "Select Location
         </div>
 
         {/* Footer */}
-        <div className="p-4 border-t flex justify-end gap-3">
+        <div className="p-4 border-t flex justify-end gap-3 flex-shrink-0">
           <button
             onClick={handleClose}
             className="px-4 py-2 text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors"

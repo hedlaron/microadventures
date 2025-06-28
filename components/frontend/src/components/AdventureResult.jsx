@@ -82,7 +82,7 @@ const AdventureResult = ({ adventure, onBack, onNewAdventure, quotaInfo, isShare
   };
 
   return (
-    <div className="h-full bg-[#f8fcfa] font-sans flex flex-col pb-8 overflow-y-auto">
+    <div className="h-full bg-[#f8fcfa] font-sans flex flex-col overflow-hidden">
       {/* Header - only show if not in shared view */}
       {!isSharedView && (
         <header className="border-b border-solid border-b-[#e6f4ef] bg-white z-10 flex-shrink-0">
@@ -151,12 +151,12 @@ const AdventureResult = ({ adventure, onBack, onNewAdventure, quotaInfo, isShare
       )}
 
       {/* Main Content - Properly centered card with scrollable content */}
-      <div className="flex-1 flex items-center justify-center p-4 sm:p-6 lg:p-8 bg-[#f8fcfa]">
-        <div className="w-full max-w-5xl max-h-[calc(100vh-160px)] flex flex-col">
+      <div className="flex-1 flex items-center justify-center p-4 sm:p-6 lg:p-8 bg-[#f8fcfa] min-h-0">
+        <div className="w-full max-w-5xl h-full flex flex-col">
           <div className="bg-white rounded-2xl shadow-xl border border-[#e6f4ef] flex-1 overflow-hidden flex flex-col min-h-0">
             {/* Back button for shared view */}
             {isSharedView && (
-              <div className="flex items-center justify-between p-4 border-b border-[#e6f4ef] bg-white">
+              <div className="flex items-center justify-between p-4 border-b border-[#e6f4ef] bg-white flex-shrink-0">
                 <button 
                   onClick={onBack}
                   className="flex items-center gap-2 text-[#46a080] hover:text-[#0c1c17] transition-colors"

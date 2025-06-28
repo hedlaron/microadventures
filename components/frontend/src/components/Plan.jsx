@@ -8,45 +8,68 @@ import { useCountdown } from '../hooks/useCountdown';
 import styled from 'styled-components';
 
 const PageWrapper = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  min-height: 100%; /* Use full available height instead of viewport height */
-  padding: 80px 0 0; /* Removed bottom padding */
+  width: 100%;
+  max-width: 700px;
   margin: 0 auto;
+  padding: ${props => props.$isEmbedded ? '0' : '1rem 0'}; /* No padding when embedded */
   
-  /* When used as a child of another component with className home-embedded */
-  .home-embedded & {
-    min-height: unset;
-    padding: 0;
-    margin: 0;
-  }
-
-  @media (max-height: 700px) {
-    align-items: flex-start;
-    padding-top: 100px;
+  /* Ensure consistent behavior in all contexts */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: ${props => props.$isEmbedded ? 'flex-start' : 'center'};
+  min-height: ${props => props.$isEmbedded ? 'auto' : 'calc(100vh - 3rem)'};
+  
+  @media (max-height: 600px) {
+    justify-content: flex-start;
+    padding-top: ${props => props.$isEmbedded ? '0' : '1rem'};
   }
 `;
 
 const PlanFormContainer = styled.div`
   position: relative;
-  max-width: 600px; /* Reduced max width for a more compact form */
-  width: 90%;
+  width: 100%;
+  max-width: 700px;
   margin: 0 auto;
-  overflow: hidden;
   border-radius: 20px;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
   display: flex;
   flex-direction: column;
   background: white;
   
-  @media (max-width: 640px) {
-    width: 95%;
+  /* Adaptive height based on context */
+  max-height: ${props => props.$isEmbedded 
+    ? 'none' /* No height restriction when embedded - let content determine height */
+    : 'calc(100vh - 5rem)' /* Account for navbar + padding when standalone */
+  };
+  overflow-y: ${props => props.$isEmbedded ? 'visible' : 'auto'};
+  
+  /* Custom scrollbar styling - only when scrollable */
+  &::-webkit-scrollbar {
+    width: 8px;
   }
   
-  @media (max-height: 800px) {
-    max-height: calc(100% - 120px);
-    overflow-y: auto;
+  &::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 4px;
+  }
+  
+  &::-webkit-scrollbar-thumb {
+    background: #FFD166;
+    border-radius: 4px;
+  }
+  
+  &::-webkit-scrollbar-thumb:hover {
+    background: #F4A261;
+  }
+  
+  @media (max-width: 640px) {
+    max-height: ${props => props.$isEmbedded ? 'none' : 'calc(100vh - 6rem)'};
+    margin: ${props => props.$isEmbedded ? '0' : '0 1rem'};
+  }
+  
+  @media (max-height: 600px) {
+    max-height: ${props => props.$isEmbedded ? 'none' : 'calc(100vh - 4rem)'};
   }
 `;
 
@@ -59,13 +82,8 @@ const PlanContainer = styled.div`
   justify-content: center;
 `;
 
-const Plan = () => {
-  console.log('Plan component rendering');
-
-  useEffect(() => {
-    console.log('Plan component mounted');
-    return () => console.log('Plan component unmounted');
-  }, []);
+const Plan = ({ isEmbedded = false }) => {
+  console.log('Plan component rendering', { isEmbedded });
 
   const { currentUser } = useAuth();
   const [location, setLocation] = useState('');
@@ -277,25 +295,24 @@ const Plan = () => {
     setError(null);
   };
 
-  // If adventure is generated, show the result
+  // If adventure is generated, show the result with full-width layout like history
   if (generatedAdventure) {
     return (
-      <AdventureResult
-        adventure={generatedAdventure}
-        onBack={handleBackToForm}
-        onNewAdventure={handleNewAdventure}
-        quotaInfo={quotaInfo}
-        backText="Back to Plan"
-      />
+      <div className="absolute inset-0 bg-[#f8fcfa]">
+        <AdventureResult
+          adventure={generatedAdventure}
+          onBack={handleBackToForm}
+          onNewAdventure={handleNewAdventure}
+          quotaInfo={quotaInfo}
+          backText="Back to Plan"
+        />
+      </div>
     );
   }
 
   return (
-    <PageWrapper>
-      <PlanFormContainer>
-        {/* New adventurous background */}
-        {/* No longer need background here as container has white background */}
-        
+    <PageWrapper $isEmbedded={isEmbedded}>
+      <PlanFormContainer $isEmbedded={isEmbedded}>
         <PlanContainer>
           <div className="w-full">
             <div className="p-4 sm:p-6 relative">
