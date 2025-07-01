@@ -31,7 +31,7 @@ const Navbar = () => {
                 className="h-full w-full"
               />
             </div>
-            <Link to="/plan" className="text-[#121714] text-lg font-bold leading-tight tracking-[-0.015em]">
+            <Link to="/" className="text-[#121714] text-lg font-bold leading-tight tracking-[-0.015em]">
               Microadventures
             </Link>
           </div>

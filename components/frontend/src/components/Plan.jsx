@@ -8,28 +8,32 @@ import { useCountdown } from '../hooks/useCountdown';
 import styled from 'styled-components';
 
 const PageWrapper = styled.div`
-  width: 100%;
-  max-width: 700px;
-  margin: 0 auto;
-  padding: ${props => props.$isEmbedded ? '0' : '1rem 0'}; /* No padding when embedded */
-  
-  /* Ensure consistent behavior in all contexts */
   display: flex;
-  flex-direction: column;
   align-items: center;
-  justify-content: ${props => props.$isEmbedded ? 'flex-start' : 'center'};
-  min-height: ${props => props.$isEmbedded ? 'auto' : 'calc(100vh - 3rem)'};
+  justify-content: center;
+  min-height: 100%; /* Use full available height instead of viewport height */
+  padding: 20px 0; /* Consistent padding for all screen sizes */
+  margin: 0 auto;
+  overflow-y: auto; /* Always allow vertical scrolling */
   
+  /* When used as a child of another component with className home-embedded */
+  .home-embedded & {
+    min-height: unset;
+    padding: 0;
+    margin: 0;
+  }
+
+  /* On very short screens, start from top */
   @media (max-height: 600px) {
-    justify-content: flex-start;
-    padding-top: ${props => props.$isEmbedded ? '0' : '1rem'};
+    align-items: flex-start;
+    padding-top: 20px;
   }
 `;
 
 const PlanFormContainer = styled.div`
   position: relative;
-  width: 100%;
-  max-width: 700px;
+  max-width: 600px; /* Reduced max width for a more compact form */
+  width: 90%;
   margin: 0 auto;
   border-radius: 20px;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
@@ -37,14 +41,19 @@ const PlanFormContainer = styled.div`
   flex-direction: column;
   background: white;
   
-  /* Adaptive height based on context */
-  max-height: ${props => props.$isEmbedded 
-    ? 'none' /* No height restriction when embedded - let content determine height */
-    : 'calc(100vh - 5rem)' /* Account for navbar + padding when standalone */
-  };
-  overflow-y: ${props => props.$isEmbedded ? 'visible' : 'auto'};
+  /* Maximize vertical space - leave minimal space at bottom */
+  max-height: calc(100vh - 68px); /* navbar (48px) + main padding (16px top + 4px bottom) */
+  overflow-y: auto;
   
-  /* Custom scrollbar styling - only when scrollable */
+  @media (max-width: 640px) {
+    max-height: calc(100vh - 60px); /* navbar (48px) + reduced mobile padding (8px top + 4px bottom) */
+  }
+  
+  @media (max-height: 600px) {
+    max-height: calc(100vh - 60px); /* navbar (48px) + minimal padding for short screens */
+  }
+  
+  /* Custom scrollbar styling */
   &::-webkit-scrollbar {
     width: 8px;
   }
@@ -64,12 +73,13 @@ const PlanFormContainer = styled.div`
   }
   
   @media (max-width: 640px) {
-    max-height: ${props => props.$isEmbedded ? 'none' : 'calc(100vh - 6rem)'};
-    margin: ${props => props.$isEmbedded ? '0' : '0 1rem'};
+    width: 95%;
+    max-height: calc(100vh - 120px); /* Smaller padding on mobile */
   }
   
+  /* On very short screens, reduce max height further */
   @media (max-height: 600px) {
-    max-height: ${props => props.$isEmbedded ? 'none' : 'calc(100vh - 4rem)'};
+    max-height: calc(100vh - 80px);
   }
 `;
 
@@ -82,8 +92,13 @@ const PlanContainer = styled.div`
   justify-content: center;
 `;
 
-const Plan = ({ isEmbedded = false }) => {
-  console.log('Plan component rendering', { isEmbedded });
+const Plan = () => {
+  console.log('Plan component rendering');
+
+  useEffect(() => {
+    console.log('Plan component mounted');
+    return () => console.log('Plan component unmounted');
+  }, []);
 
   const { currentUser } = useAuth();
   const [location, setLocation] = useState('');
@@ -298,7 +313,7 @@ const Plan = ({ isEmbedded = false }) => {
   // If adventure is generated, show the result with full-width layout like history
   if (generatedAdventure) {
     return (
-      <div className="absolute inset-0 bg-[#f8fcfa]">
+      <div className="h-full">
         <AdventureResult
           adventure={generatedAdventure}
           onBack={handleBackToForm}
@@ -311,8 +326,8 @@ const Plan = ({ isEmbedded = false }) => {
   }
 
   return (
-    <PageWrapper $isEmbedded={isEmbedded}>
-      <PlanFormContainer $isEmbedded={isEmbedded}>
+    <PageWrapper>
+      <PlanFormContainer>
         <PlanContainer>
           <div className="w-full">
             <div className="p-4 sm:p-6 relative">
