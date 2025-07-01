@@ -81,10 +81,6 @@ logs/
 .env*
 !.env.example
 
-# Alembic
-alembic/versions/*.py
-!alembic/versions/
-
 # Temporary files
 tmp/
 temp/
