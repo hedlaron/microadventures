@@ -1,0 +1,25 @@
+version: "3"
+
+include:
+  backend:
+    taskfile: ./backend/Taskfile.yaml
+    dir: ./backend
+  frontend:
+    taskfile: ./frontend/Taskfile.yaml
+    dir: ./frontend
+  postgresql:
+    taskfile: ./postgresql/Taskfile.yaml
+    dir: ./postgresql
+
+tasks:
+  bootstrap-buildx-builder:
+    desc: Bootstrap the builder
+    cmds:
+      - docker buildx create --name mybuilder --driver docker-container --driver-opt network=host --use
+      - docker buildx inspect mybuilder --bootstrap
+      - docker buildx use mybuilder
+
+  run-local-registry:
+    desc: Run a local registry
+    cmds:
+      - docker run -d -p 5000:5000 registry:2.8

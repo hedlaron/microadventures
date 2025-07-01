@@ -173,28 +173,6 @@ body {
   margin-top: 1rem;
 }
 
-.clerk-modal {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(0, 0, 0, 0.5);
-  z-index: 1000;
-}
-
-.clerk-modal-content {
-  background-color: white;
-  padding: 2rem;
-  border-radius: 0.5rem;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-  max-width: 500px;
-  width: 100%;
-}
-
 .quota-display {
   background-color: #f8fafc;
   padding: 1rem;
