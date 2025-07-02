@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: microadventures-config
+  namespace: microadventures
+data:
+  POSTGRES_HOST: microadventures-postgresql
+  POSTGRES_PORT: "5432"
+  POSTGRES_DB: microadventures
+  FRONTEND_URL: http://microadventures-frontend
+  BACKEND_URL: http://microadventures-backend:8000

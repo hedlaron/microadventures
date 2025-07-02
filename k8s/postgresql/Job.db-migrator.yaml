@@ -9,5 +9,59 @@ spec:
       containers:
         - name: migrate
           image: hedlaron/microadventures-backend:foobarbaz
+          imagePullPolicy: Always
           command: ["uv", "run", "alembic", "upgrade", "head"]
+          env:
+            # PostgreSQL connection (required for migration)
+            - name: POSTGRESQL_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: postgresql-secrets
+                  key: POSTGRES_USER
+            - name: POSTGRESQL_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: postgresql-secrets
+                  key: POSTGRES_PASSWORD
+            - name: POSTGRESQL_SERVER
+              valueFrom:
+                configMapKeyRef:
+                  name: postgresql-config
+                  key: POSTGRES_HOST
+            - name: POSTGRESQL_PORT
+              valueFrom:
+                configMapKeyRef:
+                  name: postgresql-config
+                  key: POSTGRES_PORT
+            - name: POSTGRESQL_DATABASE
+              valueFrom:
+                configMapKeyRef:
+                  name: postgresql-config
+                  key: POSTGRES_DB
+            # Application config
+            - name: DOMAIN
+              valueFrom:
+                configMapKeyRef:
+                  name: postgresql-config
+                  key: DOMAIN
+            - name: ENVIRONMENT
+              valueFrom:
+                configMapKeyRef:
+                  name: postgresql-config
+                  key: ENVIRONMENT
+            - name: BACKEND_CORS_ORIGINS
+              valueFrom:
+                configMapKeyRef:
+                  name: postgresql-config
+                  key: BACKEND_CORS_ORIGINS
+            - name: JWT_SECRET_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: postgresql-secrets
+                  key: SECRET_KEY
+            - name: OPENAI_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: postgresql-secrets
+                  key: OPENAI_API_KEY
       restartPolicy: OnFailure

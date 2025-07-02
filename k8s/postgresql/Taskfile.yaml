@@ -9,8 +9,10 @@ tasks:
         helm upgrade --install \
           -n postgres \
           postgres bitnami/postgresql \
-          --set auth.postgresPassword=password \
-          --set auth.username=admin \
+          --set auth.postgresPassword=microadventures \
+          --set auth.username=microadventures \
+          --set auth.password=microadventures \
+          --set auth.database=microadventures \
           --version 15.3.2 \
           --values values.yaml \
           --create-namespace
@@ -18,4 +20,31 @@ tasks:
   apply-initial-db-migration-job:
     desc: "Run init.sql script against the DB"
     cmds:
+      - "kubectl apply -f Secret.postgresql.yaml"
+      - "kubectl apply -f ConfigMap.postgresql.yaml"
       - "kubectl apply -f Job.db-migrator.yaml"
+
+  reapply-db-migration-job:
+    desc: "Delete and reapply the database migration job"
+    cmds:
+      - "kubectl delete job db-migrator -n microadventures --ignore-not-found=true"
+      - "kubectl apply -f Job.db-migrator.yaml"
+
+  reinstall-postgres:
+    desc: "Completely reinstall PostgreSQL (WARNING: This will delete all data)"
+    cmds:
+      - helm uninstall postgres -n postgres --ignore-not-found
+      - kubectl delete pvc --all -n postgres --ignore-not-found
+      - task: install-postgres
+
+  logs-migration-job:
+    desc: "View logs from the database migration job"
+    cmds:
+      - "kubectl logs job/db-migrator -n microadventures"
+
+  status-postgres:
+    desc: "Check PostgreSQL status"
+    cmds:
+      - "kubectl get pods -n postgres"
+      - "kubectl get pvc -n postgres"
+      - "kubectl get svc -n postgres"

@@ -6,9 +6,10 @@ metadata:
 spec:
   entryPoints:
     - web
+    - websecure
   routes:
     - kind: Rule
-      match: Host(`microadventures.aronhedl.com`) && PathPrefix(`/api/golang`)
+      match: Host(`microadventures.aronhedl.com`) && PathPrefix(`/backend`)
       middlewares:
         - name: strip-api-prefixes
       services:

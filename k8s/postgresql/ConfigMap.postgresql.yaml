@@ -1,0 +1,13 @@
+# PostgreSQL configuration for microadventures namespace
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: postgresql-config
+  namespace: microadventures
+data:
+  POSTGRES_HOST: "postgres-postgresql.postgres.svc.cluster.local"
+  POSTGRES_PORT: "5432"
+  POSTGRES_DB: "microadventures"
+  DOMAIN: "localhost"
+  ENVIRONMENT: "local"
+  BACKEND_CORS_ORIGINS: "http://localhost:3000,http://localhost:5173"

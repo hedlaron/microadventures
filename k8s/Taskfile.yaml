@@ -14,6 +14,9 @@ includes:
   postgresql:
     taskfile: ./postgresql/Taskfile.yaml
     dir: ./postgresql
+  backend:
+    taskfile: ./backend/Taskfile.yaml
+    dir: ./backend
 
 tasks:
   backend:apply:
