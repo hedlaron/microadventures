@@ -1,7 +1,28 @@
 import axios from 'axios';
 import { useCallback } from 'react';
 
-const API_URL = 'http://localhost:8000/api';
+// Dynamic API URL detection
+const getApiUrl = () => {
+    // Check if we're in development (localhost)
+    if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+        return 'http://localhost:8000/api';
+    }
+    
+    // For production/deployed environments, use the same domain with /backend prefix
+    const protocol = window.location.protocol;
+    const host = window.location.host;
+    return `${protocol}//${host}/backend/api`;
+};
+
+const API_URL = getApiUrl();
+
+// Debug logging
+console.log('Environment detection:', {
+    hostname: window.location.hostname,
+    protocol: window.location.protocol,
+    host: window.location.host,
+    detectedApiUrl: API_URL
+});
 
 const loginUser = async (credentials) => {
     try {
