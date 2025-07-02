@@ -1,0 +1,35 @@
+version: "3"
+
+env:
+  # Set default gum style options
+  BORDER: double
+  BORDER_FOREGROUND: "212"
+  PADDING: "1 1"
+  MARGIN: "1 1"
+
+includes:
+  common:
+    taskfile: ./common/Taskfile.yaml
+    dir: ./common
+  postgresql:
+    taskfile: ./postgresql/Taskfile.yaml
+    dir: ./postgresql
+
+tasks:
+  backend:apply:
+    desc: "Apply kubernetes resource manifests for backend application"
+    cmds:
+      - "kubectl apply -f ./backend"
+
+  frontend:apply:
+    desc: "Apply kubernetes resource manifests for frontend application"
+    cmds:
+      - "kubectl apply -f ./frontend"
+
+
+  apply-all:
+    desc: "Apply kubernetes resource manifests for all applications"
+    cmds:
+      - "kubectl apply -f ./backend"
+      - "kubectl apply -f ./frontend"
+      - "kubectl apply -f ./postgresql"

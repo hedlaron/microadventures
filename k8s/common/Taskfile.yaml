@@ -1,0 +1,19 @@
+version: "3"
+
+tasks:
+  apply-namespace:
+    desc: "Apply Kubernetes Namespace"
+    cmds:
+      - kubectl apply -f Namespace.yaml
+      - kubens microadventures
+
+  deploy-traefik:
+    desc: "Deploy Traefik using Helm"
+    cmds:
+      - helm repo add traefik https://traefik.github.io/charts
+      - helm upgrade --install -n traefik --create-namespace traefik traefik/traefik --version 20.8.0
+
+  apply-traefik-middleware:
+    desc: "Deploy Traefik middleware"
+    cmds:
+      - "kubectl apply -f Middleware.yaml"

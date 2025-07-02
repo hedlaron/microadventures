@@ -1,0 +1,13 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: db-migrator
+  namespace: microadventures
+spec:
+  template:
+    spec:
+      containers:
+        - name: migrate
+          image: hedlaron/microadventures-backend:foobarbaz
+          command: ["uv", "run", "alembic", "upgrade", "head"]
+      restartPolicy: OnFailure

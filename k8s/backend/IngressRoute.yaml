@@ -1,0 +1,18 @@
+apiVersion: traefik.containo.us/v1alpha1
+kind: IngressRoute
+metadata:
+  name: backend
+  namespace: microadventures
+spec:
+  entryPoints:
+    - web
+  routes:
+    - kind: Rule
+      match: Host(`microadventures.aronhedl.com`) && PathPrefix(`/api/golang`)
+      middlewares:
+        - name: strip-api-prefixes
+      services:
+        - kind: Service
+          name: backend
+          port: 8000
+          scheme: http
