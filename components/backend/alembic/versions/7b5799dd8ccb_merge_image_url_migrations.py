@@ -1,7 +1,7 @@
 """merge_image_url_migrations
 
 Revision ID: 7b5799dd8ccb
-Revises: 1bccd7bf0987, g2h3i4j5k6l7
+Revises: g2h3i4j5k6l7
 Create Date: 2025-06-26 18:11:00.380315
 
 """
@@ -13,7 +13,7 @@ import sqlalchemy as sa
 
 # revision identifiers, used by Alembic.
 revision: str = '7b5799dd8ccb'
-down_revision: Union[str, None] = ('1bccd7bf0987', 'g2h3i4j5k6l7')
+down_revision: Union[str, None] = 'g2h3i4j5k6l7'
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
 
