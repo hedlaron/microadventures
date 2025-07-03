@@ -10,7 +10,7 @@ spec:
         - name: migrate
           image: hedlaron/microadventures-backend:foobarbaz
           imagePullPolicy: Always
-          command: ["uv", "run", "alembic", "upgrade", "head"]
+          command: ["uv", "run", "alembic", "upgrade", "heads"]
           env:
             # PostgreSQL connection (required for migration)
             - name: POSTGRESQL_USERNAME
@@ -64,4 +64,6 @@ spec:
                 secretKeyRef:
                   name: postgresql-secrets
                   key: OPENAI_API_KEY
+      imagePullSecrets:
+        - name: dockerconfigjson
       restartPolicy: OnFailure
