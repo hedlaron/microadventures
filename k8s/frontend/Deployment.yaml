@@ -16,7 +16,7 @@ spec:
         app: frontend
     spec:
       containers:
-        - image: hedlaron/microadventures-frontend:v1.1
+        - image: hedlaron/microadventures-frontend:v1.3
           name: frontend
           ports:
             - containerPort: 8080
