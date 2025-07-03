@@ -9,9 +9,18 @@ const getApiUrl = () => {
     }
     
     // For production/deployed environments, use the same domain with /backend prefix
+    // Always use the same protocol as the current page to avoid mixed content issues
     const protocol = window.location.protocol;
     const host = window.location.host;
-    return `${protocol}//${host}/backend/api`;
+    const baseUrl = `${protocol}//${host}/backend/api`;
+    
+    console.log('Production API URL construction:', {
+        protocol,
+        host,
+        baseUrl
+    });
+    
+    return baseUrl;
 };
 
 const API_URL = getApiUrl();
@@ -89,7 +98,7 @@ const registerUser = async (userData) => {
 
 const fetchUserProfile = async (token) => {
     try {
-        const response = await axios.get(`${API_URL}/users/me/`, {
+        const response = await axios.get(`${API_URL}/users/me`, {
             headers: {
                 Authorization: `Bearer ${token}`
             }
