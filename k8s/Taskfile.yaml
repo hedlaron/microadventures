@@ -18,6 +18,10 @@ includes:
     taskfile: ./backend/Taskfile.yaml
     dir: ./backend
 
+  trivy-operator:
+    taskfile: ./trivy-operator/Taskfile.yaml
+    dir: ./trivy-operator
+
 tasks:
   backend:apply:
     desc: "Apply kubernetes resource manifests for backend application"
