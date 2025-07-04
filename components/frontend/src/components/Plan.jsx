@@ -377,7 +377,8 @@ const Plan = () => {
                         type="text"
                         value={location}
                         onChange={(e) => setLocation(e.target.value)}
-                        className="flex-1 text-sm h-8 bg-transparent rounded-lg border-gray-300 shadow-sm focus:border-[#FFD166] focus:ring-[#FFD166]"
+                        style={{ height: '3rem', padding: '0.75rem 1rem', borderRadius: '0.75rem' }}
+                        className="flex-1 text-sm bg-gray-50/80 border-2 border-gray-200 shadow-sm focus:border-[#FFD166] focus:ring-0 focus:bg-white transition-all duration-200 hover:bg-white hover:border-gray-300"
                         placeholder="Enter start location"
                         required
                       />
@@ -385,13 +386,14 @@ const Plan = () => {
                         type="button"
                         onClick={getCurrentLocation}
                         disabled={locationLoading}
-                        className={`px-2 py-1 h-8 border border-[#FFD166] text-black rounded-lg hover:bg-[#FFD166]/10 transition-colors flex items-center gap-1 text-xs ${
+                        style={{ height: '3rem', padding: '0.75rem 1rem' }}
+                        className={`border-2 border-[#FFD166] text-black rounded-lg hover:bg-[#FFD166]/10 transition-colors flex items-center gap-2 text-sm font-medium ${
                           locationLoading ? 'opacity-50 cursor-not-allowed' : ''
                         }`}
                       >
                         {locationLoading ? (
                           <>
-                            <svg className="w-3 h-3 animate-spin" fill="none" viewBox="0 0 24 24">
+                            <svg className="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24">
                               <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                               <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                             </svg>
@@ -399,7 +401,7 @@ const Plan = () => {
                           </>
                         ) : (
                           <>
-                            <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
                               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
                             </svg>
@@ -410,7 +412,8 @@ const Plan = () => {
                       <button
                         type="button"
                         onClick={() => setShowStartMapPicker(true)}
-                        className="px-2 py-1 h-8 border border-[#FFD166] text-black rounded-lg hover:bg-[#FFD166]/10 transition-colors flex items-center gap-1 text-xs"
+                        style={{ height: '3rem', padding: '0.75rem 1rem' }}
+                        className="border-2 border-[#FFD166] text-black rounded-lg hover:bg-[#FFD166]/10 transition-colors flex items-center gap-2 text-sm font-medium"
                       >
                         <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7" />
@@ -441,13 +444,15 @@ const Plan = () => {
                         type="text"
                         value={destination}
                         onChange={(e) => setDestination(e.target.value)}
-                        className="flex-1 text-sm h-8 bg-transparent rounded-lg border-gray-300 shadow-sm focus:border-[#FFD166] focus:ring-[#FFD166]"
+                        style={{ height: '3rem', padding: '0.75rem 1rem', borderRadius: '0.75rem' }}
+                        className="flex-1 text-sm bg-gray-50/80 border-2 border-gray-200 shadow-sm focus:border-[#FFD166] focus:ring-0 focus:bg-white transition-all duration-200 hover:bg-white hover:border-gray-300"
                         placeholder="Enter destination"
                       />
                       <button
                         type="button"
                         onClick={() => setShowEndMapPicker(true)}
-                        className="px-2 py-1 h-8 border border-[#FFD166] text-black rounded-lg hover:bg-[#FFD166]/10 transition-colors flex items-center gap-1 text-xs"
+                        style={{ height: '3rem', padding: '0.75rem 1rem' }}
+                        className="border-2 border-[#FFD166] text-black rounded-lg hover:bg-[#FFD166]/10 transition-colors flex items-center gap-2 text-sm font-medium"
                       >
                         <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7" />
@@ -465,11 +470,12 @@ const Plan = () => {
                           key={option}
                           type="button"
                           onClick={() => setDuration(option.toLowerCase().replace(' ', '-'))}
-                          className={`flex-1 px-3 py-1.5 rounded-lg border ${
+                          style={{ padding: '0.75rem 1rem', height: '2.5rem' }}
+                          className={`flex-1 rounded-lg border ${
                             duration === option.toLowerCase().replace(' ', '-')
                               ? 'bg-[#FFD166] text-black shadow-sm'
                               : 'bg-white border-gray-300 hover:bg-gray-50 text-gray-700'
-                          } transition-colors duration-100 text-sm`}
+                          } transition-colors duration-100 text-sm font-medium`}
                         >
                           {option}
                         </button>
@@ -551,16 +557,17 @@ const Plan = () => {
                   <div className="space-y-1">
                     <label className="block text-xs font-medium text-gray-700">When to start?</label>
                     <div className="flex gap-1.5">
-                      <button
-                        type="button"
-                        onClick={() => {
-                          setStartDate(new Date());
-                          setIsCustomDate(false);
-                        }}
-                        className={`flex-1 px-3 py-1.5 rounded-lg border ${
-                          !isCustomDate ? 'bg-[#FFD166] text-black shadow-sm' : 'bg-white border-gray-300 hover:bg-gray-50 text-gray-700'
-                        } transition-colors duration-100 text-sm`}
-                      >
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setStartDate(new Date());
+                            setIsCustomDate(false);
+                          }}
+                          style={{ padding: '0.75rem 1rem', height: '2.5rem' }}
+                          className={`flex-1 rounded-lg border ${
+                            !isCustomDate ? 'bg-[#FFD166] text-black shadow-sm' : 'bg-white border-gray-300 hover:bg-gray-50 text-gray-700'
+                          } transition-colors duration-100 text-sm`}
+                        >
                         Let's go now!
                       </button>
                       {isCustomDate ? (
@@ -588,7 +595,8 @@ const Plan = () => {
                         <button
                           type="button"
                           onClick={() => setIsCustomDate(true)}
-                          className="px-3 py-1.5 border border-[#FFD166] rounded-lg bg-white hover:bg-[#FFD166]/10 transition-colors duration-100 flex items-center gap-1 text-black text-sm"
+                          style={{ padding: '0.75rem 1rem', height: '2.5rem' }}
+                          className="border border-[#FFD166] rounded-lg bg-white hover:bg-[#FFD166]/10 transition-colors duration-100 flex items-center gap-1 text-black text-sm"
                         >
                           <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
@@ -602,7 +610,8 @@ const Plan = () => {
                   <button
                     type="submit"
                     disabled={loading || !location.trim() || (quotaInfo && quotaInfo.adventures_remaining === 0)}
-                    className="w-full px-6 py-2 mt-2 bg-[#FFD166] text-black rounded-lg hover:bg-[#F4A261] font-bold transition-colors shadow-md flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                    style={{ height: '3.5rem', padding: '1rem 2rem', marginTop: '1.5rem', borderRadius: '0.875rem' }}
+                    className="w-full bg-gradient-to-r from-[#FFD166] to-[#F4A261] text-black font-bold hover:from-[#F4A261] hover:to-[#E76F51] transition-all duration-200 shadow-xl hover:shadow-2xl transform hover:scale-[1.02] disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none flex items-center justify-center gap-2 border-2 border-transparent hover:border-[#E76F51]/20"
                   >
                     {loading ? (
                       <>

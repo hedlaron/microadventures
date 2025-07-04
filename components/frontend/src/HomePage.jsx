@@ -8,51 +8,141 @@ const PageWrapper = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
-  min-height: calc(100vh - 128px); /* Accounting for both navbar and footer */
+  min-height: calc(100vh - 128px);
   padding: 3rem 0;
   margin: auto 0;
   width: 100%;
+  background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
 `;
 
 const HeroContainer = styled.div`
-  position: relative;
-  max-width: 800px;
-  width: 85%;
-  aspect-ratio: 16/9;
+  max-width: 1200px;
+  width: 90%;
   margin: 0 auto;
-  overflow: hidden;
-  border-radius: 20px;
   display: flex;
-  flex-direction: column;
-`;
-
-const HeroImage = styled.img`
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  object-position: center;
-  border-radius: 20px;
-`;
-
-const HeroOverlay = styled.div`
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0, 0, 0, 0.3);
-  border-radius: 20px;
+  align-items: center;
+  justify-content: space-between;
+  gap: 4rem;
+  
+  @media (max-width: 768px) {
+    flex-direction: column;
+    text-align: center;
+    gap: 2rem;
+  }
 `;
 
 const HeroContent = styled.div`
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  text-align: center;
-  color: white;
-  z-index: 1;
+  flex: 1;
+  max-width: 500px;
 `;
+
+const HeroVisual = styled.div`
+  flex: 1;
+  max-width: 600px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+`;
+
+const AdventureSVG = () => (
+  <svg width="500" height="400" viewBox="0 0 500 400" fill="none" xmlns="http://www.w3.org/2000/svg">
+    {/* Background circle */}
+    <circle cx="250" cy="200" r="180" fill="url(#bgGradient)" opacity="0.1"/>
+    
+    {/* Main adventure path - a winding trail */}
+    <path 
+      d="M50 300 Q150 250 200 200 Q250 150 300 180 Q350 210 400 160 Q430 140 450 120" 
+      stroke="url(#pathGradient)" 
+      strokeWidth="6" 
+      fill="none" 
+      strokeLinecap="round"
+      strokeDasharray="10,5"
+    />
+    
+    {/* Location pins along the path */}
+    <g>
+      {/* Pin 1 - Start */}
+      <circle cx="70" cy="285" r="12" fill="#F4A261"/>
+      <circle cx="70" cy="285" r="6" fill="white"/>
+      <path d="M70 275 L70 265 M65 270 L75 270" stroke="#F4A261" strokeWidth="2" strokeLinecap="round"/>
+      
+      {/* Pin 2 - Middle */}
+      <circle cx="220" cy="190" r="12" fill="#E76F51"/>
+      <circle cx="220" cy="190" r="6" fill="white"/>
+      <path d="M220 180 L220 170 M215 175 L225 175" stroke="#E76F51" strokeWidth="2" strokeLinecap="round"/>
+      
+      {/* Pin 3 - Adventure spot */}
+      <circle cx="350" cy="195" r="12" fill="#46a080"/>
+      <circle cx="350" cy="195" r="6" fill="white"/>
+      <path d="M350 185 L350 175 M345 180 L355 180" stroke="#46a080" strokeWidth="2" strokeLinecap="round"/>
+    </g>
+    
+    {/* Simple mountain silhouette */}
+    <path 
+      d="M100 320 L140 280 L180 300 L220 260 L260 290 L300 250 L340 280 L380 240 L420 270 L420 350 L100 350 Z" 
+      fill="url(#mountainGradient)" 
+      opacity="0.3"
+    />
+    
+    {/* Adventure icons */}
+    {/* Hiking boot */}
+    <g transform="translate(120,240)">
+      <ellipse cx="0" cy="8" rx="18" ry="8" fill="#F4A261" opacity="0.8"/>
+      <path d="M-15 5 Q-10 0 0 2 Q10 0 15 5 L15 12 L-15 12 Z" fill="#E76F51"/>
+      <circle cx="-8" cy="8" r="2" fill="white" opacity="0.8"/>
+      <circle cx="0" cy="8" r="2" fill="white" opacity="0.8"/>
+      <circle cx="8" cy="8" r="2" fill="white" opacity="0.8"/>
+    </g>
+    
+    {/* Camera */}
+    <g transform="translate(280,140)">
+      <rect x="-12" y="-8" width="24" height="16" rx="4" fill="#46a080"/>
+      <circle cx="0" cy="0" r="8" fill="white" opacity="0.9"/>
+      <circle cx="0" cy="0" r="5" fill="#019863"/>
+      <rect x="-15" y="-6" width="6" height="4" rx="2" fill="#019863"/>
+      <circle cx="8" cy="-6" r="2" fill="#FFD166"/>
+    </g>
+    
+    {/* Compass rose - simplified */}
+    <g transform="translate(380,120)">
+      <circle cx="0" cy="0" r="16" fill="white" stroke="#E76F51" strokeWidth="2" opacity="0.9"/>
+      <path d="M0,-10 L4,0 L0,10 L-4,0 Z" fill="#E76F51"/>
+      <path d="M0,-6 L2,0 L0,6 L-2,0 Z" fill="white"/>
+      <text x="0" y="-22" textAnchor="middle" fontSize="10" fill="#6B7280" fontWeight="600">N</text>
+    </g>
+    
+    {/* Floating adventure elements */}
+    {/* Map piece */}
+    <g transform="translate(150,120) rotate(15)">
+      <rect x="-10" y="-8" width="20" height="16" rx="2" fill="white" stroke="#F4A261" strokeWidth="2"/>
+      <path d="M-6 -4 L6 -4 M-8 0 L8 0 M-6 4 L6 4" stroke="#F4A261" strokeWidth="1" opacity="0.6"/>
+      <circle cx="2" cy="-2" r="2" fill="#E76F51" opacity="0.8"/>
+    </g>
+    
+    {/* Coffee cup */}
+    <g transform="translate(320,320)">
+      <rect x="-6" y="-8" width="12" height="12" rx="2" fill="white" stroke="#46a080" strokeWidth="2"/>
+      <path d="M6 -4 Q12 -4 12 0 Q12 4 6 4" stroke="#46a080" strokeWidth="2" fill="none"/>
+      <ellipse cx="0" cy="-6" rx="4" ry="2" fill="#46a080" opacity="0.3"/>
+    </g>
+    
+    <defs>
+      <linearGradient id="bgGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+        <stop offset="0%" stopColor="#F4A261"/>
+        <stop offset="100%" stopColor="#E76F51"/>
+      </linearGradient>
+      <linearGradient id="pathGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+        <stop offset="0%" stopColor="#F4A261"/>
+        <stop offset="50%" stopColor="#E76F51"/>
+        <stop offset="100%" stopColor="#46a080"/>
+      </linearGradient>
+      <linearGradient id="mountainGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+        <stop offset="0%" stopColor="#6B7280"/>
+        <stop offset="100%" stopColor="#9CA3AF"/>
+      </linearGradient>
+    </defs>
+  </svg>
+);
 
 const HomePage = () => {
   const { 
@@ -183,178 +273,255 @@ const HomePage = () => {
 
   return (
     <PageWrapper>
-      {/* Conditionally render Plan component or hero image based on authentication status */}
+      {/* Conditionally render Plan component or hero section based on authentication status */}
       {isAuthenticated ? (
         <HomePlan />
       ) : (
         <HeroContainer>
-          <HeroImage 
-            src="https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=3540&q=80" 
-            alt="Hero background"
-          />
-          <HeroOverlay />
           <HeroContent>
-            <div className="text-center space-y-3 max-w-[800px] px-4">
-              <h1 className="text-4xl font-bold text-white mb-3">Discover Your Next Adventure</h1>
-              <p className="text-lg text-white/90 mb-6">Plan your perfect microadventure in minutes</p>
-              <button
-                onClick={openLoginModal}
-                className="inline-flex items-center justify-center rounded-full h-12 px-8 bg-white text-[#121714] text-base font-bold hover:bg-gray-100 transition-colors"
-              >
-                Start Planning
-              </button>
+            <div className="space-y-8">
+              <div className="space-y-6">
+                <h1 className="text-6xl font-bold text-gray-900 leading-tight tracking-tight">
+                  Plan your next{' '}
+                  <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#F4A261] to-[#E76F51]">
+                    microadventure
+                  </span>
+                </h1>
+                <p className="text-2xl text-gray-600 leading-relaxed font-light max-w-lg">
+                  Discover amazing local experiences and create unforgettable memories with our intelligent adventure planning platform.
+                </p>
+              </div>
+              
+              <div className="space-y-6 pt-4">
+                <button
+                  onClick={openLoginModal}
+                  className="inline-flex items-center justify-center px-10 py-5 text-xl font-semibold text-white bg-gradient-to-r from-[#F4A261] to-[#E76F51] rounded-2xl hover:from-[#E76F51] hover:to-[#D84B40] transition-all duration-300 shadow-xl hover:shadow-2xl transform hover:scale-105 border-0 focus:ring-4 focus:ring-[#F4A261]/25"
+                >
+                  <svg className="w-6 h-6 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+                  </svg>
+                  Start Your Adventure
+                </button>
+                
+                <div className="flex items-center space-x-8 text-base text-gray-500 pt-2">
+                  <div className="flex items-center">
+                    <svg className="w-5 h-5 mr-2 text-green-500" fill="currentColor" viewBox="0 0 20 20">
+                      <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                    </svg>
+                    Free to start
+                  </div>
+                  <div className="flex items-center">
+                    <svg className="w-5 h-5 mr-2 text-green-500" fill="currentColor" viewBox="0 0 20 20">
+                      <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                    </svg>
+                    AI-powered planning
+                  </div>
+                  <div className="flex items-center">
+                    <svg className="w-5 h-5 mr-2 text-green-500" fill="currentColor" viewBox="0 0 20 20">
+                      <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                    </svg>
+                    Local discoveries
+                  </div>
+                </div>
+              </div>
             </div>
           </HeroContent>
+          
+          <HeroVisual>
+            <AdventureSVG />
+          </HeroVisual>
         </HeroContainer>
       )}
 
       {/* Login/Signup Modal */}
       {isLoginModalOpen && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
           <div 
             ref={modalRef}
-            className="bg-white rounded-lg p-6 w-[90%] max-w-md relative"
+            className="modal bg-white rounded-2xl w-full max-w-md relative overflow-hidden shadow-2xl"
+            style={{ padding: '0' }}
           >
             {showLoginForm && (
               <>
-                <div className="relative w-full mb-4">
+                <div className="bg-gradient-to-r from-[#FFD166] to-[#F4A261] p-6 text-center relative">
                   <button 
                     onClick={closeLoginModal} 
-                    className="absolute left-0 text-gray-600 hover:text-gray-800"
+                    className="absolute top-3 right-3 text-white/70 hover:text-white transition-colors text-2xl font-light bg-transparent border-none outline-none w-8 h-8 flex items-center justify-center rounded-full hover:bg-white/10"
                   >
-                    ✕ Close
+                    ×
                   </button>
-                  <h2 className="text-xl font-bold text-[#121714] text-center">
-                    Login
+                  <h2 className="text-2xl font-bold text-white mb-2">
+                    Welcome Back!
                   </h2>
+                  <p className="text-white/90 text-sm">
+                    Sign in to continue your adventure
+                  </p>
                 </div>
-                <form onSubmit={handleLoginSubmit} className="flex flex-col gap-3">
-                  {error && (
-                    <div className="bg-red-50 text-red-600 p-3 rounded-lg text-sm">
-                      {error}
+                
+                <div style={{ padding: '2rem' }}>
+                  <form onSubmit={handleLoginSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+                    {error && (
+                      <div className="bg-red-50 text-red-600 p-4 rounded-lg text-sm border border-red-200">
+                        {error}
+                      </div>
+                    )}
+                    {loginSuccess && (
+                      <div className="bg-green-50 text-green-600 p-4 rounded-lg text-sm border border-green-200">
+                        Login successful! Redirecting...
+                      </div>
+                    )}
+                    <div className="space-y-2">
+                      <label className="block text-sm font-semibold text-gray-700">
+                        Email Address
+                      </label>
+                      <input
+                        name="email"
+                        type="email"
+                        style={{ height: '3.25rem', padding: '0.875rem 1.25rem', borderRadius: '0.875rem' }}
+                        className="w-full text-sm bg-gray-50/80 rounded-xl border-2 border-gray-200 shadow-sm focus:border-[#FFD166] focus:ring-0 focus:bg-white transition-all duration-200 hover:bg-white hover:border-gray-300"
+                        placeholder="Enter your email"
+                      />
                     </div>
-                  )}
-                  {loginSuccess && (
-                    <div className="bg-green-50 text-green-600 p-3 rounded-lg text-sm">
-                      Login successful! Redirecting...
+                    <div className="space-y-2">
+                      <label className="block text-sm font-semibold text-gray-700">
+                        Password
+                      </label>
+                      <input
+                        name="password"
+                        type="password"
+                        style={{ height: '3.25rem', padding: '0.875rem 1.25rem', borderRadius: '0.875rem' }}
+                        className="w-full text-sm bg-gray-50/80 rounded-xl border-2 border-gray-200 shadow-sm focus:border-[#FFD166] focus:ring-0 focus:bg-white transition-all duration-200 hover:bg-white hover:border-gray-300"
+                        placeholder="Enter your password"
+                      />
                     </div>
-                  )}
-                  <div className="space-y-1">
-                    <label className="block text-xs font-medium text-gray-700">
-                      Email
-                    </label>
-                    <input
-                      name="email"
-                      type="email"
-                      className="w-full text-sm h-8 bg-transparent rounded-lg border-gray-300 shadow-sm focus:border-[#FFD166] focus:ring-[#FFD166]"
-                      placeholder="Enter your email"
-                    />
-                  </div>
-                  <div className="space-y-1">
-                    <label className="block text-xs font-medium text-gray-700">
-                      Password
-                    </label>
-                    <input
-                      name="password"
-                      type="password"
-                      className="w-full text-sm h-8 bg-transparent rounded-lg border-gray-300 shadow-sm focus:border-[#FFD166] focus:ring-[#FFD166]"
-                      placeholder="Enter your password"
-                    />
-                  </div>
-                  <button 
-                    type="submit"
-                    disabled={isLoading}
-                    className="w-full px-6 py-2 mt-2 bg-[#FFD166] text-black rounded-lg hover:bg-[#F4A261] font-bold transition-colors shadow-md flex items-center justify-center gap-2"
-                  >
-                    {isLoading ? 'Logging in...' : 'Login'}
-                  </button>
-                  <div className="text-center mt-2">
-                    <p className="text-sm text-gray-600">
-                      Don't have an account?{' '}
-                      <button
-                        type="button"
-                        onClick={switchToSignUp}
-                        className="text-[#121714] font-medium hover:underline"
-                      >
-                        Sign up
-                      </button>
-                    </p>
-                  </div>
-                </form>
+                    <button 
+                      type="submit"
+                      disabled={isLoading}
+                      style={{ height: '3.5rem', padding: '1rem 2rem', marginTop: '0.75rem', borderRadius: '0.875rem' }}
+                      className="w-full bg-gradient-to-r from-[#FFD166] to-[#F4A261] text-black font-bold hover:from-[#F4A261] hover:to-[#E76F51] transition-all duration-200 shadow-xl hover:shadow-2xl transform hover:scale-[1.02] disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none flex items-center justify-center gap-2 border-2 border-transparent hover:border-[#E76F51]/20"
+                    >
+                      {isLoading ? (
+                        <>
+                          <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-black"></div>
+                          Signing in...
+                        </>
+                      ) : (
+                        <>
+                          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1" />
+                          </svg>
+                          Sign In
+                        </>
+                      )}
+                    </button>
+                    <div className="text-center" style={{ marginTop: '1.5rem' }}>
+                      <p className="text-sm text-gray-600">
+                        Don't have an account?{' '}
+                        <span
+                          onClick={switchToSignUp}
+                          className="text-[#F4A261] font-medium hover:text-[#E76F51] transition-colors cursor-pointer hover:underline"
+                        >
+                          Create one here
+                        </span>
+                      </p>
+                    </div>
+                  </form>
+                </div>
               </>
             )}
             
             {showSignUpForm && (
               <>
-                <div className="relative w-full mb-4">
+                <div className="bg-gradient-to-r from-[#46a080] to-[#019863] p-6 text-center relative">
                   <button 
                     onClick={closeLoginModal} 
-                    className="absolute left-0 text-gray-600 hover:text-gray-800"
+                    className="absolute top-3 right-3 text-white/70 hover:text-white transition-colors text-2xl font-light bg-transparent border-none outline-none w-8 h-8 flex items-center justify-center rounded-full hover:bg-white/10"
                   >
-                    ✕ Close
+                    ×
                   </button>
-                  <h2 className="text-xl font-bold text-[#121714] text-center">
-                    Sign Up
+                  <h2 className="text-2xl font-bold text-white mb-2">
+                    Join the Adventure!
                   </h2>
+                  <p className="text-white/90 text-sm">
+                    Create your account to start exploring
+                  </p>
                 </div>
-                <form onSubmit={handleSignUpSubmit} className="flex flex-col gap-3">
-                  {error && (
-                    <div className="bg-red-50 text-red-600 p-3 rounded-lg text-sm">
-                      {error}
+                
+                <div style={{ padding: '2rem' }}>
+                  <form onSubmit={handleSignUpSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+                    {error && (
+                      <div className="bg-red-50 text-red-600 p-4 rounded-lg text-sm border border-red-200">
+                        {error}
+                      </div>
+                    )}
+                    {loginSuccess && (
+                      <div className="bg-green-50 text-green-600 p-4 rounded-lg text-sm border border-green-200">
+                        Account created! Please log in.
+                      </div>
+                    )}
+                    <div className="space-y-2">
+                      <label className="block text-sm font-semibold text-gray-700">Username</label>
+                      <input
+                        name="username"
+                        type="text"
+                        placeholder="Choose a username"
+                        style={{ height: '3.25rem', padding: '0.875rem 1.25rem', borderRadius: '0.875rem' }}
+                        className="w-full text-sm bg-gray-50/80 rounded-xl border-2 border-gray-200 shadow-sm focus:border-[#46a080] focus:ring-0 focus:bg-white transition-all duration-200 hover:bg-white hover:border-gray-300"
+                      />
                     </div>
-                  )}
-                  {loginSuccess && (
-                    <div className="bg-green-50 text-green-600 p-3 rounded-lg text-sm">
-                      Account created! Please log in.
+                    <div className="space-y-2">
+                      <label className="block text-sm font-semibold text-gray-700">Email Address</label>
+                      <input
+                        name="email"
+                        type="email"
+                        placeholder="Enter your email"
+                        style={{ height: '3.25rem', padding: '0.875rem 1.25rem', borderRadius: '0.875rem' }}
+                        className="w-full text-sm bg-gray-50/80 rounded-xl border-2 border-gray-200 shadow-sm focus:border-[#46a080] focus:ring-0 focus:bg-white transition-all duration-200 hover:bg-white hover:border-gray-300"
+                      />
                     </div>
-                  )}
-                  <div className="space-y-1">
-                    <label className="block text-xs font-medium text-gray-700">Username</label>
-                    <input
-                      name="username"
-                      type="text"
-                      placeholder="Enter your username"
-                      className="w-full text-sm h-8 bg-transparent rounded-lg border-gray-300 shadow-sm focus:border-[#FFD166] focus:ring-[#FFD166]"
-                    />
-                  </div>
-                  <div className="space-y-1">
-                    <label className="block text-xs font-medium text-gray-700">Email</label>
-                    <input
-                      name="email"
-                      type="email"
-                      placeholder="Enter your email"
-                      className="w-full text-sm h-8 bg-transparent rounded-lg border-gray-300 shadow-sm focus:border-[#FFD166] focus:ring-[#FFD166]"
-                    />
-                  </div>
-                  <div className="space-y-1">
-                    <label className="block text-xs font-medium text-gray-700">Password</label>
-                    <input
-                      name="password"
-                      type="password"
-                      placeholder="Enter your password"
-                      className="w-full text-sm h-8 bg-transparent rounded-lg border-gray-300 shadow-sm focus:border-[#FFD166] focus:ring-[#FFD166]"
-                    />
-                  </div>
-                  <button 
-                    type="submit"
-                    disabled={isLoading}
-                    className="w-full px-6 py-2 mt-2 bg-[#FFD166] text-black rounded-lg hover:bg-[#F4A261] font-bold transition-colors shadow-md flex items-center justify-center gap-2"
-                  >
-                    {isLoading ? 'Signing up...' : 'Sign Up'}
-                  </button>
-                  <div className="text-center mt-2">
-                    <p className="text-sm text-gray-600">
-                      Already have an account?{' '}
-                      <button
-                        type="button"
-                        onClick={switchToLogin}
-                        className="text-[#121714] font-medium hover:underline"
-                      >
-                        Log in
-                      </button>
-                    </p>
-                  </div>
-                </form>
+                    <div className="space-y-2">
+                      <label className="block text-sm font-semibold text-gray-700">Password</label>
+                      <input
+                        name="password"
+                        type="password"
+                        placeholder="Create a password"
+                        style={{ height: '3.25rem', padding: '0.875rem 1.25rem', borderRadius: '0.875rem' }}
+                        className="w-full text-sm bg-gray-50/80 rounded-xl border-2 border-gray-200 shadow-sm focus:border-[#46a080] focus:ring-0 focus:bg-white transition-all duration-200 hover:bg-white hover:border-gray-300"
+                      />
+                    </div>
+                    <button 
+                      type="submit"
+                      disabled={isLoading}
+                      style={{ height: '3.5rem', padding: '1rem 2rem', marginTop: '0.75rem', borderRadius: '0.875rem' }}
+                      className="w-full bg-gradient-to-r from-[#46a080] to-[#019863] text-white font-bold hover:from-[#019863] hover:to-[#0c7b63] transition-all duration-200 shadow-xl hover:shadow-2xl transform hover:scale-[1.02] disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none flex items-center justify-center gap-2 border-2 border-transparent hover:border-[#0c7b63]/20"
+                    >
+                      {isLoading ? (
+                        <>
+                          <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
+                          Creating account...
+                        </>
+                      ) : (
+                        <>
+                          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z" />
+                          </svg>
+                          Create Account
+                        </>
+                      )}
+                    </button>
+                    <div className="text-center" style={{ marginTop: '1.5rem' }}>
+                      <p className="text-sm text-gray-600">
+                        Already have an account?{' '}
+                        <span
+                          onClick={switchToLogin}
+                          className="text-[#46a080] font-medium hover:text-[#019863] transition-colors cursor-pointer hover:underline"
+                        >
+                          Sign in here
+                        </span>
+                      </p>
+                    </div>
+                  </form>
+                </div>
               </>
             )}
           </div>

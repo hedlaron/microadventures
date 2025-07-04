@@ -130,12 +130,13 @@ const History = ({ onBack, onSelectAdventure }) => {
   if (loading) {
     return (
       <div className="min-h-screen bg-[#f8fcfa] font-sans">
-        <header className="flex items-center justify-between whitespace-nowrap border-b border-solid border-b-[#e6f4ef] px-6 sm:px-10 py-3 bg-white">
+        <header className="flex items-center justify-between whitespace-nowrap border-b border-solid border-b-[#e6f4ef] px-6 sm:px-10 py-4 bg-white">
           <button 
             onClick={onBack}
-            className="flex items-center gap-2 text-[#46a080] hover:text-[#0c1c17] transition-colors"
+            style={{ padding: '0.75rem 1.25rem', height: '3rem', borderRadius: '0.75rem' }}
+            className="flex items-center gap-2 text-[#46a080] hover:text-white hover:bg-[#46a080] transition-all duration-200 border-2 border-[#46a080] font-medium"
           >
-            <ArrowLeft size={20} />
+            <ArrowLeft size={18} />
             <span className="text-sm font-medium">Back</span>
           </button>
           <h2 className="text-[#0c1c17] text-lg font-bold leading-tight tracking-[-0.015em]">
@@ -160,6 +161,7 @@ const History = ({ onBack, onSelectAdventure }) => {
       <header className="flex items-center justify-between whitespace-nowrap border-b border-solid border-b-[#e6f4ef] px-6 sm:px-10 py-3 bg-white">
         <button 
           onClick={onBack}
+          style={{ padding: '0.5rem 1rem', height: '2.5rem' }}
           className="flex items-center gap-2 text-[#46a080] hover:text-[#0c1c17] transition-colors"
         >
           <ArrowLeft size={20} />
@@ -247,13 +249,13 @@ const History = ({ onBack, onSelectAdventure }) => {
                               onClick={(e) => handleShare(e, adventure)}
                               disabled={sharingStates[adventure.id]}
                               className={`
-                                flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium
-                                transition-all duration-200 shadow-sm
+                                flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold
+                                transition-all duration-200 shadow-lg backdrop-blur-sm
                                 ${adventure.is_public 
-                                  ? 'bg-green-500 text-white hover:bg-green-600' 
-                                  : 'bg-white/90 text-gray-700 hover:bg-white'
+                                  ? 'bg-green-500/90 text-white hover:bg-green-600 border border-green-400/50' 
+                                  : 'bg-white/90 text-gray-700 hover:bg-white border border-white/50'
                                 }
-                                ${sharingStates[adventure.id] ? 'opacity-75 cursor-not-allowed' : 'hover:scale-105'}
+                                ${sharingStates[adventure.id] ? 'opacity-75 cursor-not-allowed' : 'hover:scale-105 hover:shadow-xl'}
                               `}
                               title={adventure.is_public ? 'Make Private' : 'Share Publicly'}
                             >
@@ -266,11 +268,11 @@ const History = ({ onBack, onSelectAdventure }) => {
                               <button
                                 onClick={(e) => handleCopyLink(e, adventure)}
                                 className={`
-                                  flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium
-                                  transition-all duration-200 shadow-sm
+                                  flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold
+                                  transition-all duration-200 shadow-lg backdrop-blur-sm
                                   ${copiedStates[adventure.id] 
-                                    ? 'bg-blue-500 text-white' 
-                                    : 'bg-white/90 text-gray-700 hover:bg-white hover:scale-105'
+                                    ? 'bg-blue-500/90 text-white border border-blue-400/50' 
+                                    : 'bg-white/90 text-gray-700 hover:bg-white hover:scale-105 hover:shadow-xl border border-white/50'
                                   }
                                 `}
                                 title="Copy Share Link"
@@ -332,10 +334,10 @@ const History = ({ onBack, onSelectAdventure }) => {
                     <button
                       onClick={goToPreviousPage}
                       disabled={currentPage === 1}
-                      className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-colors ${
+                      className={`flex items-center gap-2 px-4 py-2.5 rounded-lg font-medium transition-all duration-200 ${
                         currentPage === 1
                           ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
-                          : 'bg-white border border-[#e6f4ef] text-[#46a080] hover:bg-[#f8fcfa]'
+                          : 'bg-white border-2 border-[#46a080] text-[#46a080] hover:bg-[#46a080] hover:text-white shadow-sm hover:shadow-md'
                       }`}
                     >
                       <ChevronLeft size={16} />
@@ -347,10 +349,10 @@ const History = ({ onBack, onSelectAdventure }) => {
                         <button
                           key={page}
                           onClick={() => goToPage(page)}
-                          className={`w-10 h-10 rounded-lg transition-colors ${
+                          className={`w-11 h-11 rounded-lg font-semibold transition-all duration-200 ${
                             page === currentPage
-                              ? 'bg-[#46a080] text-white'
-                              : 'bg-white border border-[#e6f4ef] text-[#46a080] hover:bg-[#f8fcfa]'
+                              ? 'bg-[#46a080] text-white shadow-md scale-105'
+                              : 'bg-white border-2 border-[#e6f4ef] text-[#46a080] hover:bg-[#f8fcfa] hover:border-[#46a080] hover:scale-105'
                           }`}
                         >
                           {page}
@@ -361,10 +363,10 @@ const History = ({ onBack, onSelectAdventure }) => {
                     <button
                       onClick={goToNextPage}
                       disabled={currentPage === totalPages}
-                      className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-colors ${
+                      className={`flex items-center gap-2 px-4 py-2.5 rounded-lg font-medium transition-all duration-200 ${
                         currentPage === totalPages
                           ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
-                          : 'bg-white border border-[#e6f4ef] text-[#46a080] hover:bg-[#f8fcfa]'
+                          : 'bg-white border-2 border-[#46a080] text-[#46a080] hover:bg-[#46a080] hover:text-white shadow-sm hover:shadow-md'
                       }`}
                     >
                       Next

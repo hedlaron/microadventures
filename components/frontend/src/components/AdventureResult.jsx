@@ -90,6 +90,7 @@ const AdventureResult = ({ adventure, onBack, onNewAdventure, quotaInfo, isShare
           <div className="flex items-center justify-between px-6 sm:px-10 py-3">
             <button 
               onClick={onBack}
+              style={{ padding: '0.5rem 1rem', height: '2.5rem' }}
               className="flex items-center gap-2 text-[#46a080] hover:text-[#0c1c17] transition-colors"
             >
               <ArrowLeft size={20} />
@@ -116,7 +117,8 @@ const AdventureResult = ({ adventure, onBack, onNewAdventure, quotaInfo, isShare
               <button
                 onClick={handleShare}
                 disabled={isSharing}
-                className={`flex items-center gap-2 px-3 py-1.5 text-sm rounded-lg transition-colors ${
+                style={{ padding: '0.5rem 1rem', height: '2.5rem' }}
+                className={`flex items-center gap-2 text-sm rounded-lg transition-colors ${
                   adventure.is_public 
                     ? 'bg-green-600 text-white hover:bg-green-700' 
                     : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
@@ -130,7 +132,8 @@ const AdventureResult = ({ adventure, onBack, onNewAdventure, quotaInfo, isShare
               {adventure.is_public && shareUrl && (
                 <button
                   onClick={copyToClipboard}
-                  className="flex items-center gap-2 px-3 py-1.5 text-sm bg-blue-100 text-blue-700 rounded-lg hover:bg-blue-200 transition-colors"
+                  style={{ padding: '0.5rem 1rem', height: '2.5rem' }}
+                  className="flex items-center gap-2 text-sm bg-blue-100 text-blue-700 rounded-lg hover:bg-blue-200 transition-colors"
                   title="Copy share link"
                 >
                   {copied ? <Check size={14} /> : <Copy size={14} />}
@@ -140,7 +143,8 @@ const AdventureResult = ({ adventure, onBack, onNewAdventure, quotaInfo, isShare
               
               <button
                 onClick={onNewAdventure}
-                className="flex items-center gap-2 px-3 py-1.5 text-sm bg-[#46a080] text-white rounded-lg hover:bg-[#019863] transition-colors"
+                style={{ padding: '0.5rem 1rem', height: '2.5rem' }}
+                className="flex items-center gap-2 text-sm bg-[#46a080] text-white rounded-lg hover:bg-[#019863] transition-colors"
               >
                 <RotateCcw size={14} />
                 New Adventure
