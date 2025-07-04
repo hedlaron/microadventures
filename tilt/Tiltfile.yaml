@@ -1,2 +1,0 @@
-include('../../components/backend/Tiltfile')
-include('../../components/frontend/Tiltfile')
