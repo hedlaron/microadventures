@@ -9,7 +9,7 @@ spec:
     - websecure
   routes:
     - kind: Rule
-      match: Host(`microadventures.aronhedl.com`)
+      match: Host(`microadventures.aronhedl.com`) || Host(`local-microadventures.aronhedl.com`)
       services:
         - kind: Service
           name: frontend

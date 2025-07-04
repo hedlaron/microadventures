@@ -14,10 +14,6 @@ includes:
   postgresql:
     taskfile: ./postgresql/Taskfile.yaml
     dir: ./postgresql
-  backend:
-    taskfile: ./backend/Taskfile.yaml
-    dir: ./backend
-
   trivy-operator:
     taskfile: ./trivy-operator/Taskfile.yaml
     dir: ./trivy-operator
@@ -49,9 +45,63 @@ tasks:
           --docker-password=${DOCKER_PASSWORD} \
           --docker-server=https://index.docker.io/v1/
 
+  backend:restart-backend:
+    desc: "Restart backend deployment to pick up new configuration"
+    cmds:
+      - "kubectl rollout restart deployment backend -n microadventures"
+      - "kubectl rollout status deployment backend -n microadventures"
+
+  backend:logs-backend:
+    desc: "View logs from the backend deployment"
+    cmds:
+      - "kubectl logs -l app=backend -n microadventures --tail=50"
+
+  backend:status-backend:
+    desc: "Check backend status"
+    cmds:
+      - "kubectl get pods -l app=backend -n microadventures"
+      - "kubectl get svc backend -n microadventures"
+
+  backend:port-forward-backend:
+    desc: "Port forward backend to localhost:8000"
+    cmds:
+      - "kubectl port-forward service/backend 8000:8000 -n microadventures"
+
   apply-all:
     desc: "Apply kubernetes resource manifests for all applications"
     cmds:
-      - "kubectl apply -f ./backend"
-      - "kubectl apply -f ./frontend"
-      - "kubectl apply -f ./postgresql"
+      - task: common:apply-namespace
+      - task: postgresql:install-postgres
+      - task: postgresql:apply-initial-db-migration-job
+      - task: common:deploy-traefik
+      - task: common:apply-traefik-middleware
+      - task: backend:apply
+      - task: frontend:apply
+      - |
+        gum style "$(cat <<EOF
+        🚨  Using kubectl - The pods will be in ImagePullBackOff state because of the private repository
+        🚨  DOCKER_USERNAME=\$DOCKER_USERNAME DOCKER_EMAIL=\$DOCKER_EMAIL DOCKER_PASSWORD=\$DOCKER_PASSWORD task backend:create-image-pull-secret
+        EOF
+        )"
+
+  apply-all-tilt:
+    desc: "Apply kubernetes resource manifests for all applications using Tilt with kind"
+    cmds:
+      - kubectx kind-kind
+      - task: common:apply-namespace
+      - task: postgresql:install-postgres
+      - task: postgresql:apply-initial-db-migration-job
+      - task: postgresql:reapply-db-migration-job
+      - task: common:deploy-traefik
+      - task: common:apply-traefik-middleware
+      - task: backend:apply
+      - task: frontend:apply
+      - |
+        gum style "$(cat <<EOF
+        🚨  Using Tilt - The pods will be in ImagePullBackOff state because of the private repository
+        🚨  It's not necessary with Tilt as we will build the images locally 
+        🚨  but if needed run:
+        🚨  DOCKER_USERNAME=\$DOCKER_USERNAME DOCKER_EMAIL=\$DOCKER_EMAIL DOCKER_PASSWORD=\$DOCKER_PASSWORD task backend:create-image-pull-secret
+        EOF
+        )"
+      - sudo cloud-provider-kind

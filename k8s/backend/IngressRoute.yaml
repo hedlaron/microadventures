@@ -9,7 +9,7 @@ spec:
     - websecure
   routes:
     - kind: Rule
-      match: Host(`microadventures.aronhedl.com`) && PathPrefix(`/backend`)
+      match: (Host(`microadventures.aronhedl.com`) || Host(`local-microadventures.aronhedl.com`)) && PathPrefix(`/backend`)
       middlewares:
         - name: strip-api-prefixes
       services:

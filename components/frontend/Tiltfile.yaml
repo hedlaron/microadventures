@@ -1,0 +1,6 @@
+docker_build(
+  'hedlaron/microadventures-frontend', 
+  './',
+)
+k8s_yaml('../../k8s/frontend/Deployment.yaml')
+k8s_resource('frontend', port_forwards=8080)
