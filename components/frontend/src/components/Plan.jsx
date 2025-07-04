@@ -11,61 +11,42 @@ const PageWrapper = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
-  min-height: 100%; /* Use full available height instead of viewport height */
-  padding: 20px 0; /* Consistent padding for all screen sizes */
-  margin: 0 auto;
-  overflow-y: auto; /* Always allow vertical scrolling */
+  min-height: 100vh;
+  padding: 1rem;
+  background: linear-gradient(135deg, #f9fbfa 0%, #f3f4f6 100%);
   
-  /* When used as a child of another component with className home-embedded */
-  .home-embedded & {
-    min-height: unset;
-    padding: 0;
-    margin: 0;
-  }
-
-  /* On very short screens, start from top */
   @media (max-height: 600px) {
     align-items: flex-start;
-    padding-top: 20px;
+    padding-top: 1rem;
   }
 `;
 
 const PlanFormContainer = styled.div`
   position: relative;
-  max-width: 600px; /* Reduced max width for a more compact form */
-  width: 90%;
+  width: 100%;
+  max-width: 600px;
   margin: 0 auto;
-  border-radius: 20px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-  display: flex;
-  flex-direction: column;
+  border-radius: 24px;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.08), 0 8px 16px rgba(0, 0, 0, 0.04);
   background: white;
+  border: 1px solid rgba(255, 209, 102, 0.15);
   
-  /* Maximize vertical space - leave minimal space at bottom */
-  max-height: calc(100vh - 68px); /* navbar (48px) + main padding (16px top + 4px bottom) */
+  /* Ensure it fits screen height properly */
+  max-height: calc(100vh - 2rem);
   overflow-y: auto;
   
-  @media (max-width: 640px) {
-    max-height: calc(100vh - 60px); /* navbar (48px) + reduced mobile padding (8px top + 4px bottom) */
-  }
-  
-  @media (max-height: 600px) {
-    max-height: calc(100vh - 60px); /* navbar (48px) + minimal padding for short screens */
-  }
-  
-  /* Custom scrollbar styling */
+  /* Custom scrollbar for the form */
   &::-webkit-scrollbar {
-    width: 8px;
+    width: 6px;
   }
   
   &::-webkit-scrollbar-track {
-    background: #f1f1f1;
-    border-radius: 4px;
+    background: transparent;
   }
   
   &::-webkit-scrollbar-thumb {
     background: #FFD166;
-    border-radius: 4px;
+    border-radius: 3px;
   }
   
   &::-webkit-scrollbar-thumb:hover {
@@ -73,23 +54,22 @@ const PlanFormContainer = styled.div`
   }
   
   @media (max-width: 640px) {
-    width: 95%;
-    max-height: calc(100vh - 120px); /* Smaller padding on mobile */
-  }
-  
-  /* On very short screens, reduce max height further */
-  @media (max-height: 600px) {
-    max-height: calc(100vh - 80px);
+    max-width: 95vw;
+    border-radius: 20px;
+    max-height: calc(100vh - 1rem);
   }
 `;
 
 const PlanContainer = styled.div`
   position: relative;
   width: 100%;
+  padding: 3rem;
   display: flex;
   flex-direction: column;
-  align-items: center;
-  justify-content: center;
+  
+  @media (max-width: 640px) {
+    padding: 2.5rem;
+  }
 `;
 
 const Plan = () => {
@@ -329,71 +309,69 @@ const Plan = () => {
     <PageWrapper>
       <PlanFormContainer>
         <PlanContainer>
-          <div className="w-full">
-            <div className="p-4 sm:p-6 relative">
-                  <div className="relative">                <h1 className="mb-4 sm:mb-6 text-black text-lg sm:text-xl font-bold leading-tight flex items-center justify-center">
-                    <svg className="w-4 h-4 sm:w-5 sm:h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7" />
-                    </svg>
-                    Plan Your Microadventure
-                  </h1>
+          <div className="relative">
+            <h1 className="mb-8 sm:mb-10 text-black text-2xl sm:text-3xl font-bold leading-tight flex items-center justify-center text-center">
+              <span className="bg-gradient-to-r from-[#FFD166] to-[#F4A261] bg-clip-text text-transparent">
+                Plan Your Microadventure
+              </span>
+            </h1>
 
-                  {/* Quota Display */}
-                  {quotaInfo && (
-                    <div className="mb-4 p-3 bg-gradient-to-r from-[#FFD166]/10 to-[#F4A261]/10 rounded-lg border border-[#FFD166]/20">
-                      <div className="flex items-center justify-center gap-2 text-sm mb-2">
-                        <svg className="w-4 h-4 text-[#F4A261]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
-                        </svg>
-                        <span className="text-[#0c1c17] font-medium">
-                          {quotaInfo.adventures_remaining} adventures remaining today
-                        </span>
-                      </div>
-                      {quotaInfo.time_until_reset && timeLeft > 0 && (
-                        <div className="flex items-center justify-center gap-2 text-xs">
-                          <svg className="w-3 h-3 text-[#666]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                          </svg>
-                          <span className="text-[#666]">
-                            {quotaInfo.adventures_remaining === 0 ? 'Quota resets in:' : 'Next reset in:'} <span className="font-mono font-medium text-[#F4A261]">{formatTime(timeLeft)}</span>
-                          </span>
-                        </div>
-                      )}
-                    </div>
-                  )}
+            {/* Quota Display */}
+            {quotaInfo && (
+              <div className="mb-6 p-4 bg-gradient-to-r from-[#FFD166]/10 to-[#F4A261]/10 rounded-xl border border-[#FFD166]/20">
+                <div className="flex items-center justify-center gap-2 text-sm mb-2">
+                  <svg className="w-4 h-4 text-[#F4A261]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+                  </svg>
+                  <span className="text-[#0c1c17] font-medium">
+                    {quotaInfo.adventures_remaining} adventures remaining today
+                  </span>
+                </div>
+                {quotaInfo.time_until_reset && timeLeft > 0 && (
+                  <div className="flex items-center justify-center gap-2 text-xs">
+                    <svg className="w-3 h-3 text-[#666]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                    <span className="text-[#666]">
+                      {quotaInfo.adventures_remaining === 0 ? 'Quota resets in:' : 'Next reset in:'} <span className="font-mono font-medium text-[#F4A261]">{formatTime(timeLeft)}</span>
+                    </span>
+                  </div>
+                )}
+              </div>
+            )}
 
                   {/* Error Display */}
                   {error && (
-                    <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg">
-                      <p className="text-red-600 text-sm">{error}</p>
+                    <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-xl">
+                      <p className="text-red-600 text-sm text-center">{error}</p>
                     </div>
                   )}
               
-                <form onSubmit={handleSubmit} className="space-y-3 sm:space-y-4">
-                  <div className="space-y-1">
-                    <label className="block text-xs font-medium text-gray-700">Start Location</label>
-                    <div className="flex gap-1.5">
+                <form onSubmit={handleSubmit} className="space-y-6">
+                  <div className="space-y-3">
+                    <label className="block text-sm font-semibold text-gray-800">📍 Start Location</label>
+                    <div className="flex gap-2">
                       <input
                         type="text"
                         value={location}
                         onChange={(e) => setLocation(e.target.value)}
-                        style={{ height: '3rem', padding: '0.75rem 1rem', borderRadius: '0.75rem' }}
-                        className="flex-1 text-sm bg-gray-50/80 border-2 border-gray-200 shadow-sm focus:border-[#FFD166] focus:ring-0 focus:bg-white transition-all duration-200 hover:bg-white hover:border-gray-300"
-                        placeholder="Enter start location"
+                        style={{ height: '3rem', padding: '0.75rem', borderRadius: '12px' }}
+                        className="flex-1 text-sm bg-white/80 border-2 border-gray-100 shadow-sm focus:border-[#FFD166] focus:ring-2 focus:ring-[#FFD166]/20 focus:bg-white transition-all duration-200 hover:bg-white hover:border-[#FFD166]/40 placeholder-gray-400"
+                        placeholder="Where are you starting from?"
                         required
                       />
                       <button
                         type="button"
                         onClick={getCurrentLocation}
                         disabled={locationLoading}
-                        style={{ height: '3rem', padding: '0.75rem 1rem' }}
-                        className={`border-2 border-[#FFD166] text-black rounded-lg hover:bg-[#FFD166]/10 transition-colors flex items-center gap-2 text-sm font-medium ${
+                        style={{ height: '3rem', padding: '0 0.75rem', minWidth: '100px' }}
+                        className={`border-2 border-[#FFD166] text-black rounded-xl hover:bg-[#FFD166]/10 transition-colors flex items-center justify-center gap-1 text-xs font-medium ${
                           locationLoading ? 'opacity-50 cursor-not-allowed' : ''
                         }`}
                       >
                         {locationLoading ? (
                           <>
-                            <svg className="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24">
+                            <svg className="w-3 h-3 animate-spin" fill="none" viewBox="0 0 24 24">
                               <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                               <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                             </svg>
@@ -401,19 +379,19 @@ const Plan = () => {
                           </>
                         ) : (
                           <>
-                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
                               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
                             </svg>
-                            Current Location
+                            Current
                           </>
                         )}
                       </button>
                       <button
                         type="button"
                         onClick={() => setShowStartMapPicker(true)}
-                        style={{ height: '3rem', padding: '0.75rem 1rem' }}
-                        className="border-2 border-[#FFD166] text-black rounded-lg hover:bg-[#FFD166]/10 transition-colors flex items-center gap-2 text-sm font-medium"
+                        style={{ height: '3rem', padding: '0 0.75rem', minWidth: '70px' }}
+                        className="border-2 border-[#FFD166] text-black rounded-xl hover:bg-[#FFD166]/10 transition-colors flex items-center justify-center gap-1 text-xs font-medium"
                       >
                         <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7" />
@@ -423,36 +401,36 @@ const Plan = () => {
                     </div>
                   </div>
 
-                  <div className="space-y-1">
+                  <div className="space-y-3">
                     <div className="flex justify-between items-center">
-                      <label className="block text-xs font-medium text-gray-700">Destination</label>
+                      <label className="block text-sm font-semibold text-gray-800">🎯 Destination</label>
                       <button
                         type="button"
                         onClick={handleRoundTripToggle}
-                        className={`text-xs px-2 py-0.5 rounded-full transition-all ${isRoundTrip ? 'bg-[#FFD166] text-black font-medium' : 'bg-gray-100 text-gray-500 hover:bg-gray-200'}`}
+                        className={`text-xs px-3 py-1.5 rounded-full transition-all ${isRoundTrip ? 'bg-[#FFD166] text-black font-medium' : 'bg-gray-100 text-gray-500 hover:bg-gray-200'}`}
                       >
                         <span className="flex items-center gap-1">
-                          <svg className="w-2.5 h-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                          <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
                           </svg>
                           Round Trip
                         </span>
                       </button>
                     </div>
-                    <div className="flex gap-1.5">
+                    <div className="flex gap-2">
                       <input
                         type="text"
                         value={destination}
                         onChange={(e) => setDestination(e.target.value)}
-                        style={{ height: '3rem', padding: '0.75rem 1rem', borderRadius: '0.75rem' }}
-                        className="flex-1 text-sm bg-gray-50/80 border-2 border-gray-200 shadow-sm focus:border-[#FFD166] focus:ring-0 focus:bg-white transition-all duration-200 hover:bg-white hover:border-gray-300"
-                        placeholder="Enter destination"
+                        style={{ height: '3rem', padding: '0.75rem', borderRadius: '12px' }}
+                        className="flex-1 text-sm bg-white/80 border-2 border-gray-100 shadow-sm focus:border-[#FFD166] focus:ring-2 focus:ring-[#FFD166]/20 focus:bg-white transition-all duration-200 hover:bg-white hover:border-[#FFD166]/40 placeholder-gray-400"
+                        placeholder="Where would you like to go?"
                       />
                       <button
                         type="button"
                         onClick={() => setShowEndMapPicker(true)}
-                        style={{ height: '3rem', padding: '0.75rem 1rem' }}
-                        className="border-2 border-[#FFD166] text-black rounded-lg hover:bg-[#FFD166]/10 transition-colors flex items-center gap-2 text-sm font-medium"
+                        style={{ height: '3rem', padding: '0 0.75rem', minWidth: '70px' }}
+                        className="border-2 border-[#FFD166] text-black rounded-xl hover:bg-[#FFD166]/10 transition-colors flex items-center justify-center gap-1 text-xs font-medium"
                       >
                         <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7" />
@@ -462,20 +440,20 @@ const Plan = () => {
                     </div>
                   </div>
 
-                  <div className="space-y-1">
-                    <label className="block text-xs font-medium text-gray-700">Duration</label>
-                    <div className="flex gap-1.5">
+                  <div className="space-y-3">
+                    <label className="block text-sm font-semibold text-gray-800">⏰ Duration</label>
+                    <div className="grid grid-cols-2 gap-2">
                       {['Few Hours', 'Half Day', 'Full Day', 'Few Days'].map((option) => (
                         <button
                           key={option}
                           type="button"
                           onClick={() => setDuration(option.toLowerCase().replace(' ', '-'))}
-                          style={{ padding: '0.75rem 1rem', height: '2.5rem' }}
-                          className={`flex-1 rounded-lg border ${
+                          style={{ padding: '0.75rem', height: '2.5rem', borderRadius: '12px' }}
+                          className={`flex items-center justify-center text-center ${
                             duration === option.toLowerCase().replace(' ', '-')
-                              ? 'bg-[#FFD166] text-black shadow-sm'
-                              : 'bg-white border-gray-300 hover:bg-gray-50 text-gray-700'
-                          } transition-colors duration-100 text-sm font-medium`}
+                              ? 'bg-gradient-to-r from-[#FFD166] to-[#F4A261] text-black shadow-lg border-2 border-[#FFD166] transform scale-105'
+                              : 'bg-white border-2 border-gray-100 hover:border-[#FFD166]/50 hover:bg-[#FFD166]/5 text-gray-700 shadow-sm hover:shadow-md'
+                          } transition-all duration-200 text-sm font-medium`}
                         >
                           {option}
                         </button>
@@ -483,22 +461,23 @@ const Plan = () => {
                     </div>
                   </div>
 
-                  <div className="space-y-1">
-                    <label className="block text-xs font-medium text-gray-700">Activity Type</label>
-                    <div className="grid grid-cols-3 gap-1.5">
+                  <div className="space-y-3">
+                    <label className="block text-sm font-semibold text-gray-800">🎯 Activity Type</label>
+                    <div className="grid grid-cols-3 gap-2">
                       <button
                         type="button"
                         onClick={() => {
                           setActivityType('surprise-me');
                           setIsCustomActivity(false);
                         }}
-                        className={`col-span-3 px-4 py-1.5 rounded-lg border ${
+                        style={{ borderRadius: '12px', padding: '0.75rem', minHeight: '2.5rem' }}
+                        className={`border-2 ${
                           activityType === 'surprise-me'
-                            ? 'bg-[#FFD166] text-black shadow-sm'
-                            : 'bg-white border-gray-300 hover:bg-gray-50 text-gray-700'
-                        } transition-colors duration-100 font-medium`}
+                            ? 'bg-gradient-to-r from-[#FFD166] to-[#F4A261] text-black shadow-lg border-[#FFD166] transform scale-105'
+                            : 'bg-white border-gray-100 hover:border-[#FFD166]/50 hover:bg-[#FFD166]/5 text-gray-700 shadow-sm hover:shadow-md'
+                        } transition-all duration-200 text-xs font-medium flex items-center justify-center text-center`}
                       >
-                        <span className="flex items-center justify-center gap-1">I feel adventurous 🤩</span>
+                        ✨ Surprise me! ✨
                       </button>
                       {['Hiking', 'Cycling', 'Running', 'Picnic', 'Photography', 'Foodie Trip', 'Bird Watching', 'City Tour'].map((option) => (
                         <button
@@ -508,11 +487,12 @@ const Plan = () => {
                             setActivityType(option.toLowerCase().replace(' ', '-'));
                             setIsCustomActivity(false);
                           }}
-                          className={`px-3 py-1.5 rounded-lg border ${
+                          style={{ borderRadius: '12px', padding: '0.5rem', minHeight: '2.5rem' }}
+                          className={`border-2 ${
                             activityType === option.toLowerCase().replace(' ', '-')
-                              ? 'bg-[#FFD166] text-black shadow-sm'
-                              : 'bg-white border-gray-300 hover:bg-gray-50 text-gray-700'
-                          } transition-colors duration-100 text-sm`}
+                              ? 'bg-gradient-to-r from-[#FFD166] to-[#F4A261] text-black shadow-lg border-[#FFD166] transform scale-105'
+                              : 'bg-white border-gray-100 hover:border-[#FFD166]/50 hover:bg-[#FFD166]/5 text-gray-700 shadow-sm hover:shadow-md'
+                          } transition-all duration-200 text-xs font-medium flex items-center justify-center text-center`}
                         >
                           {option}
                         </button>
@@ -524,28 +504,31 @@ const Plan = () => {
                             setIsCustomActivity(true);
                             setActivityType('custom');
                           }}
-                          className={`px-3 py-1.5 rounded-lg border ${
+                          style={{ borderRadius: '12px', padding: '0.5rem', minHeight: '2.5rem' }}
+                          className={`border-2 ${
                             activityType === 'custom'
-                              ? 'bg-[#FFD166] text-black shadow-sm'
-                              : 'bg-white border-gray-300 hover:bg-gray-50 text-gray-700'
-                          } transition-colors duration-100 text-sm`}
+                              ? 'bg-[#FFD166] text-black shadow-sm border-[#FFD166]'
+                              : 'bg-white border-gray-100 hover:bg-gray-50 text-gray-700'
+                          } transition-colors duration-200 text-xs font-medium flex items-center justify-center`}
                         >
                           Custom...
                         </button>
                       ) : (
-                        <div className="col-span-3 flex gap-1">
+                        <div className="col-span-3 flex gap-2">
                           <input
                             type="text"
                             value={customActivity}
                             onChange={(e) => setCustomActivity(e.target.value)}
                             placeholder="Enter custom activity"
-                            className="flex-1 px-2 py-1 text-sm bg-transparent rounded-lg border-gray-300 shadow-sm focus:border-[#FFD166] focus:ring-[#FFD166]"
+                            style={{ height: '2.5rem', padding: '0.75rem', borderRadius: '12px' }}
+                            className="flex-1 text-sm bg-white border-2 border-gray-100 shadow-sm focus:border-[#FFD166] focus:ring-2 focus:ring-[#FFD166]/20"
                             autoFocus
                           />
                           <button
                             type="button"
                             onClick={() => setIsCustomActivity(false)}
-                            className="px-2 py-1 border border-gray-300 rounded-lg bg-white hover:bg-gray-50 text-gray-500 text-sm"
+                            style={{ height: '2.5rem', padding: '0 0.75rem', borderRadius: '12px' }}
+                            className="border-2 border-gray-100 bg-white hover:bg-gray-50 text-gray-500 text-xs font-medium flex items-center justify-center"
                           >
                             Cancel
                           </button>
@@ -554,98 +537,106 @@ const Plan = () => {
                     </div>
                   </div>
 
-                  <div className="space-y-1">
-                    <label className="block text-xs font-medium text-gray-700">When to start?</label>
-                    <div className="flex gap-1.5">
+                  <div className="space-y-3">
+                    <label className="block text-sm font-semibold text-gray-800">🕐 When to start?</label>
+                    <div className="grid grid-cols-2 gap-2">
                         <button
                           type="button"
                           onClick={() => {
                             setStartDate(new Date());
                             setIsCustomDate(false);
                           }}
-                          style={{ padding: '0.75rem 1rem', height: '2.5rem' }}
-                          className={`flex-1 rounded-lg border ${
-                            !isCustomDate ? 'bg-[#FFD166] text-black shadow-sm' : 'bg-white border-gray-300 hover:bg-gray-50 text-gray-700'
-                          } transition-colors duration-100 text-sm`}
+                          style={{ padding: '0.75rem', height: '2.5rem', borderRadius: '12px' }}
+                          className={`border-2 ${
+                            !isCustomDate 
+                              ? 'bg-gradient-to-r from-[#FFD166] to-[#F4A261] text-black shadow-lg border-[#FFD166] transform scale-105' 
+                              : 'bg-white border-gray-100 hover:border-[#FFD166]/50 hover:bg-[#FFD166]/5 text-gray-700 shadow-sm hover:shadow-md'
+                          } transition-all duration-200 text-sm font-medium flex items-center justify-center`}
                         >
-                        Let's go now!
+                        🏃‍♂️ Let's go now!
                       </button>
-                      {isCustomDate ? (
-                          <div className="flex-1 flex flex-col gap-1 p-1.5 border rounded-lg border-[#FFD166] bg-white">
-                            <div className="flex items-center gap-1">
-                              <span className="text-xs font-medium text-gray-700 w-8">Start:</span>
-                              <input
-                                type="datetime-local"
-                                value={startDate.toISOString().slice(0, 16)}
-                                onChange={(e) => setStartDate(new Date(e.target.value))}
-                                className="flex-1 text-xs bg-transparent rounded-lg border-gray-300 shadow-sm focus:border-[#FFD166] focus:ring-[#FFD166]"
-                              />
-                            </div>
-                            <div className="flex items-center gap-1">
-                              <span className="text-xs font-medium text-gray-700 w-8">End:</span>
-                              <input
-                                type="datetime-local"
-                                value={endDate.toISOString().slice(0, 16)}
-                                onChange={(e) => setEndDate(new Date(e.target.value))}
-                                className="flex-1 text-xs bg-transparent rounded-lg border-gray-300 shadow-sm focus:border-[#FFD166] focus:ring-[#FFD166]"
-                              />
-                            </div>
-                          </div>
-                      ) : (
-                        <button
-                          type="button"
-                          onClick={() => setIsCustomDate(true)}
-                          style={{ padding: '0.75rem 1rem', height: '2.5rem' }}
-                          className="border border-[#FFD166] rounded-lg bg-white hover:bg-[#FFD166]/10 transition-colors duration-100 flex items-center gap-1 text-black text-sm"
-                        >
-                          <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                          </svg>
-                          Pick a date/time
-                        </button>
-                      )}
+                      <button
+                        type="button"
+                        onClick={() => setIsCustomDate(true)}
+                        style={{ padding: '0.75rem', height: '2.5rem', borderRadius: '12px' }}
+                        className={`border-2 ${
+                          isCustomDate 
+                            ? 'bg-gradient-to-r from-[#FFD166] to-[#F4A261] text-black shadow-lg border-[#FFD166] transform scale-105' 
+                            : 'bg-white border-gray-100 hover:border-[#FFD166]/50 hover:bg-[#FFD166]/5 text-gray-700 shadow-sm hover:shadow-md'
+                        } transition-all duration-200 text-sm font-medium flex items-center justify-center gap-2`}
+                      >
+                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                        </svg>
+                        📅 Pick date/time
+                      </button>
                     </div>
+                    {isCustomDate && (
+                      <div className="p-3 border-2 border-[#FFD166] rounded-xl bg-white space-y-2">
+                        <div className="flex items-center gap-2">
+                          <span className="text-sm font-medium text-gray-700 w-12">Start:</span>
+                          <input
+                            type="datetime-local"
+                            value={startDate.toISOString().slice(0, 16)}
+                            onChange={(e) => setStartDate(new Date(e.target.value))}
+                            style={{ height: '2.5rem', padding: '0.5rem', borderRadius: '8px' }}
+                            className="flex-1 text-sm bg-white border border-gray-200 shadow-sm focus:border-[#FFD166] focus:ring-1 focus:ring-[#FFD166]"
+                          />
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <span className="text-sm font-medium text-gray-700 w-12">End:</span>
+                          <input
+                            type="datetime-local"
+                            value={endDate.toISOString().slice(0, 16)}
+                            onChange={(e) => setEndDate(new Date(e.target.value))}
+                            style={{ height: '2.5rem', padding: '0.5rem', borderRadius: '8px' }}
+                            className="flex-1 text-sm bg-white border border-gray-200 shadow-sm focus:border-[#FFD166] focus:ring-1 focus:ring-[#FFD166]"
+                          />
+                        </div>
+                      </div>
+                    )}
                   </div>
 
                   <button
                     type="submit"
                     disabled={loading || !location.trim() || (quotaInfo && quotaInfo.adventures_remaining === 0)}
-                    style={{ height: '3.5rem', padding: '1rem 2rem', marginTop: '1.5rem', borderRadius: '0.875rem' }}
-                    className="w-full bg-gradient-to-r from-[#FFD166] to-[#F4A261] text-black font-bold hover:from-[#F4A261] hover:to-[#E76F51] transition-all duration-200 shadow-xl hover:shadow-2xl transform hover:scale-[1.02] disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none flex items-center justify-center gap-2 border-2 border-transparent hover:border-[#E76F51]/20"
+                    style={{ height: '3.5rem', padding: '1rem 2rem', marginTop: '1.5rem', borderRadius: '16px' }}
+                    className="w-full bg-gradient-to-r from-[#FFD166] via-[#F4A261] to-[#E76F51] text-black font-bold text-lg hover:from-[#F4A261] hover:via-[#E76F51] hover:to-[#E07A5F] transition-all duration-300 shadow-xl hover:shadow-2xl transform hover:scale-[1.02] disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none flex items-center justify-center gap-3 border-0 relative overflow-hidden"
                   >
-                    {loading ? (
-                      <>
-                        <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-black"></div>
-                        Creating Your Adventure...
-                      </>
-                    ) : !location.trim() ? (
-                      <>
-                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-                        </svg>
-                        Enter Start Location
-                      </>
-                    ) : quotaInfo && quotaInfo.adventures_remaining === 0 ? (
-                      <>
-                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z" />
-                        </svg>
-                        Daily Limit Reached
-                      </>
-                    ) : (
-                      <>
-                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
-                        </svg>
-                        Create My Adventure Plan
-                      </>
-                    )}
+                    <div className="absolute inset-0 bg-gradient-to-r from-white/20 to-transparent opacity-0 hover:opacity-100 transition-opacity duration-300"></div>
+                    <div className="relative z-10 flex items-center justify-center gap-3">
+                      {loading ? (
+                        <>
+                          <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-black"></div>
+                          <span>Creating Your Adventure...</span>
+                        </>
+                      ) : !location.trim() ? (
+                        <>
+                          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                          </svg>
+                          <span>Enter Start Location First</span>
+                        </>
+                      ) : quotaInfo && quotaInfo.adventures_remaining === 0 ? (
+                        <>
+                          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z" />
+                          </svg>
+                          <span>Daily Limit Reached</span>
+                        </>
+                      ) : (
+                        <>
+                          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+                          </svg>
+                          <span>Create My Adventure Plan!</span>
+                        </>
+                      )}
+                    </div>
                   </button>
                 </form>
-              </div>
             </div>
-          </div>
         </PlanContainer>
       </PlanFormContainer>
 
