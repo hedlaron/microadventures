@@ -1,5 +1,7 @@
 from pydantic_settings import BaseSettings, SettingsConfigDict
 from typing import Annotated, Any, Literal
+import socket
+import os
 
 from pydantic import (
     AnyUrl,
@@ -18,6 +20,22 @@ def parse_cors(v: Any) -> list[str] | str:
     elif isinstance(v, list | str):
         return v
     raise ValueError(v)
+
+
+def resolve_db_host(host: str) -> str:
+    """
+    Resolve database host, falling back to localhost if 'db' host is not reachable.
+    This allows the same config to work in both Docker and local environments.
+    """
+    if host == "db":
+        try:
+            # Try to resolve 'db' hostname
+            socket.gethostbyname(host)
+            return host
+        except socket.gaierror:
+            # If 'db' can't be resolved, assume we're running locally
+            return "localhost"
+    return host
 
 
 class Settings(BaseSettings):
@@ -55,11 +73,14 @@ class Settings(BaseSettings):
     @computed_field  # type: ignore[misc]
     @property
     def SQLALCHEMY_DATABASE_URI(self) -> PostgresDsn:
+        # Resolve the database host (fall back to localhost if 'db' is not reachable)
+        resolved_host = resolve_db_host(self.POSTGRESQL_SERVER)
+        
         return MultiHostUrl.build(
             scheme="postgresql+psycopg2",
             username=self.POSTGRESQL_USERNAME,
             password=self.POSTGRESQL_PASSWORD,
-            host=self.POSTGRESQL_SERVER,
+            host=resolved_host,
             port=self.POSTGRESQL_PORT,
             path=self.POSTGRESQL_DATABASE,
         )
