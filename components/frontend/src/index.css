@@ -251,7 +251,6 @@ input, textarea, select {
 }
 
 nav {
-  height: 5rem; /* Updated navbar height */
   flex-shrink: 0; /* Prevent navbar from shrinking */
 }
 
