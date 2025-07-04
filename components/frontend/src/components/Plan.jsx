@@ -13,7 +13,7 @@ const PageWrapper = styled.div`
   justify-content: center;
   min-height: 100vh;
   padding: 1rem;
-  background: linear-gradient(135deg, #f9fbfa 0%, #f3f4f6 100%);
+  background: #f8fcfa;
   
   @media (max-height: 600px) {
     align-items: flex-start;
@@ -26,10 +26,9 @@ const PlanFormContainer = styled.div`
   width: 100%;
   max-width: 600px;
   margin: 0 auto;
-  border-radius: 24px;
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.08), 0 8px 16px rgba(0, 0, 0, 0.04);
+  border-radius: 12px;
   background: white;
-  border: 1px solid rgba(255, 209, 102, 0.15);
+  border: 1px solid #e6f4ef;
   
   /* Ensure it fits screen height properly */
   max-height: calc(100vh - 2rem);
@@ -45,17 +44,17 @@ const PlanFormContainer = styled.div`
   }
   
   &::-webkit-scrollbar-thumb {
-    background: #FFD166;
+    background: #46a080;
     border-radius: 3px;
   }
   
   &::-webkit-scrollbar-thumb:hover {
-    background: #F4A261;
+    background: #019863;
   }
   
   @media (max-width: 640px) {
     max-width: 95vw;
-    border-radius: 20px;
+    border-radius: 12px;
     max-height: calc(100vh - 1rem);
   }
 `;
@@ -63,12 +62,12 @@ const PlanFormContainer = styled.div`
 const PlanContainer = styled.div`
   position: relative;
   width: 100%;
-  padding: 3rem;
+  padding: 2rem;
   display: flex;
   flex-direction: column;
   
   @media (max-width: 640px) {
-    padding: 2.5rem;
+    padding: 1.5rem;
   }
 `;
 
@@ -310,30 +309,22 @@ const Plan = () => {
       <PlanFormContainer>
         <PlanContainer>
           <div className="relative">
-            <h1 className="mb-8 sm:mb-10 text-black text-2xl sm:text-3xl font-bold leading-tight flex items-center justify-center text-center">
-              <span className="bg-gradient-to-r from-[#FFD166] to-[#F4A261] bg-clip-text text-transparent">
-                Plan Your Microadventure
-              </span>
+            <h1 className="mb-6 text-[#0c1c17] text-2xl sm:text-3xl font-bold leading-tight text-center tracking-[-0.015em]">
+              Plan Your Microadventure
             </h1>
 
             {/* Quota Display */}
             {quotaInfo && (
-              <div className="mb-6 p-4 bg-gradient-to-r from-[#FFD166]/10 to-[#F4A261]/10 rounded-xl border border-[#FFD166]/20">
+              <div className="mb-6 p-4 bg-[#e6f4ef] rounded-xl border border-[#cde9df]">
                 <div className="flex items-center justify-center gap-2 text-sm mb-2">
-                  <svg className="w-4 h-4 text-[#F4A261]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
-                  </svg>
                   <span className="text-[#0c1c17] font-medium">
                     {quotaInfo.adventures_remaining} adventures remaining today
                   </span>
                 </div>
                 {quotaInfo.time_until_reset && timeLeft > 0 && (
                   <div className="flex items-center justify-center gap-2 text-xs">
-                    <svg className="w-3 h-3 text-[#666]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                    </svg>
-                    <span className="text-[#666]">
-                      {quotaInfo.adventures_remaining === 0 ? 'Quota resets in:' : 'Next reset in:'} <span className="font-mono font-medium text-[#F4A261]">{formatTime(timeLeft)}</span>
+                    <span className="text-[#46a080]">
+                      {quotaInfo.adventures_remaining === 0 ? 'Quota resets in:' : 'Next reset in:'} <span className="font-mono font-medium">{formatTime(timeLeft)}</span>
                     </span>
                   </div>
                 )}
@@ -355,8 +346,7 @@ const Plan = () => {
                         type="text"
                         value={location}
                         onChange={(e) => setLocation(e.target.value)}
-                        style={{ height: '3rem', padding: '0.75rem', borderRadius: '12px' }}
-                        className="flex-1 text-sm bg-white/80 border-2 border-gray-100 shadow-sm focus:border-[#FFD166] focus:ring-2 focus:ring-[#FFD166]/20 focus:bg-white transition-all duration-200 hover:bg-white hover:border-[#FFD166]/40 placeholder-gray-400"
+                        className="flex-1 text-sm bg-white border-2 border-[#e6f4ef] px-3 py-3 rounded-xl focus:border-[#46a080] focus:ring-2 focus:ring-[#46a080]/20 focus:outline-none transition-all duration-200 placeholder-[#46a080]"
                         placeholder="Where are you starting from?"
                         required
                       />
@@ -364,8 +354,7 @@ const Plan = () => {
                         type="button"
                         onClick={getCurrentLocation}
                         disabled={locationLoading}
-                        style={{ height: '3rem', padding: '0 0.75rem', minWidth: '100px' }}
-                        className={`border-2 border-[#FFD166] text-black rounded-xl hover:bg-[#FFD166]/10 transition-colors flex items-center justify-center gap-1 text-xs font-medium ${
+                        className={`border-2 border-[#e6f4ef] text-[#0c1c17] rounded-xl hover:bg-[#e6f4ef] transition-colors flex items-center justify-center gap-1 text-xs font-medium px-3 ${
                           locationLoading ? 'opacity-50 cursor-not-allowed' : ''
                         }`}
                       >
@@ -422,15 +411,13 @@ const Plan = () => {
                         type="text"
                         value={destination}
                         onChange={(e) => setDestination(e.target.value)}
-                        style={{ height: '3rem', padding: '0.75rem', borderRadius: '12px' }}
-                        className="flex-1 text-sm bg-white/80 border-2 border-gray-100 shadow-sm focus:border-[#FFD166] focus:ring-2 focus:ring-[#FFD166]/20 focus:bg-white transition-all duration-200 hover:bg-white hover:border-[#FFD166]/40 placeholder-gray-400"
+                        className="flex-1 text-sm bg-white border-2 border-[#e6f4ef] px-3 py-3 rounded-xl focus:border-[#46a080] focus:ring-2 focus:ring-[#46a080]/20 focus:outline-none transition-all duration-200 placeholder-[#46a080]"
                         placeholder="Where would you like to go?"
                       />
                       <button
                         type="button"
                         onClick={() => setShowEndMapPicker(true)}
-                        style={{ height: '3rem', padding: '0 0.75rem', minWidth: '70px' }}
-                        className="border-2 border-[#FFD166] text-black rounded-xl hover:bg-[#FFD166]/10 transition-colors flex items-center justify-center gap-1 text-xs font-medium"
+                        className="border-2 border-[#e6f4ef] text-[#0c1c17] rounded-xl hover:bg-[#e6f4ef] transition-colors flex items-center justify-center gap-1 text-xs font-medium px-3"
                       >
                         <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7" />
@@ -448,11 +435,10 @@ const Plan = () => {
                           key={option}
                           type="button"
                           onClick={() => setDuration(option.toLowerCase().replace(' ', '-'))}
-                          style={{ padding: '0.75rem', height: '2.5rem', borderRadius: '12px' }}
-                          className={`flex items-center justify-center text-center ${
+                          className={`flex items-center justify-center text-center px-3 py-2 rounded-xl ${
                             duration === option.toLowerCase().replace(' ', '-')
-                              ? 'bg-gradient-to-r from-[#FFD166] to-[#F4A261] text-black shadow-lg border-2 border-[#FFD166] transform scale-105'
-                              : 'bg-white border-2 border-gray-100 hover:border-[#FFD166]/50 hover:bg-[#FFD166]/5 text-gray-700 shadow-sm hover:shadow-md'
+                              ? 'bg-[#46a080] text-white border-2 border-[#46a080]'
+                              : 'bg-white border-2 border-[#e6f4ef] hover:border-[#46a080] hover:bg-[#e6f4ef] text-[#0c1c17]'
                           } transition-all duration-200 text-sm font-medium`}
                         >
                           {option}
@@ -470,11 +456,10 @@ const Plan = () => {
                           setActivityType('surprise-me');
                           setIsCustomActivity(false);
                         }}
-                        style={{ borderRadius: '12px', padding: '0.75rem', minHeight: '2.5rem' }}
-                        className={`border-2 ${
+                        className={`border-2 px-3 py-2 rounded-xl ${
                           activityType === 'surprise-me'
-                            ? 'bg-gradient-to-r from-[#FFD166] to-[#F4A261] text-black shadow-lg border-[#FFD166] transform scale-105'
-                            : 'bg-white border-gray-100 hover:border-[#FFD166]/50 hover:bg-[#FFD166]/5 text-gray-700 shadow-sm hover:shadow-md'
+                            ? 'bg-[#46a080] text-white border-[#46a080]'
+                            : 'bg-white border-[#e6f4ef] hover:border-[#46a080] hover:bg-[#e6f4ef] text-[#0c1c17]'
                         } transition-all duration-200 text-xs font-medium flex items-center justify-center text-center`}
                       >
                         ✨ Surprise me! ✨
@@ -487,11 +472,10 @@ const Plan = () => {
                             setActivityType(option.toLowerCase().replace(' ', '-'));
                             setIsCustomActivity(false);
                           }}
-                          style={{ borderRadius: '12px', padding: '0.5rem', minHeight: '2.5rem' }}
-                          className={`border-2 ${
+                          className={`border-2 px-2 py-2 rounded-xl ${
                             activityType === option.toLowerCase().replace(' ', '-')
-                              ? 'bg-gradient-to-r from-[#FFD166] to-[#F4A261] text-black shadow-lg border-[#FFD166] transform scale-105'
-                              : 'bg-white border-gray-100 hover:border-[#FFD166]/50 hover:bg-[#FFD166]/5 text-gray-700 shadow-sm hover:shadow-md'
+                              ? 'bg-[#46a080] text-white border-[#46a080]'
+                              : 'bg-white border-[#e6f4ef] hover:border-[#46a080] hover:bg-[#e6f4ef] text-[#0c1c17]'
                           } transition-all duration-200 text-xs font-medium flex items-center justify-center text-center`}
                         >
                           {option}
@@ -546,11 +530,10 @@ const Plan = () => {
                             setStartDate(new Date());
                             setIsCustomDate(false);
                           }}
-                          style={{ padding: '0.75rem', height: '2.5rem', borderRadius: '12px' }}
-                          className={`border-2 ${
+                          className={`border-2 px-3 py-2 rounded-xl ${
                             !isCustomDate 
-                              ? 'bg-gradient-to-r from-[#FFD166] to-[#F4A261] text-black shadow-lg border-[#FFD166] transform scale-105' 
-                              : 'bg-white border-gray-100 hover:border-[#FFD166]/50 hover:bg-[#FFD166]/5 text-gray-700 shadow-sm hover:shadow-md'
+                              ? 'bg-[#46a080] text-white border-[#46a080]' 
+                              : 'bg-white border-[#e6f4ef] hover:border-[#46a080] hover:bg-[#e6f4ef] text-[#0c1c17]'
                           } transition-all duration-200 text-sm font-medium flex items-center justify-center`}
                         >
                         🏃‍♂️ Let's go now!
@@ -558,11 +541,10 @@ const Plan = () => {
                       <button
                         type="button"
                         onClick={() => setIsCustomDate(true)}
-                        style={{ padding: '0.75rem', height: '2.5rem', borderRadius: '12px' }}
-                        className={`border-2 ${
+                        className={`border-2 px-3 py-2 rounded-xl ${
                           isCustomDate 
-                            ? 'bg-gradient-to-r from-[#FFD166] to-[#F4A261] text-black shadow-lg border-[#FFD166] transform scale-105' 
-                            : 'bg-white border-gray-100 hover:border-[#FFD166]/50 hover:bg-[#FFD166]/5 text-gray-700 shadow-sm hover:shadow-md'
+                            ? 'bg-[#46a080] text-white border-[#46a080]' 
+                            : 'bg-white border-[#e6f4ef] hover:border-[#46a080] hover:bg-[#e6f4ef] text-[#0c1c17]'
                         } transition-all duration-200 text-sm font-medium flex items-center justify-center gap-2`}
                       >
                         <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
@@ -600,14 +582,11 @@ const Plan = () => {
                   <button
                     type="submit"
                     disabled={loading || !location.trim() || (quotaInfo && quotaInfo.adventures_remaining === 0)}
-                    style={{ height: '3.5rem', padding: '1rem 2rem', marginTop: '1.5rem', borderRadius: '16px' }}
-                    className="w-full bg-gradient-to-r from-[#FFD166] via-[#F4A261] to-[#E76F51] text-black font-bold text-lg hover:from-[#F4A261] hover:via-[#E76F51] hover:to-[#E07A5F] transition-all duration-300 shadow-xl hover:shadow-2xl transform hover:scale-[1.02] disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none flex items-center justify-center gap-3 border-0 relative overflow-hidden"
+                    className="w-full bg-[#46a080] text-white font-bold text-lg hover:bg-[#019863] transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-3 border-0 px-8 py-4 rounded-xl mt-6"
                   >
-                    <div className="absolute inset-0 bg-gradient-to-r from-white/20 to-transparent opacity-0 hover:opacity-100 transition-opacity duration-300"></div>
-                    <div className="relative z-10 flex items-center justify-center gap-3">
                       {loading ? (
                         <>
-                          <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-black"></div>
+                          <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
                           <span>Creating Your Adventure...</span>
                         </>
                       ) : !location.trim() ? (
@@ -633,7 +612,6 @@ const Plan = () => {
                           <span>Create My Adventure Plan!</span>
                         </>
                       )}
-                    </div>
                   </button>
                 </form>
             </div>

@@ -112,38 +112,44 @@ const MapPicker = ({ isOpen, onClose, onLocationSelect, title = "Select Location
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-      <div className="bg-white rounded-lg shadow-xl w-full max-w-4xl h-full max-h-[90vh] flex flex-col">
+    <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+      <div className="bg-white rounded-xl border border-[#e6f4ef] w-full max-w-4xl h-full max-h-[90vh] flex flex-col">
         {/* Header */}
-        <div className="flex items-center justify-between p-4 border-b flex-shrink-0">
-          <h2 className="text-lg font-semibold text-gray-900">{title}</h2>
+        <div className="flex items-center justify-between p-6 border-b border-[#e6f4ef] flex-shrink-0">
+          <h2 className="text-xl font-bold text-[#0c1c17] flex items-center gap-2 tracking-[-0.015em]">
+            <span className="text-2xl">📍</span>
+            {title}
+          </h2>
           <button
             onClick={handleClose}
-            className="p-2 hover:bg-gray-100 rounded-full transition-colors"
+            className="p-2 hover:bg-[#e6f4ef] rounded-xl transition-colors"
           >
-            <X size={20} />
+            <X size={20} className="text-[#46a080]" />
           </button>
         </div>
 
         {/* Map Container */}
         <div className="flex-1 relative min-h-0">
-          <div ref={mapRef} className="w-full h-full" />
+          <div ref={mapRef} className="w-full h-full rounded-b-xl" />
           
           {/* Instructions */}
-          <div className="absolute top-4 left-4 bg-white p-3 rounded-lg shadow-md max-w-xs">
-            <div className="flex items-center gap-2 text-sm text-gray-700">
-              <MapPin size={16} />
-              <span>Click on the map to select a location</span>
+          <div className="absolute top-4 left-4 bg-white/95 backdrop-blur-sm p-4 rounded-xl border border-[#e6f4ef] max-w-xs">
+            <div className="flex items-center gap-2 text-sm text-[#0c1c17]">
+              <MapPin size={16} className="text-[#46a080]" />
+              <span className="font-medium">Click on the map to select a location</span>
             </div>
           </div>
 
           {/* Selected Location Info */}
           {selectedLocation && (
-            <div className="absolute bottom-4 left-4 bg-white p-3 rounded-lg shadow-md max-w-md">
-              <div className="text-sm text-gray-700">
-                <div className="font-medium">Selected Location:</div>
-                <div className="text-xs mt-1 text-gray-600 break-words">{selectedLocation.address}</div>
-                <div className="text-xs text-gray-500">
+            <div className="absolute bottom-4 left-4 bg-white/95 backdrop-blur-sm p-4 rounded-xl border border-[#e6f4ef] max-w-md">
+              <div className="text-sm text-[#0c1c17]">
+                <div className="font-semibold text-[#0c1c17] mb-2 flex items-center gap-2">
+                  <span className="text-lg">✅</span>
+                  Selected Location:
+                </div>
+                <div className="text-sm text-[#46a080] break-words mb-1">{selectedLocation.address}</div>
+                <div className="text-xs text-[#46a080] font-mono">
                   {selectedLocation.lat.toFixed(4)}, {selectedLocation.lng.toFixed(4)}
                 </div>
               </div>
@@ -152,17 +158,17 @@ const MapPicker = ({ isOpen, onClose, onLocationSelect, title = "Select Location
         </div>
 
         {/* Footer */}
-        <div className="p-4 border-t flex justify-end gap-3 flex-shrink-0">
+        <div className="p-6 border-t border-[#e6f4ef] flex justify-end gap-3 flex-shrink-0">
           <button
             onClick={handleClose}
-            className="px-4 py-2 text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors"
+            className="px-6 py-3 text-[#0c1c17] bg-[#e6f4ef] rounded-xl hover:bg-[#cde9df] transition-colors font-medium"
           >
             Cancel
           </button>
           <button
             onClick={handleConfirm}
             disabled={!selectedLocation}
-            className={`px-4 py-2 rounded-lg transition-colors ${
+            className={`px-6 py-3 rounded-xl transition-colors duration-200 font-medium ${
               selectedLocation
                 ? 'bg-[#46a080] text-white hover:bg-[#019863]'
                 : 'bg-gray-300 text-gray-500 cursor-not-allowed'

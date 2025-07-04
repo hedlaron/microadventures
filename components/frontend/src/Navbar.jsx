@@ -20,11 +20,11 @@ const Navbar = () => {
   }, []);
 
   return (
-    <nav className="fixed top-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-md shadow-sm">
-      <div className="w-full px-4 sm:px-6 lg:px-8" style={{ paddingRight: '2rem' }}>
-        <header className="flex items-center justify-between" style={{ minHeight: '2.5rem' }}>
-          <div className="flex items-center gap-3 text-[#121714]">
-            <div style={{ width: '1.5rem', height: '1.5rem' }}>
+    <nav className="fixed top-0 left-0 right-0 z-50 bg-white border-b border-[#e6f4ef]">
+      <div className="w-full px-4 sm:px-6 lg:px-8">
+        <header className="flex items-center justify-between py-3">
+          <div className="flex items-center gap-4 text-[#0c1c17]">
+            <div className="size-4">
               <img 
                 src="/microadventures.svg" 
                 alt="Microadventures Logo" 
@@ -32,34 +32,30 @@ const Navbar = () => {
               />
             </div>
             <div 
-              onClick={() => window.location.reload()} 
-              className="text-[#121714] text-lg font-bold leading-tight tracking-[-0.015em] hover:scale-105 transition-transform duration-200 cursor-pointer"
+              onClick={() => navigate('/')} 
+              className="text-[#0c1c17] text-lg font-bold leading-tight tracking-[-0.015em] hover:text-[#46a080] transition-colors duration-200 cursor-pointer"
             >
               Microadventures
             </div>
           </div>
           
-          <div className="flex items-center" style={{ gap: '0.75rem' }}>
-            <Link to="/about" className="text-[#121714] text-sm font-medium hover:text-[#FFD166] transition-colors px-3 py-2 rounded-md">
+          <div className="flex items-center gap-9">
+            <Link to="/about" className="text-[#0c1c17] text-sm font-medium leading-normal hover:text-[#46a080] transition-colors">
               About
             </Link>
-            <Link to="/contact" className="text-[#121714] text-sm font-medium hover:text-[#FFD166] transition-colors px-3 py-2 rounded-md">
+            <Link to="/contact" className="text-[#0c1c17] text-sm font-medium leading-normal hover:text-[#46a080] transition-colors">
               Contact
             </Link>
             {isAuthenticated && (
-              <Link to="/history" className="text-[#121714] text-sm font-medium hover:text-[#FFD166] transition-colors px-3 py-2 rounded-md">
+              <Link to="/history" className="text-[#0c1c17] text-sm font-medium leading-normal hover:text-[#46a080] transition-colors">
                 History
               </Link>
             )}
             {!isAuthenticated && (
               <button 
                 onClick={openLoginModal}
-                style={{ padding: '0.75rem 1.25rem', height: '2.5rem', borderRadius: '0.5rem' }}
-                className="gradient-btn bg-gradient-to-r from-[#FFD166] to-[#F4A261] text-black font-bold hover:from-[#F4A261] hover:to-[#E76F51] transition-all duration-200 shadow-md hover:shadow-lg transform hover:scale-105 flex items-center gap-2 text-sm"
+                className="flex items-center justify-center overflow-hidden rounded-xl h-10 bg-[#46a080] text-white gap-2 text-sm font-bold leading-normal tracking-[0.015em] min-w-0 px-4 hover:bg-[#019863] transition-colors"
               >
-                <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
-                </svg>
                 Get Started
               </button>
             )}
@@ -67,27 +63,26 @@ const Navbar = () => {
               <div className="relative" ref={dropdownRef}>
                 <button 
                   onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-                  style={{ padding: '0.75rem 1rem', borderRadius: '0.5rem' }}
-                  className="flex items-center gap-2 hover:bg-gray-50 transition-all duration-200 focus:outline-none"
+                  className="flex items-center gap-2 hover:bg-[#e6f4ef] transition-colors duration-200 focus:outline-none px-2 py-1 rounded-lg"
                 >
-                  <div className="w-7 h-7 bg-gradient-to-r from-[#FFD166] to-[#F4A261] rounded-full flex items-center justify-center">
-                    <span className="text-black font-semibold text-sm">
+                  <div className="w-8 h-8 bg-[#46a080] rounded-full flex items-center justify-center">
+                    <span className="text-white font-semibold text-sm">
                       {getUserName()?.charAt(0)?.toUpperCase()}
                     </span>
                   </div>
-                  <span className="text-[#121714] text-sm font-medium">
+                  <span className="text-[#0c1c17] text-sm font-medium">
                     {getUserName()}
                   </span>
-                  <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <svg className="w-4 h-4 text-[#46a080]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
                   </svg>
                 </button>
                 
                 {isDropdownOpen && (
-                  <div className="absolute right-0 bg-transparent rounded-xl shadow-xl border border-gray-100 z-[100] overflow-hidden" style={{ marginTop: '0.5rem', width: '12rem' }}>
-                    <div className="bg-transparent border-b border-gray-100" style={{ padding: '0.75rem 1rem' }}>
-                      <div className="text-xs text-gray-500 uppercase tracking-wider mb-1">Signed in as</div>
-                      <div className="text-sm font-semibold text-[#121714]">{getUserName()}</div>
+                  <div className="absolute right-0 bg-white rounded-xl border border-[#e6f4ef] z-[100] overflow-hidden mt-2 w-48">
+                    <div className="bg-white border-b border-[#e6f4ef] p-3">
+                      <div className="text-xs text-[#46a080] uppercase tracking-wider mb-1">Signed in as</div>
+                      <div className="text-sm font-semibold text-[#0c1c17]">{getUserName()}</div>
                     </div>
                     <button
                       onClick={() => {
@@ -95,8 +90,7 @@ const Navbar = () => {
                         setIsDropdownOpen(false);
                         navigate('/');
                       }}
-                      className="w-full text-left text-sm text-gray-700 hover:bg-red-50 hover:text-red-600 transition-colors duration-200 flex items-center gap-2"
-                      style={{ padding: '0.625rem 1rem' }}
+                      className="w-full text-left text-sm text-[#0c1c17] hover:bg-red-50 hover:text-red-600 transition-colors duration-200 flex items-center gap-2 p-3"
                     >
                       <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
