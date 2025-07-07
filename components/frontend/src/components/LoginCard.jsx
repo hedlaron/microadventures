@@ -6,7 +6,7 @@ const LoginCard = ({ onSubmit, error, isLoading, onClose }) => {
           {/* ...existing form fields... */}
           
           {error && (
-            <div className="text-red-500 text-sm mb-4">
+            <div className="text-orange-700 text-sm mb-4">
               {error}
             </div>
           )}
@@ -14,9 +14,13 @@ const LoginCard = ({ onSubmit, error, isLoading, onClose }) => {
           <button 
             type="submit" 
             disabled={isLoading}
-            className="w-full bg-primary text-white p-2 rounded-md hover:bg-primary-dark transition-colors"
+            className="w-full bg-primary text-white p-2 rounded-md hover:bg-primary-dark transition-colors flex items-center justify-center"
           >
-            {isLoading ? 'Logging in...' : 'Login'}
+            {isLoading ? (
+              <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
+            ) : (
+              'Login'
+            )}
           </button>
         </form>
       </div>

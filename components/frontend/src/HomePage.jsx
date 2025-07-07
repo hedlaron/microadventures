@@ -2,17 +2,18 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useAuth } from './contexts/AuthContext';
 import HomePlan from './components/HomePlan';
 import styled from 'styled-components';
+import { primaryButtonLarge, brandGradientText, focusRing, cardAccent, legacyColors } from './utils/colors';
 
 // Styled components
 const PageWrapper = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
-  min-height: calc(100vh - 128px);
+  min-height: 100%;
+  height: 100%;
   padding: 3rem 0;
-  margin: auto 0;
   width: 100%;
-  background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+  background: #ffffff;
 `;
 
 const HeroContainer = styled.div`
@@ -62,19 +63,19 @@ const AdventureSVG = () => (
     {/* Location pins along the path */}
     <g>
       {/* Pin 1 - Start */}
-      <circle cx="70" cy="285" r="12" fill="#F4A261"/>
+      <circle cx="70" cy="285" r="12" fill={legacyColors.primaryOrange}/>
       <circle cx="70" cy="285" r="6" fill="white"/>
-      <path d="M70 275 L70 265 M65 270 L75 270" stroke="#F4A261" strokeWidth="2" strokeLinecap="round"/>
+      <path d="M70 275 L70 265 M65 270 L75 270" stroke={legacyColors.primaryOrange} strokeWidth="2" strokeLinecap="round"/>
       
       {/* Pin 2 - Middle */}
-      <circle cx="220" cy="190" r="12" fill="#E76F51"/>
+      <circle cx="220" cy="190" r="12" fill={legacyColors.secondaryOrange}/>
       <circle cx="220" cy="190" r="6" fill="white"/>
-      <path d="M220 180 L220 170 M215 175 L225 175" stroke="#E76F51" strokeWidth="2" strokeLinecap="round"/>
+      <path d="M220 180 L220 170 M215 175 L225 175" stroke={legacyColors.secondaryOrange} strokeWidth="2" strokeLinecap="round"/>
       
       {/* Pin 3 - Adventure spot */}
-      <circle cx="350" cy="195" r="12" fill="#46a080"/>
+      <circle cx="350" cy="195" r="12" fill={legacyColors.primaryOrange}/>
       <circle cx="350" cy="195" r="6" fill="white"/>
-      <path d="M350 185 L350 175 M345 180 L355 180" stroke="#46a080" strokeWidth="2" strokeLinecap="round"/>
+      <path d="M350 185 L350 175 M345 180 L355 180" stroke={legacyColors.primaryOrange} strokeWidth="2" strokeLinecap="round"/>
     </g>
     
     {/* Simple mountain silhouette */}
@@ -87,8 +88,8 @@ const AdventureSVG = () => (
     {/* Adventure icons */}
     {/* Hiking boot */}
     <g transform="translate(120,240)">
-      <ellipse cx="0" cy="8" rx="18" ry="8" fill="#F4A261" opacity="0.8"/>
-      <path d="M-15 5 Q-10 0 0 2 Q10 0 15 5 L15 12 L-15 12 Z" fill="#E76F51"/>
+      <ellipse cx="0" cy="8" rx="18" ry="8" fill={legacyColors.primaryOrange} opacity="0.8"/>
+      <path d="M-15 5 Q-10 0 0 2 Q10 0 15 5 L15 12 L-15 12 Z" fill={legacyColors.secondaryOrange}/>
       <circle cx="-8" cy="8" r="2" fill="white" opacity="0.8"/>
       <circle cx="0" cy="8" r="2" fill="white" opacity="0.8"/>
       <circle cx="8" cy="8" r="2" fill="white" opacity="0.8"/>
@@ -96,17 +97,17 @@ const AdventureSVG = () => (
     
     {/* Camera */}
     <g transform="translate(280,140)">
-      <rect x="-12" y="-8" width="24" height="16" rx="4" fill="#46a080"/>
+      <rect x="-12" y="-8" width="24" height="16" rx="4" fill={legacyColors.primaryOrange}/>
       <circle cx="0" cy="0" r="8" fill="white" opacity="0.9"/>
-      <circle cx="0" cy="0" r="5" fill="#019863"/>
-      <rect x="-15" y="-6" width="6" height="4" rx="2" fill="#019863"/>
-      <circle cx="8" cy="-6" r="2" fill="#FFD166"/>
+      <circle cx="0" cy="0" r="5" fill={legacyColors.secondaryOrange}/>
+      <rect x="-15" y="-6" width="6" height="4" rx="2" fill={legacyColors.secondaryOrange}/>
+      <circle cx="8" cy="-6" r="2" fill={legacyColors.lightYellow}/>
     </g>
     
     {/* Compass rose - simplified */}
     <g transform="translate(380,120)">
-      <circle cx="0" cy="0" r="16" fill="white" stroke="#E76F51" strokeWidth="2" opacity="0.9"/>
-      <path d="M0,-10 L4,0 L0,10 L-4,0 Z" fill="#E76F51"/>
+      <circle cx="0" cy="0" r="16" fill="white" stroke={legacyColors.secondaryOrange} strokeWidth="2" opacity="0.9"/>
+      <path d="M0,-10 L4,0 L0,10 L-4,0 Z" fill={legacyColors.secondaryOrange}/>
       <path d="M0,-6 L2,0 L0,6 L-2,0 Z" fill="white"/>
       <text x="0" y="-22" textAnchor="middle" fontSize="10" fill="#6B7280" fontWeight="600">N</text>
     </g>
@@ -114,27 +115,27 @@ const AdventureSVG = () => (
     {/* Floating adventure elements */}
     {/* Map piece */}
     <g transform="translate(150,120) rotate(15)">
-      <rect x="-10" y="-8" width="20" height="16" rx="2" fill="white" stroke="#F4A261" strokeWidth="2"/>
-      <path d="M-6 -4 L6 -4 M-8 0 L8 0 M-6 4 L6 4" stroke="#F4A261" strokeWidth="1" opacity="0.6"/>
-      <circle cx="2" cy="-2" r="2" fill="#E76F51" opacity="0.8"/>
+      <rect x="-10" y="-8" width="20" height="16" rx="2" fill="white" stroke={legacyColors.primaryOrange} strokeWidth="2"/>
+      <path d="M-6 -4 L6 -4 M-8 0 L8 0 M-6 4 L6 4" stroke={legacyColors.primaryOrange} strokeWidth="1" opacity="0.6"/>
+      <circle cx="2" cy="-2" r="2" fill={legacyColors.secondaryOrange} opacity="0.8"/>
     </g>
     
     {/* Coffee cup */}
     <g transform="translate(320,320)">
-      <rect x="-6" y="-8" width="12" height="12" rx="2" fill="white" stroke="#46a080" strokeWidth="2"/>
-      <path d="M6 -4 Q12 -4 12 0 Q12 4 6 4" stroke="#46a080" strokeWidth="2" fill="none"/>
-      <ellipse cx="0" cy="-6" rx="4" ry="2" fill="#46a080" opacity="0.3"/>
+      <rect x="-6" y="-8" width="12" height="12" rx="2" fill="white" stroke={legacyColors.primaryOrange} strokeWidth="2"/>
+      <path d="M6 -4 Q12 -4 12 0 Q12 4 6 4" stroke={legacyColors.primaryOrange} strokeWidth="2" fill="none"/>
+      <ellipse cx="0" cy="-6" rx="4" ry="2" fill={legacyColors.primaryOrange} opacity="0.3"/>
     </g>
     
     <defs>
       <linearGradient id="bgGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-        <stop offset="0%" stopColor="#F4A261"/>
-        <stop offset="100%" stopColor="#E76F51"/>
+        <stop offset="0%" stopColor={legacyColors.primaryOrange}/>
+        <stop offset="100%" stopColor={legacyColors.secondaryOrange}/>
       </linearGradient>
       <linearGradient id="pathGradient" x1="0%" y1="0%" x2="100%" y2="0%">
-        <stop offset="0%" stopColor="#F4A261"/>
-        <stop offset="50%" stopColor="#E76F51"/>
-        <stop offset="100%" stopColor="#46a080"/>
+        <stop offset="0%" stopColor={legacyColors.primaryOrange}/>
+        <stop offset="50%" stopColor={legacyColors.secondaryOrange}/>
+        <stop offset="100%" stopColor={legacyColors.darkOrange}/>
       </linearGradient>
       <linearGradient id="mountainGradient" x1="0%" y1="0%" x2="0%" y2="100%">
         <stop offset="0%" stopColor="#6B7280"/>
@@ -275,7 +276,9 @@ const HomePage = () => {
     <PageWrapper>
       {/* Conditionally render Plan component or hero section based on authentication status */}
       {isAuthenticated ? (
-        <HomePlan />
+        <div className="w-full h-full flex flex-col">
+          <HomePlan />
+        </div>
       ) : (
         <HeroContainer>
           <HeroContent>
@@ -283,41 +286,43 @@ const HomePage = () => {
               <div className="space-y-6">
                 <h1 className="text-6xl font-bold text-gray-900 leading-tight tracking-tight">
                   Plan your next{' '}
-                  <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#F4A261] to-[#E76F51]">
+                  <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#F4A261] to-[#E76F51] font-extrabold">
                     microadventure
                   </span>
                 </h1>
-                <p className="text-2xl text-gray-600 leading-relaxed font-light max-w-lg">
+                <p className="text-2xl text-gray-700 leading-relaxed font-light max-w-lg">
                   Discover amazing local experiences and create unforgettable memories with our intelligent adventure planning platform.
                 </p>
               </div>
               
               <div className="space-y-6 pt-4">
-                <button
-                  onClick={openLoginModal}
-                  className="inline-flex items-center justify-center px-10 py-5 text-xl font-semibold text-white bg-gradient-to-r from-[#F4A261] to-[#E76F51] rounded-2xl hover:from-[#E76F51] hover:to-[#D84B40] transition-all duration-300 shadow-xl hover:shadow-2xl transform hover:scale-105 border-0 focus:ring-4 focus:ring-[#F4A261]/25"
-                >
-                  <svg className="w-6 h-6 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
-                  </svg>
-                  Start Your Adventure
-                </button>
+                <div className="inline-block">
+                  <button
+                    onClick={openLoginModal}
+                    className="inline-flex items-center justify-center px-12 py-6 text-xl font-semibold text-white bg-gradient-to-r from-[#F4A261] to-[#E76F51] hover:from-[#E76F51] hover:to-[#D84B40] transition-[background,box-shadow] duration-200 shadow-xl hover:shadow-2xl border-0 rounded-2xl focus:ring-4 focus:ring-orange-300/25 min-w-[280px]"
+                  >
+                    <svg className="w-6 h-6 mr-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+                    </svg>
+                    Start Your Adventure
+                  </button>
+                </div>
                 
                 <div className="flex items-center space-x-8 text-base text-gray-500 pt-2">
                   <div className="flex items-center">
-                    <svg className="w-5 h-5 mr-2 text-green-500" fill="currentColor" viewBox="0 0 20 20">
+                    <svg className="w-5 h-5 mr-2 text-[#F4A261]" fill="currentColor" viewBox="0 0 20 20">
                       <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
                     </svg>
                     Free to start
                   </div>
                   <div className="flex items-center">
-                    <svg className="w-5 h-5 mr-2 text-green-500" fill="currentColor" viewBox="0 0 20 20">
+                    <svg className="w-5 h-5 mr-2 text-[#F4A261]" fill="currentColor" viewBox="0 0 20 20">
                       <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
                     </svg>
                     AI-powered planning
                   </div>
                   <div className="flex items-center">
-                    <svg className="w-5 h-5 mr-2 text-green-500" fill="currentColor" viewBox="0 0 20 20">
+                    <svg className="w-5 h-5 mr-2 text-[#F4A261]" fill="currentColor" viewBox="0 0 20 20">
                       <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
                     </svg>
                     Local discoveries
@@ -343,7 +348,7 @@ const HomePage = () => {
           >
             {showLoginForm && (
               <>
-                <div className="bg-gradient-to-r from-[#FFD166] to-[#F4A261] p-6 text-center relative">
+                <div className="bg-gradient-to-r from-[#F4A261] to-[#E76F51] p-6 text-center relative">
                   <button 
                     onClick={closeLoginModal} 
                     className="absolute top-3 right-3 text-white/70 hover:text-white transition-colors text-2xl font-light bg-transparent border-none outline-none w-8 h-8 flex items-center justify-center rounded-full hover:bg-white/10"
@@ -361,13 +366,13 @@ const HomePage = () => {
                 <div style={{ padding: '2rem' }}>
                   <form onSubmit={handleLoginSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
                     {error && (
-                      <div className="bg-red-50 text-red-600 p-4 rounded-lg text-sm border border-red-200">
+                      <div className="bg-orange-50 text-orange-700 p-4 rounded-lg text-sm border border-orange-200">
                         {error}
                       </div>
                     )}
                     {loginSuccess && (
-                      <div className="bg-green-50 text-green-600 p-4 rounded-lg text-sm border border-green-200">
-                        Login successful! Redirecting...
+                      <div className="bg-orange-50 border border-orange-200 rounded-lg p-4 flex items-center justify-center">
+                        <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-orange-600"></div>
                       </div>
                     )}
                     <div className="space-y-2">
@@ -378,7 +383,7 @@ const HomePage = () => {
                         name="email"
                         type="email"
                         style={{ height: '3.25rem', padding: '0.875rem 1.25rem', borderRadius: '0.875rem' }}
-                        className="w-full text-sm bg-gray-50/80 rounded-xl border-2 border-gray-200 shadow-sm focus:border-[#FFD166] focus:ring-0 focus:bg-white transition-all duration-200 hover:bg-white hover:border-gray-300"
+                        className="w-full text-sm bg-gray-50/80 rounded-xl border-2 border-gray-200 shadow-sm focus:border-[#F4A261] focus:ring-0 focus:bg-white transition-all duration-200 hover:bg-white hover:border-gray-300"
                         placeholder="Enter your email"
                       />
                     </div>
@@ -390,7 +395,7 @@ const HomePage = () => {
                         name="password"
                         type="password"
                         style={{ height: '3.25rem', padding: '0.875rem 1.25rem', borderRadius: '0.875rem' }}
-                        className="w-full text-sm bg-gray-50/80 rounded-xl border-2 border-gray-200 shadow-sm focus:border-[#FFD166] focus:ring-0 focus:bg-white transition-all duration-200 hover:bg-white hover:border-gray-300"
+                        className="w-full text-sm bg-gray-50/80 rounded-xl border-2 border-gray-200 shadow-sm focus:border-[#F4A261] focus:ring-0 focus:bg-white transition-all duration-200 hover:bg-white hover:border-gray-300"
                         placeholder="Enter your password"
                       />
                     </div>
@@ -398,13 +403,10 @@ const HomePage = () => {
                       type="submit"
                       disabled={isLoading}
                       style={{ height: '3.5rem', padding: '1rem 2rem', marginTop: '0.75rem', borderRadius: '0.875rem' }}
-                      className="w-full bg-gradient-to-r from-[#FFD166] to-[#F4A261] text-black font-bold hover:from-[#F4A261] hover:to-[#E76F51] transition-all duration-200 shadow-xl hover:shadow-2xl transform hover:scale-[1.02] disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none flex items-center justify-center gap-2 border-2 border-transparent hover:border-[#E76F51]/20"
+                      className="w-full bg-gradient-to-r from-[#F4A261] to-[#E76F51] hover:from-[#E76F51] hover:to-[#D84B40] text-white font-bold transition-all duration-300 shadow-xl hover:shadow-2xl hover:brightness-110 border-0 focus:ring-4 focus:ring-orange-300/25 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
                     >
                       {isLoading ? (
-                        <>
-                          <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-black"></div>
-                          Signing in...
-                        </>
+                        <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
                       ) : (
                         <>
                           <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -432,7 +434,7 @@ const HomePage = () => {
             
             {showSignUpForm && (
               <>
-                <div className="bg-gradient-to-r from-[#46a080] to-[#019863] p-6 text-center relative">
+                <div className="bg-gradient-to-r from-[#F4A261] to-[#E76F51] p-6 text-center relative">
                   <button 
                     onClick={closeLoginModal} 
                     className="absolute top-3 right-3 text-white/70 hover:text-white transition-colors text-2xl font-light bg-transparent border-none outline-none w-8 h-8 flex items-center justify-center rounded-full hover:bg-white/10"
@@ -450,13 +452,13 @@ const HomePage = () => {
                 <div style={{ padding: '2rem' }}>
                   <form onSubmit={handleSignUpSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
                     {error && (
-                      <div className="bg-red-50 text-red-600 p-4 rounded-lg text-sm border border-red-200">
+                      <div className="bg-orange-50 text-orange-700 p-4 rounded-lg text-sm border border-orange-200">
                         {error}
                       </div>
                     )}
                     {loginSuccess && (
-                      <div className="bg-green-50 text-green-600 p-4 rounded-lg text-sm border border-green-200">
-                        Account created! Please log in.
+                      <div className="bg-orange-50 border border-orange-200 rounded-lg p-4 flex items-center justify-center">
+                        <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-orange-600"></div>
                       </div>
                     )}
                     <div className="space-y-2">
@@ -466,7 +468,7 @@ const HomePage = () => {
                         type="text"
                         placeholder="Choose a username"
                         style={{ height: '3.25rem', padding: '0.875rem 1.25rem', borderRadius: '0.875rem' }}
-                        className="w-full text-sm bg-gray-50/80 rounded-xl border-2 border-gray-200 shadow-sm focus:border-[#46a080] focus:ring-0 focus:bg-white transition-all duration-200 hover:bg-white hover:border-gray-300"
+                        className="w-full text-sm bg-gray-50/80 rounded-xl border-2 border-gray-200 shadow-sm focus:border-[#F4A261] focus:ring-0 focus:bg-white transition-all duration-200 hover:bg-white hover:border-gray-300"
                       />
                     </div>
                     <div className="space-y-2">
@@ -476,7 +478,7 @@ const HomePage = () => {
                         type="email"
                         placeholder="Enter your email"
                         style={{ height: '3.25rem', padding: '0.875rem 1.25rem', borderRadius: '0.875rem' }}
-                        className="w-full text-sm bg-gray-50/80 rounded-xl border-2 border-gray-200 shadow-sm focus:border-[#46a080] focus:ring-0 focus:bg-white transition-all duration-200 hover:bg-white hover:border-gray-300"
+                        className="w-full text-sm bg-gray-50/80 rounded-xl border-2 border-gray-200 shadow-sm focus:border-[#F4A261] focus:ring-0 focus:bg-white transition-all duration-200 hover:bg-white hover:border-gray-300"
                       />
                     </div>
                     <div className="space-y-2">
@@ -486,20 +488,17 @@ const HomePage = () => {
                         type="password"
                         placeholder="Create a password"
                         style={{ height: '3.25rem', padding: '0.875rem 1.25rem', borderRadius: '0.875rem' }}
-                        className="w-full text-sm bg-gray-50/80 rounded-xl border-2 border-gray-200 shadow-sm focus:border-[#46a080] focus:ring-0 focus:bg-white transition-all duration-200 hover:bg-white hover:border-gray-300"
+                        className="w-full text-sm bg-gray-50/80 rounded-xl border-2 border-gray-200 shadow-sm focus:border-[#F4A261] focus:ring-0 focus:bg-white transition-all duration-200 hover:bg-white hover:border-gray-300"
                       />
                     </div>
                     <button 
                       type="submit"
                       disabled={isLoading}
                       style={{ height: '3.5rem', padding: '1rem 2rem', marginTop: '0.75rem', borderRadius: '0.875rem' }}
-                      className="w-full bg-gradient-to-r from-[#46a080] to-[#019863] text-white font-bold hover:from-[#019863] hover:to-[#0c7b63] transition-all duration-200 shadow-xl hover:shadow-2xl transform hover:scale-[1.02] disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none flex items-center justify-center gap-2 border-2 border-transparent hover:border-[#0c7b63]/20"
+                      className="w-full bg-gradient-to-r from-[#F4A261] to-[#E76F51] hover:from-[#E76F51] hover:to-[#D84B40] text-white font-bold transition-all duration-300 shadow-xl hover:shadow-2xl hover:brightness-110 border-0 focus:ring-4 focus:ring-orange-300/25 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
                     >
                       {isLoading ? (
-                        <>
-                          <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
-                          Creating account...
-                        </>
+                        <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
                       ) : (
                         <>
                           <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -514,7 +513,7 @@ const HomePage = () => {
                         Already have an account?{' '}
                         <span
                           onClick={switchToLogin}
-                          className="text-[#46a080] font-medium hover:text-[#019863] transition-colors cursor-pointer hover:underline"
+                          className="text-[#F4A261] font-medium hover:text-[#E76F51] transition-colors cursor-pointer hover:underline"
                         >
                           Sign in here
                         </span>

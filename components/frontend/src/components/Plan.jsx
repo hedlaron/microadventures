@@ -6,18 +6,27 @@ import AdventureResult from './AdventureResult';
 import MapPicker from './MapPicker';
 import { useCountdown } from '../hooks/useCountdown';
 import styled from 'styled-components';
+import { primaryButtonRounded, errorText, errorBg, errorBorder, focusRing } from '../utils/colors';
 
 const PageWrapper = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
-  min-height: 100vh;
-  padding: 1rem;
-  background: #f8fcfa;
+  min-height: 100%;
+  height: 100%;
+  padding: 2rem 1rem 1rem 1rem;
+  
+  /* Add top padding when not embedded in home page */
+  &:not(.home-embedded) {
+    padding-top: 6rem;
+  }
   
   @media (max-height: 600px) {
     align-items: flex-start;
-    padding-top: 1rem;
+    
+    &:not(.home-embedded) {
+      padding-top: 6rem;
+    }
   }
 `;
 
@@ -25,10 +34,9 @@ const PlanFormContainer = styled.div`
   position: relative;
   width: 100%;
   max-width: 600px;
-  margin: 0 auto;
   border-radius: 12px;
   background: white;
-  border: 1px solid #e6f4ef;
+  border: 1px solid rgba(244, 162, 97, 0.2);
   
   /* Ensure it fits screen height properly */
   max-height: calc(100vh - 2rem);
@@ -44,12 +52,12 @@ const PlanFormContainer = styled.div`
   }
   
   &::-webkit-scrollbar-thumb {
-    background: #46a080;
+    background: #F4A261;
     border-radius: 3px;
   }
   
   &::-webkit-scrollbar-thumb:hover {
-    background: #019863;
+    background: #E76F51;
   }
   
   @media (max-width: 640px) {
@@ -71,8 +79,8 @@ const PlanContainer = styled.div`
   }
 `;
 
-const Plan = () => {
-  console.log('Plan component rendering');
+const Plan = ({ isEmbedded = false }) => {
+  console.log('Plan component rendering', { isEmbedded });
 
   useEffect(() => {
     console.log('Plan component mounted');
@@ -305,7 +313,7 @@ const Plan = () => {
   }
 
   return (
-    <PageWrapper>
+    <PageWrapper className={isEmbedded ? 'home-embedded' : ''}>
       <PlanFormContainer>
         <PlanContainer>
           <div className="relative">
@@ -315,15 +323,15 @@ const Plan = () => {
 
             {/* Quota Display */}
             {quotaInfo && (
-              <div className="mb-6 p-4 bg-[#e6f4ef] rounded-xl border border-[#cde9df]">
+              <div className="mb-6 p-4 bg-gradient-to-br from-orange-50 to-orange-100/50 rounded-xl border border-orange-200/50">
                 <div className="flex items-center justify-center gap-2 text-sm mb-2">
-                  <span className="text-[#0c1c17] font-medium">
+                  <span className="text-orange-900 font-medium">
                     {quotaInfo.adventures_remaining} adventures remaining today
                   </span>
                 </div>
                 {quotaInfo.time_until_reset && timeLeft > 0 && (
                   <div className="flex items-center justify-center gap-2 text-xs">
-                    <span className="text-[#46a080]">
+                    <span className="text-orange-700">
                       {quotaInfo.adventures_remaining === 0 ? 'Quota resets in:' : 'Next reset in:'} <span className="font-mono font-medium">{formatTime(timeLeft)}</span>
                     </span>
                   </div>
@@ -333,8 +341,8 @@ const Plan = () => {
 
                   {/* Error Display */}
                   {error && (
-                    <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-xl">
-                      <p className="text-red-600 text-sm text-center">{error}</p>
+                    <div className="mb-6 p-4 bg-orange-50 border border-orange-200 rounded-xl">
+                      <p className="text-orange-700 text-sm text-center">{error}</p>
                     </div>
                   )}
               
@@ -346,7 +354,7 @@ const Plan = () => {
                         type="text"
                         value={location}
                         onChange={(e) => setLocation(e.target.value)}
-                        className="flex-1 text-sm bg-white border-2 border-[#e6f4ef] px-3 py-3 rounded-xl focus:border-[#46a080] focus:ring-2 focus:ring-[#46a080]/20 focus:outline-none transition-all duration-200 placeholder-[#46a080]"
+                        className="flex-1 text-sm bg-white border-2 border-gray-200 text-gray-800 px-3 py-3 rounded-xl focus:border-orange-300 focus:ring-2 focus:ring-orange-200/50 focus:outline-none transition-all duration-200 placeholder-gray-400"
                         placeholder="Where are you starting from?"
                         required
                       />
@@ -354,18 +362,15 @@ const Plan = () => {
                         type="button"
                         onClick={getCurrentLocation}
                         disabled={locationLoading}
-                        className={`border-2 border-[#e6f4ef] text-[#0c1c17] rounded-xl hover:bg-[#e6f4ef] transition-colors flex items-center justify-center gap-1 text-xs font-medium px-3 ${
+                        className={`border-2 border-gray-200 text-gray-700 rounded-xl hover:bg-gray-50 hover:border-gray-300 transition-colors flex items-center justify-center gap-1 text-xs font-medium px-3 ${
                           locationLoading ? 'opacity-50 cursor-not-allowed' : ''
                         }`}
                       >
                         {locationLoading ? (
-                          <>
-                            <svg className="w-3 h-3 animate-spin" fill="none" viewBox="0 0 24 24">
-                              <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                              <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                            </svg>
-                            Getting...
-                          </>
+                          <svg className="w-3 h-3 animate-spin" fill="none" viewBox="0 0 24 24">
+                            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                          </svg>
                         ) : (
                           <>
                             <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
@@ -380,7 +385,7 @@ const Plan = () => {
                         type="button"
                         onClick={() => setShowStartMapPicker(true)}
                         style={{ height: '3rem', padding: '0 0.75rem', minWidth: '70px' }}
-                        className="border-2 border-[#FFD166] text-black rounded-xl hover:bg-[#FFD166]/10 transition-colors flex items-center justify-center gap-1 text-xs font-medium"
+                        className="border-2 border-orange-300 text-orange-900 rounded-xl hover:bg-orange-50 transition-colors flex items-center justify-center gap-1 text-xs font-medium"
                       >
                         <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7" />
@@ -396,7 +401,7 @@ const Plan = () => {
                       <button
                         type="button"
                         onClick={handleRoundTripToggle}
-                        className={`text-xs px-3 py-1.5 rounded-full transition-all ${isRoundTrip ? 'bg-[#FFD166] text-black font-medium' : 'bg-gray-100 text-gray-500 hover:bg-gray-200'}`}
+                        className={`text-xs px-3 py-1.5 rounded-full transition-all ${isRoundTrip ? 'bg-gradient-to-r from-orange-200 to-orange-300 text-orange-900 font-medium' : 'bg-gray-100 text-gray-500 hover:bg-gray-200'}`}
                       >
                         <span className="flex items-center gap-1">
                           <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
@@ -411,13 +416,13 @@ const Plan = () => {
                         type="text"
                         value={destination}
                         onChange={(e) => setDestination(e.target.value)}
-                        className="flex-1 text-sm bg-white border-2 border-[#e6f4ef] px-3 py-3 rounded-xl focus:border-[#46a080] focus:ring-2 focus:ring-[#46a080]/20 focus:outline-none transition-all duration-200 placeholder-[#46a080]"
+                        className="flex-1 text-sm bg-white border-2 border-gray-200 text-gray-800 px-3 py-3 rounded-xl focus:border-orange-300 focus:ring-2 focus:ring-orange-200/50 focus:outline-none transition-all duration-200 placeholder-gray-400"
                         placeholder="Where would you like to go?"
                       />
                       <button
                         type="button"
                         onClick={() => setShowEndMapPicker(true)}
-                        className="border-2 border-[#e6f4ef] text-[#0c1c17] rounded-xl hover:bg-[#e6f4ef] transition-colors flex items-center justify-center gap-1 text-xs font-medium px-3"
+                        className="border-2 border-gray-200 text-gray-700 rounded-xl hover:bg-gray-50 hover:border-gray-300 transition-colors flex items-center justify-center gap-1 text-xs font-medium px-3"
                       >
                         <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7" />
@@ -437,8 +442,8 @@ const Plan = () => {
                           onClick={() => setDuration(option.toLowerCase().replace(' ', '-'))}
                           className={`flex items-center justify-center text-center px-3 py-2 rounded-xl ${
                             duration === option.toLowerCase().replace(' ', '-')
-                              ? 'bg-[#46a080] text-white border-2 border-[#46a080]'
-                              : 'bg-white border-2 border-[#e6f4ef] hover:border-[#46a080] hover:bg-[#e6f4ef] text-[#0c1c17]'
+                              ? 'bg-gradient-to-r from-[#F4A261] to-[#E76F51] text-white border-2 border-orange-300'
+                              : 'bg-white border-2 border-gray-200 hover:border-orange-300 hover:bg-orange-50 text-gray-700'
                           } transition-all duration-200 text-sm font-medium`}
                         >
                           {option}
@@ -458,8 +463,8 @@ const Plan = () => {
                         }}
                         className={`border-2 px-3 py-2 rounded-xl ${
                           activityType === 'surprise-me'
-                            ? 'bg-[#46a080] text-white border-[#46a080]'
-                            : 'bg-white border-[#e6f4ef] hover:border-[#46a080] hover:bg-[#e6f4ef] text-[#0c1c17]'
+                            ? 'bg-gradient-to-r from-[#F4A261] to-[#E76F51] text-white border-orange-300'
+                            : 'bg-white border-gray-200 hover:border-orange-300 hover:bg-orange-50 text-gray-700'
                         } transition-all duration-200 text-xs font-medium flex items-center justify-center text-center`}
                       >
                         ✨ Surprise me! ✨
@@ -474,8 +479,8 @@ const Plan = () => {
                           }}
                           className={`border-2 px-2 py-2 rounded-xl ${
                             activityType === option.toLowerCase().replace(' ', '-')
-                              ? 'bg-[#46a080] text-white border-[#46a080]'
-                              : 'bg-white border-[#e6f4ef] hover:border-[#46a080] hover:bg-[#e6f4ef] text-[#0c1c17]'
+                              ? 'bg-gradient-to-r from-[#F4A261] to-[#E76F51] text-white border-orange-300'
+                              : 'bg-white border-gray-200 hover:border-orange-300 hover:bg-orange-50 text-gray-700'
                           } transition-all duration-200 text-xs font-medium flex items-center justify-center text-center`}
                         >
                           {option}
@@ -491,8 +496,8 @@ const Plan = () => {
                           style={{ borderRadius: '12px', padding: '0.5rem', minHeight: '2.5rem' }}
                           className={`border-2 ${
                             activityType === 'custom'
-                              ? 'bg-[#FFD166] text-black shadow-sm border-[#FFD166]'
-                              : 'bg-white border-gray-100 hover:bg-gray-50 text-gray-700'
+                              ? 'bg-gradient-to-r from-[#F4A261] to-[#E76F51] text-white shadow-sm border-orange-300'
+                              : 'bg-white border-gray-200 hover:bg-orange-50 text-gray-700'
                           } transition-colors duration-200 text-xs font-medium flex items-center justify-center`}
                         >
                           Custom...
@@ -505,14 +510,14 @@ const Plan = () => {
                             onChange={(e) => setCustomActivity(e.target.value)}
                             placeholder="Enter custom activity"
                             style={{ height: '2.5rem', padding: '0.75rem', borderRadius: '12px' }}
-                            className="flex-1 text-sm bg-white border-2 border-gray-100 shadow-sm focus:border-[#FFD166] focus:ring-2 focus:ring-[#FFD166]/20"
+                            className="flex-1 text-sm bg-white border-2 border-gray-200 text-gray-800 shadow-sm focus:border-orange-300 focus:ring-2 focus:ring-orange-200/50 placeholder-gray-400"
                             autoFocus
                           />
                           <button
                             type="button"
                             onClick={() => setIsCustomActivity(false)}
                             style={{ height: '2.5rem', padding: '0 0.75rem', borderRadius: '12px' }}
-                            className="border-2 border-gray-100 bg-white hover:bg-gray-50 text-gray-500 text-xs font-medium flex items-center justify-center"
+                            className="border-2 border-gray-200 bg-white hover:bg-gray-50 text-gray-600 text-xs font-medium flex items-center justify-center"
                           >
                             Cancel
                           </button>
@@ -532,8 +537,8 @@ const Plan = () => {
                           }}
                           className={`border-2 px-3 py-2 rounded-xl ${
                             !isCustomDate 
-                              ? 'bg-[#46a080] text-white border-[#46a080]' 
-                              : 'bg-white border-[#e6f4ef] hover:border-[#46a080] hover:bg-[#e6f4ef] text-[#0c1c17]'
+                              ? 'bg-gradient-to-r from-[#F4A261] to-[#E76F51] text-white border-orange-300' 
+                              : 'bg-white border-gray-200 hover:border-orange-300 hover:bg-orange-50 text-gray-700'
                           } transition-all duration-200 text-sm font-medium flex items-center justify-center`}
                         >
                         🏃‍♂️ Let's go now!
@@ -543,8 +548,8 @@ const Plan = () => {
                         onClick={() => setIsCustomDate(true)}
                         className={`border-2 px-3 py-2 rounded-xl ${
                           isCustomDate 
-                            ? 'bg-[#46a080] text-white border-[#46a080]' 
-                            : 'bg-white border-[#e6f4ef] hover:border-[#46a080] hover:bg-[#e6f4ef] text-[#0c1c17]'
+                            ? 'bg-gradient-to-r from-[#F4A261] to-[#E76F51] text-white border-orange-300' 
+                            : 'bg-white border-gray-200 hover:border-orange-300 hover:bg-orange-50 text-gray-700'
                         } transition-all duration-200 text-sm font-medium flex items-center justify-center gap-2`}
                       >
                         <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
@@ -554,25 +559,25 @@ const Plan = () => {
                       </button>
                     </div>
                     {isCustomDate && (
-                      <div className="p-3 border-2 border-[#FFD166] rounded-xl bg-white space-y-2">
+                      <div className="p-3 border-2 border-orange-300 rounded-xl bg-orange-50/50 space-y-2">
                         <div className="flex items-center gap-2">
-                          <span className="text-sm font-medium text-gray-700 w-12">Start:</span>
+                          <span className="text-sm font-medium text-orange-900 w-12">Start:</span>
                           <input
                             type="datetime-local"
                             value={startDate.toISOString().slice(0, 16)}
                             onChange={(e) => setStartDate(new Date(e.target.value))}
                             style={{ height: '2.5rem', padding: '0.5rem', borderRadius: '8px' }}
-                            className="flex-1 text-sm bg-white border border-gray-200 shadow-sm focus:border-[#FFD166] focus:ring-1 focus:ring-[#FFD166]"
+                            className="flex-1 text-sm bg-white border border-orange-200 shadow-sm focus:border-orange-300 focus:ring-1 focus:ring-orange-300"
                           />
                         </div>
                         <div className="flex items-center gap-2">
-                          <span className="text-sm font-medium text-gray-700 w-12">End:</span>
+                          <span className="text-sm font-medium text-orange-900 w-12">End:</span>
                           <input
                             type="datetime-local"
                             value={endDate.toISOString().slice(0, 16)}
                             onChange={(e) => setEndDate(new Date(e.target.value))}
                             style={{ height: '2.5rem', padding: '0.5rem', borderRadius: '8px' }}
-                            className="flex-1 text-sm bg-white border border-gray-200 shadow-sm focus:border-[#FFD166] focus:ring-1 focus:ring-[#FFD166]"
+                            className="flex-1 text-sm bg-white border border-orange-200 shadow-sm focus:border-orange-300 focus:ring-1 focus:ring-orange-300"
                           />
                         </div>
                       </div>
@@ -582,13 +587,10 @@ const Plan = () => {
                   <button
                     type="submit"
                     disabled={loading || !location.trim() || (quotaInfo && quotaInfo.adventures_remaining === 0)}
-                    className="w-full bg-[#46a080] text-white font-bold text-lg hover:bg-[#019863] transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-3 border-0 px-8 py-4 rounded-xl mt-6"
+                    className="w-full bg-gradient-to-r from-[#F4A261] to-[#E76F51] text-white font-bold text-lg hover:from-[#E76F51] hover:to-[#D84B40] transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-3 border-0 px-8 py-4 rounded-xl mt-6 shadow-lg hover:shadow-xl hover:brightness-110"
                   >
                       {loading ? (
-                        <>
-                          <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
-                          <span>Creating Your Adventure...</span>
-                        </>
+                        <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
                       ) : !location.trim() ? (
                         <>
                           <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">

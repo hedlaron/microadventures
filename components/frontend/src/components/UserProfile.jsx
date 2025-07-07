@@ -6,7 +6,11 @@ const UserProfile = () => {
     const { user, logout } = useContext(AuthContext);
 
     if (!user) {
-        return <div>Loading...</div>;
+        return (
+            <div className="flex items-center justify-center p-8">
+                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-orange-600"></div>
+            </div>
+        );
     }
 
     return (

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import { fetchUserAdventures, shareAdventure } from '../utils/api';
 import { ArrowLeft, Calendar, MapPin, Clock, Share2, Copy, Check, ChevronLeft, ChevronRight } from 'lucide-react';
+import { cardAccent, cardAccentSecondary, errorText, errorBg, brandGradient, brandGradientHover } from '../utils/colors';
 
 const History = ({ onBack, onSelectAdventure }) => {
   const { currentUser } = useAuth();
@@ -129,12 +130,12 @@ const History = ({ onBack, onSelectAdventure }) => {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-[#f8fcfa] font-sans">
-        <header className="flex items-center justify-between whitespace-nowrap border-b border-solid border-b-[#e6f4ef] px-6 sm:px-10 py-4 bg-white">
+      <div className="min-h-screen bg-gradient-to-br from-orange-50 to-orange-100/50 font-sans">
+        <header className="flex items-center justify-between whitespace-nowrap border-b border-solid border-b-orange-200/50 px-6 sm:px-10 py-4 bg-white">
           <button 
             onClick={onBack}
             style={{ padding: '0.75rem 1.25rem', height: '3rem', borderRadius: '0.75rem' }}
-            className="flex items-center gap-2 text-[#46a080] hover:text-white hover:bg-[#46a080] transition-all duration-200 border-2 border-[#46a080] font-medium"
+            className="flex items-center gap-2 text-orange-600 hover:text-white hover:bg-gradient-to-r hover:from-[#F4A261] hover:to-[#E76F51] transition-all duration-200 border-2 border-orange-300 font-medium"
           >
             <ArrowLeft size={18} />
             <span className="text-sm font-medium">Back</span>
@@ -147,8 +148,7 @@ const History = ({ onBack, onSelectAdventure }) => {
         
         <div className="flex items-center justify-center min-h-[50vh]">
           <div className="text-center">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#46a080] mx-auto mb-4"></div>
-            <p className="text-[#46a080] text-lg">Loading your adventures...</p>
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-orange-400 mx-auto"></div>
           </div>
         </div>
       </div>
@@ -156,13 +156,13 @@ const History = ({ onBack, onSelectAdventure }) => {
   }
 
   return (
-    <div className="min-h-screen bg-[#f8fcfa] font-sans">
+    <div className="min-h-screen bg-gradient-to-br from-orange-50 to-orange-100/50 font-sans">
       {/* Header */}
-      <header className="flex items-center justify-between whitespace-nowrap border-b border-solid border-b-[#e6f4ef] px-6 sm:px-10 py-3 bg-white">
+      <header className="flex items-center justify-between whitespace-nowrap border-b border-solid border-b-orange-200/50 px-6 sm:px-10 py-3 bg-white">
         <button 
           onClick={onBack}
           style={{ padding: '0.5rem 1rem', height: '2.5rem' }}
-          className="flex items-center gap-2 text-[#46a080] hover:text-[#0c1c17] transition-colors"
+          className="flex items-center gap-2 text-orange-600 hover:text-orange-800 transition-colors"
         >
           <ArrowLeft size={20} />
           <span className="text-sm font-medium">Back</span>
@@ -179,11 +179,11 @@ const History = ({ onBack, onSelectAdventure }) => {
           <div className="layout-content-container flex flex-col max-w-[960px] flex-1 min-h-0">
             {error ? (
               <div className="text-center py-12">
-                <div className="bg-red-50 border border-red-200 rounded-lg p-6 max-w-md mx-auto">
-                  <p className="text-red-600 mb-4">{error}</p>
+                <div className="bg-orange-50 border border-orange-200 rounded-lg p-6 max-w-md mx-auto">
+                  <p className="text-orange-700 mb-4">{error}</p>
                   <button
                     onClick={loadAdventures}
-                    className="px-4 py-2 bg-[#46a080] text-white rounded-lg hover:bg-[#019863] transition-colors"
+                    className="px-4 py-2 bg-gradient-to-r from-[#F4A261] to-[#E76F51] text-white rounded-lg hover:from-[#E76F51] hover:to-[#D84B40] transition-all"
                   >
                     Try Again
                   </button>
@@ -191,19 +191,19 @@ const History = ({ onBack, onSelectAdventure }) => {
               </div>
             ) : adventures.length === 0 ? (
               <div className="text-center py-12">
-                <div className="bg-white rounded-xl p-8 border border-[#e6f4ef] max-w-md mx-auto">
-                  <div className="text-[#46a080] mb-4">
+                <div className="bg-white rounded-xl p-8 border border-orange-200/50 max-w-md mx-auto">
+                  <div className="text-orange-500 mb-4">
                     <MapPin size={48} className="mx-auto" />
                   </div>
                   <h3 className="text-[#0c1c17] text-xl font-bold mb-2">
                     No Adventures Yet
                   </h3>
-                  <p className="text-[#46a080] mb-6">
+                  <p className="text-orange-600 mb-6">
                     You haven't created any adventures yet. Start planning your first microadventure!
                   </p>
                   <button
                     onClick={onBack}
-                    className="px-6 py-2 bg-[#46a080] text-white rounded-lg hover:bg-[#019863] transition-colors"
+                    className="px-6 py-2 bg-gradient-to-r from-[#F4A261] to-[#E76F51] text-white rounded-lg hover:from-[#E76F51] hover:to-[#D84B40] transition-all"
                   >
                     Plan Your First Adventure
                   </button>
@@ -217,7 +217,7 @@ const History = ({ onBack, onSelectAdventure }) => {
                     Your Adventures ({adventures.length})
                   </h1>
                   {totalPages > 1 && (
-                    <div className="text-sm text-[#46a080]">
+                    <div className="text-sm text-gray-600">
                       Page {currentPage} of {totalPages}
                     </div>
                   )}
@@ -230,9 +230,9 @@ const History = ({ onBack, onSelectAdventure }) => {
                       <div
                         key={adventure.id}
                         onClick={() => onSelectAdventure(adventure)}
-                        className="bg-white rounded-xl overflow-hidden border border-[#e6f4ef] hover:shadow-lg transition-all cursor-pointer group"
+                        className="bg-white rounded-xl overflow-hidden border border-orange-200/50 hover:shadow-lg transition-all cursor-pointer group"
                       >
-                        <div className="relative h-48 bg-gradient-to-br from-[#46a080] to-[#019863]">
+                        <div className="relative h-48 bg-gradient-to-br from-[#F4A261] to-[#E76F51]">
                           {adventure.image_url && (
                             <img 
                               src={adventure.image_url} 
@@ -252,10 +252,10 @@ const History = ({ onBack, onSelectAdventure }) => {
                                 flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold
                                 transition-all duration-200 shadow-lg backdrop-blur-sm
                                 ${adventure.is_public 
-                                  ? 'bg-green-500/90 text-white hover:bg-green-600 border border-green-400/50' 
+                                  ? 'bg-brand-400/90 text-white hover:bg-brand-500 border border-brand-300/50' 
                                   : 'bg-white/90 text-gray-700 hover:bg-white border border-white/50'
                                 }
-                                ${sharingStates[adventure.id] ? 'opacity-75 cursor-not-allowed' : 'hover:scale-105 hover:shadow-xl'}
+                                ${sharingStates[adventure.id] ? 'opacity-75 cursor-not-allowed' : 'hover:brightness-110 hover:shadow-xl'}
                               `}
                               title={adventure.is_public ? 'Make Private' : 'Share Publicly'}
                             >
@@ -271,8 +271,8 @@ const History = ({ onBack, onSelectAdventure }) => {
                                   flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold
                                   transition-all duration-200 shadow-lg backdrop-blur-sm
                                   ${copiedStates[adventure.id] 
-                                    ? 'bg-blue-500/90 text-white border border-blue-400/50' 
-                                    : 'bg-white/90 text-gray-700 hover:bg-white hover:scale-105 hover:shadow-xl border border-white/50'
+                                    ? 'bg-brand-500/90 text-white border border-brand-400/50' 
+                                    : 'bg-white/90 text-gray-700 hover:bg-white hover:brightness-110 hover:shadow-xl border border-white/50'
                                   }
                                 `}
                                 title="Copy Share Link"
@@ -293,7 +293,7 @@ const History = ({ onBack, onSelectAdventure }) => {
                           </div>
                           
                           <div className="absolute bottom-4 left-4 right-4">
-                            <h3 className="text-white text-lg font-bold leading-tight mb-2 group-hover:text-[#FFD166] transition-colors">
+                            <h3 className="text-white text-lg font-bold leading-tight mb-2 group-hover:text-orange-100 transition-colors">
                               {adventure.title}
                             </h3>
                           </div>
@@ -304,7 +304,7 @@ const History = ({ onBack, onSelectAdventure }) => {
                             {adventure.description}
                           </p>
                           
-                          <div className="flex items-center justify-between text-xs text-[#46a080]">
+                          <div className="flex items-center justify-between text-xs text-green-600">
                             <div className="flex items-center gap-1">
                               <Calendar size={14} />
                               <span>{formatDate(adventure.created_at)}</span>
@@ -317,7 +317,7 @@ const History = ({ onBack, onSelectAdventure }) => {
                           </div>
                           
                           {adventure.location && (
-                            <div className="flex items-center gap-1 mt-2 text-xs text-[#46a080]">
+                            <div className="flex items-center gap-1 mt-2 text-xs text-green-600">
                               <MapPin size={14} />
                               <span className="truncate">{adventure.location}</span>
                             </div>
@@ -330,14 +330,14 @@ const History = ({ onBack, onSelectAdventure }) => {
                 
                 {/* Pagination Controls */}
                 {totalPages > 1 && (
-                  <div className="flex items-center justify-between mt-6 pt-4 border-t border-[#e6f4ef] flex-shrink-0">
+                  <div className="flex items-center justify-between mt-6 pt-4 border-t border-gray-200 flex-shrink-0">
                     <button
                       onClick={goToPreviousPage}
                       disabled={currentPage === 1}
                       className={`flex items-center gap-2 px-4 py-2.5 rounded-lg font-medium transition-all duration-200 ${
                         currentPage === 1
                           ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
-                          : 'bg-white border-2 border-[#46a080] text-[#46a080] hover:bg-[#46a080] hover:text-white shadow-sm hover:shadow-md'
+                          : 'bg-white border-2 border-gray-300 text-gray-700 hover:bg-gray-50 hover:border-gray-400 shadow-sm hover:shadow-md'
                       }`}
                     >
                       <ChevronLeft size={16} />
@@ -351,8 +351,8 @@ const History = ({ onBack, onSelectAdventure }) => {
                           onClick={() => goToPage(page)}
                           className={`w-11 h-11 rounded-lg font-semibold transition-all duration-200 ${
                             page === currentPage
-                              ? 'bg-[#46a080] text-white shadow-md scale-105'
-                              : 'bg-white border-2 border-[#e6f4ef] text-[#46a080] hover:bg-[#f8fcfa] hover:border-[#46a080] hover:scale-105'
+                              ? 'bg-gray-800 text-white shadow-md scale-105'
+                              : 'bg-white border-2 border-gray-200 text-gray-700 hover:bg-gray-50 hover:border-gray-300 hover:brightness-110'
                           }`}
                         >
                           {page}
@@ -366,7 +366,7 @@ const History = ({ onBack, onSelectAdventure }) => {
                       className={`flex items-center gap-2 px-4 py-2.5 rounded-lg font-medium transition-all duration-200 ${
                         currentPage === totalPages
                           ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
-                          : 'bg-white border-2 border-[#46a080] text-[#46a080] hover:bg-[#46a080] hover:text-white shadow-sm hover:shadow-md'
+                          : 'bg-white border-2 border-gray-300 text-gray-700 hover:bg-gray-50 hover:border-gray-400 shadow-sm hover:shadow-md'
                       }`}
                     >
                       Next

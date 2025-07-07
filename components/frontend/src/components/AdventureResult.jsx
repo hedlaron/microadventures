@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { MapPin, Mountain, Umbrella, Sun, ArrowLeft, RotateCcw, Share2, Copy, Check } from 'lucide-react';
 import { shareAdventure } from '../utils/api';
+import { primaryButtonRounded, brandGradient, brandGradientHover, cardAccent, cardAccentSecondary, focusRing } from '../utils/colors';
 
 const AdventureResult = ({ adventure, onBack, onNewAdventure, quotaInfo, isSharedView = false, backText = "Back" }) => {
   const [isSharing, setIsSharing] = useState(false);
@@ -82,15 +83,15 @@ const AdventureResult = ({ adventure, onBack, onNewAdventure, quotaInfo, isShare
   };
 
   return (
-    <div className="h-full bg-[#f8fcfa] font-sans flex flex-col overflow-hidden">
+    <div className="h-full bg-gradient-to-br from-brand-50 to-brand-100/50 font-sans flex flex-col overflow-hidden">
       {/* Header - only show if not in shared view */}
       {!isSharedView && (
-        <header className="border-b border-[#e6f4ef] bg-white z-10 flex-shrink-0">
+        <header className="border-b border-brand-200/50 bg-white z-10 flex-shrink-0">
           {/* Top row - Back button and title */}
           <div className="flex items-center justify-between px-6 sm:px-10 py-4">
             <button 
               onClick={onBack}
-              className="flex items-center gap-2 text-[#0c1c17] bg-[#e6f4ef] hover:bg-[#cde9df] transition-colors duration-200 px-4 py-2 rounded-xl font-medium"
+              className="flex items-center gap-2 text-[#0c1c17] bg-brand-100/50 hover:bg-brand-200/70 transition-colors duration-200 px-4 py-2 rounded-xl font-medium"
             >
               <ArrowLeft size={20} />
               <span className="text-sm">{backText}</span>
@@ -102,10 +103,10 @@ const AdventureResult = ({ adventure, onBack, onNewAdventure, quotaInfo, isShare
           </div>
           
           {/* Bottom row - Action buttons */}
-          <div className="flex items-center justify-between px-6 sm:px-10 py-3 bg-[#e6f4ef]/50 border-t border-[#cde9df]">
+          <div className="flex items-center justify-between px-6 sm:px-10 py-3 bg-orange-100/30 border-t border-orange-200/50">
             <div className="flex items-center gap-3">
               {quotaInfo && (
-                <div className="text-sm text-[#46a080] font-medium">
+                <div className="text-sm text-orange-600 font-medium">
                   {quotaInfo.adventures_remaining} adventures left today
                 </div>
               )}
@@ -118,8 +119,8 @@ const AdventureResult = ({ adventure, onBack, onNewAdventure, quotaInfo, isShare
                 disabled={isSharing}
                 className={`flex items-center gap-2 text-sm font-medium px-4 py-2 rounded-xl transition-colors duration-200 ${
                   adventure.is_public 
-                    ? 'bg-green-100 text-green-700 hover:bg-green-200' 
-                    : 'bg-[#e6f4ef] text-[#0c1c17] hover:bg-[#cde9df]'
+                    ? 'bg-success-100 text-success-700 hover:bg-success-200' 
+                    : 'bg-brand-100/50 text-brand-700 hover:bg-brand-200/70'
                 } ${isSharing ? 'opacity-50 cursor-not-allowed' : ''}`}
               >
                 <Share2 size={16} />
@@ -130,7 +131,7 @@ const AdventureResult = ({ adventure, onBack, onNewAdventure, quotaInfo, isShare
               {adventure.is_public && shareUrl && (
                 <button
                   onClick={copyToClipboard}
-                  className="flex items-center gap-2 text-sm font-medium bg-blue-100 text-blue-700 hover:bg-blue-200 transition-colors duration-200 px-4 py-2 rounded-xl"
+                  className="flex items-center gap-2 text-sm font-medium bg-brand-50 text-brand-700 hover:bg-brand-100 transition-colors duration-200 px-4 py-2 rounded-xl"
                   title="Copy share link"
                 >
                   {copied ? <Check size={16} /> : <Copy size={16} />}
@@ -140,7 +141,7 @@ const AdventureResult = ({ adventure, onBack, onNewAdventure, quotaInfo, isShare
               
               <button
                 onClick={onNewAdventure}
-                className="flex items-center gap-2 text-sm font-medium bg-[#46a080] text-white hover:bg-[#019863] transition-colors duration-200 px-4 py-2 rounded-xl"
+                className="flex items-center gap-2 text-sm font-medium bg-gradient-to-r from-[#F4A261] to-[#E76F51] hover:from-[#E76F51] hover:to-[#D84B40] text-white transition-all duration-300 shadow-lg hover:shadow-xl hover:brightness-110 border-0 rounded-xl px-4 py-2"
               >
                 <RotateCcw size={16} />
                 New Adventure
@@ -153,20 +154,20 @@ const AdventureResult = ({ adventure, onBack, onNewAdventure, quotaInfo, isShare
       {/* Main Content - Properly centered card with scrollable content */}
       <div className="flex-1 flex items-center justify-center p-4 sm:p-6 lg:p-8 min-h-0">
         <div className="w-full max-w-5xl h-full flex flex-col">
-          <div className="bg-white rounded-xl border border-[#e6f4ef] flex-1 overflow-hidden flex flex-col min-h-0">
+          <div className="bg-white rounded-xl border border-orange-200/50 flex-1 overflow-hidden flex flex-col min-h-0">
             {/* Back button for shared view */}
             {isSharedView && (
-              <div className="flex items-center justify-between p-6 border-b border-[#e6f4ef] bg-[#e6f4ef]/50 flex-shrink-0">
+              <div className="flex items-center justify-between p-6 border-b border-orange-200/50 bg-orange-100/30 flex-shrink-0">
                 <button 
                   onClick={onBack}
-                  className="flex items-center gap-2 text-[#0c1c17] bg-[#e6f4ef] hover:bg-[#cde9df] transition-colors duration-200 px-4 py-2 rounded-xl font-medium"
+                  className="flex items-center gap-2 text-[#0c1c17] bg-orange-100/50 hover:bg-orange-200/70 transition-colors duration-200 px-4 py-2 rounded-xl font-medium"
                 >
                   <ArrowLeft size={20} />
                   <span className="text-sm">{backText}</span>
                 </button>
                 <button
                   onClick={onNewAdventure}
-                  className="flex items-center gap-2 bg-[#46a080] text-white hover:bg-[#019863] transition-colors duration-200 px-4 py-2 rounded-xl font-medium"
+                  className="flex items-center gap-2 bg-gradient-to-r from-[#F4A261] to-[#E76F51] text-white hover:from-[#E76F51] hover:to-[#D84B40] transition-all duration-200 px-4 py-2 rounded-xl font-medium shadow-lg hover:shadow-xl"
                 >
                   <RotateCcw size={18} />
                   Create My Own
@@ -178,7 +179,7 @@ const AdventureResult = ({ adventure, onBack, onNewAdventure, quotaInfo, isShare
                 {/* Hero Section */}
                 <div className="@container mb-8">
                   <div className="@[480px]:px-0 @[480px]:py-0">
-                    <div className="bg-cover bg-center flex flex-col justify-end overflow-hidden bg-[#f8fcfa] rounded-xl min-h-80 relative border border-[#e6f4ef]">
+                    <div className="bg-cover bg-center flex flex-col justify-end overflow-hidden bg-gradient-to-br from-orange-50 to-orange-100/50 rounded-xl min-h-80 relative border border-orange-200/50">
                       {adventure.image_url ? (
                         <img 
                           src={adventure.image_url} 
@@ -186,7 +187,7 @@ const AdventureResult = ({ adventure, onBack, onNewAdventure, quotaInfo, isShare
                           className="absolute inset-0 w-full h-full object-cover rounded-xl"
                         />
                       ) : (
-                        <div className="absolute inset-0 bg-[#e6f4ef] rounded-xl"></div>
+                        <div className="absolute inset-0 bg-gradient-to-br from-orange-100 to-orange-200/50 rounded-xl"></div>
                       )}
                       <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent rounded-xl"></div>
                       <div className="flex p-6 relative z-10">
@@ -214,22 +215,22 @@ const AdventureResult = ({ adventure, onBack, onNewAdventure, quotaInfo, isShare
                     <h2 className="text-[#0c1c17] text-[22px] font-bold leading-tight tracking-[-0.015em] pb-3">
                       Map
                     </h2>
-                    <div className="w-full bg-center bg-no-repeat aspect-video bg-cover rounded-xl border border-[#e6f4ef] overflow-hidden">
+                    <div className="w-full bg-center bg-no-repeat aspect-video bg-cover rounded-xl border border-orange-200/50 overflow-hidden">
                       {/* Open in Google Maps link */}
                       <a 
                         href={adventure.route.map_embed_url}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="block w-full h-full bg-[#e6f4ef] rounded-xl flex items-center justify-center text-[#0c1c17] hover:bg-[#cde9df] transition-colors duration-300"
+                        className="block w-full h-full bg-gradient-to-br from-orange-50 to-orange-100/50 rounded-xl flex items-center justify-center text-[#0c1c17] hover:bg-orange-100/70 transition-colors duration-300"
                       >
                         <div className="text-center">
                           <div className="text-6xl mb-4">🗺️</div>
                           <h3 className="text-xl font-bold mb-2">View Route in Google Maps</h3>
-                          <p className="text-sm text-[#46a080] font-medium">
+                          <p className="text-sm text-orange-600 font-medium">
                             {adventure.route.estimated_distance && `${adventure.route.estimated_distance} • `}
                             {adventure.route.estimated_travel_time}
                           </p>
-                          <div className="mt-4 px-4 py-2 bg-white border border-[#cde9df] rounded-lg inline-block font-medium">
+                          <div className="mt-4 px-4 py-2 bg-white border border-orange-200 rounded-lg inline-block font-medium">
                             Click to Open Route
                           </div>
                         </div>
@@ -244,17 +245,17 @@ const AdventureResult = ({ adventure, onBack, onNewAdventure, quotaInfo, isShare
                     <h2 className="text-[#0c1c17] text-[22px] font-bold leading-tight tracking-[-0.015em] pb-3">
                       Weather Forecast
                     </h2>
-                    <div className="bg-white rounded-xl p-4 border border-[#e6f4ef]">
+                    <div className="bg-white rounded-xl p-4 border border-orange-200/50">
                       <div className="flex items-center justify-between">
                         <div>
                           <p className="text-[#0c1c17] text-lg font-semibold">
                             {adventure.weather_forecast.temperature}
                           </p>
-                          <p className="text-[#46a080] text-sm">
+                          <p className="text-green-600 text-sm">
                             {adventure.weather_forecast.conditions}
                           </p>
                         </div>
-                        <div className="text-right text-sm text-[#46a080]">
+                        <div className="text-right text-sm text-green-600">
                           <p>UV: {adventure.weather_forecast.uv_index}</p>
                           <p>Wind: {adventure.weather_forecast.wind}</p>
                           <p>Precipitation: {adventure.weather_forecast.precipitation}</p>
@@ -280,17 +281,17 @@ const AdventureResult = ({ adventure, onBack, onNewAdventure, quotaInfo, isShare
                             <div className="text-[#0c1c17]">
                               <IconComponent size={24} />
                             </div>
-                            {!isLast && <div className="w-[1.5px] bg-[#cde9df] h-2 grow"></div>}
+                            {!isLast && <div className="w-[1.5px] bg-orange-200 h-2 grow"></div>}
                           </div>
                           <div className="flex flex-1 flex-col py-3">
                             <p className="text-[#0c1c17] text-base font-medium leading-normal">
                               {item.activity}
                             </p>
-                            <p className="text-[#46a080] text-base font-normal leading-normal">
+                            <p className="text-green-600 text-base font-normal leading-normal">
                               {formatTime(item.time)}
                             </p>
                             {item.location && (
-                              <p className="text-[#46a080] text-sm font-normal leading-normal">
+                              <p className="text-green-600 text-sm font-normal leading-normal">
                                 📍 {item.location}
                               </p>
                             )}
@@ -318,7 +319,7 @@ const AdventureResult = ({ adventure, onBack, onNewAdventure, quotaInfo, isShare
                           <label key={`essential-${index}`} className="flex gap-x-3 py-3 flex-row">
                             <input
                               type="checkbox"
-                              className="h-5 w-5 rounded border-[#cde9df] border-2 bg-transparent text-[#019863] checked:bg-[#019863] checked:border-[#019863] focus:ring-0 focus:ring-offset-0 focus:border-[#cde9df] focus:outline-none"
+                              className="h-5 w-5 rounded border-orange-200 border-2 bg-transparent text-orange-600 checked:bg-orange-600 checked:border-orange-600 focus:ring-0 focus:ring-offset-0 focus:border-orange-200 focus:outline-none"
                             />
                             <p className="text-[#0c1c17] text-base font-normal leading-normal">
                               {item}
@@ -329,7 +330,7 @@ const AdventureResult = ({ adventure, onBack, onNewAdventure, quotaInfo, isShare
                           <label key={`weather-${index}`} className="flex gap-x-3 py-3 flex-row">
                             <input
                               type="checkbox"
-                              className="h-5 w-5 rounded border-[#cde9df] border-2 bg-transparent text-[#019863] checked:bg-[#019863] checked:border-[#019863] focus:ring-0 focus:ring-offset-0 focus:border-[#cde9df] focus:outline-none"
+                              className="h-5 w-5 rounded border-orange-200 border-2 bg-transparent text-orange-600 checked:bg-orange-600 checked:border-orange-600 focus:ring-0 focus:ring-offset-0 focus:border-orange-200 focus:outline-none"
                             />
                             <p className="text-[#0c1c17] text-base font-normal leading-normal">
                               {item}
@@ -340,7 +341,7 @@ const AdventureResult = ({ adventure, onBack, onNewAdventure, quotaInfo, isShare
                           <label key={`optional-${index}`} className="flex gap-x-3 py-3 flex-row">
                             <input
                               type="checkbox"
-                              className="h-5 w-5 rounded border-[#cde9df] border-2 bg-transparent text-[#019863] checked:bg-[#019863] checked:border-[#019863] focus:ring-0 focus:ring-offset-0 focus:border-[#cde9df] focus:outline-none"
+                              className="h-5 w-5 rounded border-orange-200 border-2 bg-transparent text-orange-600 checked:bg-orange-600 checked:border-orange-600 focus:ring-0 focus:ring-offset-0 focus:border-orange-200 focus:outline-none"
                             />
                             <p className="text-[#0c1c17] text-base font-normal leading-normal">
                               {item}
@@ -351,7 +352,7 @@ const AdventureResult = ({ adventure, onBack, onNewAdventure, quotaInfo, isShare
                           <label key={`food-${index}`} className="flex gap-x-3 py-3 flex-row">
                             <input
                               type="checkbox"
-                              className="h-5 w-5 rounded border-[#cde9df] border-2 bg-transparent text-[#019863] checked:bg-[#019863] checked:border-[#019863] focus:ring-0 focus:ring-offset-0 focus:border-[#cde9df] focus:outline-none"
+                              className="h-5 w-5 rounded border-orange-200 border-2 bg-transparent text-orange-600 checked:bg-orange-600 checked:border-orange-600 focus:ring-0 focus:ring-offset-0 focus:border-orange-200 focus:outline-none"
                             />
                             <p className="text-[#0c1c17] text-base font-normal leading-normal">
                               {item}
@@ -369,7 +370,7 @@ const AdventureResult = ({ adventure, onBack, onNewAdventure, quotaInfo, isShare
                     <h2 className="text-[#0c1c17] text-[22px] font-bold leading-tight tracking-[-0.015em] pb-3">
                       Additional Recommendations
                     </h2>
-                    <div className="bg-white rounded-xl p-6 border border-[#e6f4ef] space-y-6">
+                    <div className="bg-white rounded-xl p-6 border border-orange-200/50 space-y-6">
                       {adventure.recommendations.photo_opportunities && (
                         <div>
                           <h3 className="text-[#0c1c17] text-lg font-semibold mb-3 flex items-center gap-2">
@@ -378,7 +379,7 @@ const AdventureResult = ({ adventure, onBack, onNewAdventure, quotaInfo, isShare
                           <ul className="text-[#0c1c17] text-sm space-y-2">
                             {adventure.recommendations.photo_opportunities.map((spot, index) => (
                               <li key={index} className="flex items-start gap-2">
-                                <span className="text-[#46a080] mt-1">•</span>
+                                <span className="text-orange-500 mt-1">•</span>
                                 <span>{spot}</span>
                               </li>
                             ))}
@@ -394,7 +395,7 @@ const AdventureResult = ({ adventure, onBack, onNewAdventure, quotaInfo, isShare
                           <ul className="text-[#0c1c17] text-sm space-y-2">
                             {adventure.recommendations.local_tips.map((tip, index) => (
                               <li key={index} className="flex items-start gap-2">
-                                <span className="text-[#46a080] mt-1">•</span>
+                                <span className="text-orange-500 mt-1">•</span>
                                 <span>{tip}</span>
                               </li>
                             ))}
@@ -410,7 +411,7 @@ const AdventureResult = ({ adventure, onBack, onNewAdventure, quotaInfo, isShare
                           <ul className="text-[#0c1c17] text-sm space-y-2">
                             {adventure.recommendations.hidden_gems.map((gem, index) => (
                               <li key={index} className="flex items-start gap-2">
-                                <span className="text-[#46a080] mt-1">•</span>
+                                <span className="text-orange-500 mt-1">•</span>
                                 <span>{gem}</span>
                               </li>
                             ))}
@@ -427,53 +428,60 @@ const AdventureResult = ({ adventure, onBack, onNewAdventure, quotaInfo, isShare
                     <h2 className="text-[#0c1c17] text-[22px] font-bold leading-tight tracking-[-0.015em] pb-3">
                       Share Your Adventure
                     </h2>
-                    <div className="bg-white rounded-xl p-4 border border-[#e6f4ef] flex flex-col sm:flex-row gap-4">
-                      <div className="flex-1">
-                        <p className="text-[#0c1c17] text-base font-normal leading-normal mb-2">
+                    <div className="bg-white rounded-xl p-4 border border-orange-200/50">
+                      <div className="mb-4">
+                        <p className="text-[#0c1c17] text-base font-normal leading-normal">
                           {adventure.is_public 
                             ? 'Your adventure is public! Anyone with the link can view it.' 
                             : 'Your adventure is private. Share it with others by making it public.'}
                         </p>
+                      </div>
+                      
+                      <div className="flex flex-col sm:flex-row gap-3">
+                        {/* URL Input and Copy Button Row */}
                         {shareUrl && (
-                          <div className="flex items-center gap-2">
+                          <div className="flex-1 flex items-center gap-2">
                             <input
                               type="text"
                               value={`${window.location.origin}${shareUrl}`}
                               readOnly
-                              className="flex-1 p-2 border border-[#cde9df] rounded-lg focus:outline-none focus:ring-1 focus:ring-[#46a080] focus:border-transparent"
+                              className="flex-1 p-2 border border-orange-200 rounded-lg focus:outline-none focus:ring-1 focus:ring-orange-300 focus:border-transparent"
                             />
                             <button
                               onClick={copyToClipboard}
-                              className="px-4 py-2 bg-[#46a080] text-white rounded-lg hover:bg-[#019863] transition-colors flex items-center gap-2"
+                              className="px-4 py-2 bg-gradient-to-r from-[#F4A261] to-[#E76F51] text-white rounded-lg hover:from-[#E76F51] hover:to-[#D84B40] transition-all flex items-center gap-2 shadow-lg hover:shadow-xl"
                             >
                               {copied ? <Check size={16} /> : <Copy size={16} />}
                               {copied ? 'Copied!' : 'Copy Link'}
                             </button>
                           </div>
                         )}
+                        
+                        {/* Share/Make Private Button */}
+                        <button
+                          onClick={handleShare}
+                          disabled={isSharing}
+                          className={`px-4 py-2 rounded-lg flex items-center gap-2 transition-all ${
+                            shareUrl ? 'sm:w-auto' : 'flex-1'
+                          } ${adventure.is_public ? 'bg-gradient-to-r from-orange-400 to-orange-500 text-white hover:from-orange-500 hover:to-orange-600 shadow-lg hover:shadow-xl' : 'bg-gradient-to-r from-[#F4A261] to-[#E76F51] text-white hover:from-[#E76F51] hover:to-[#D84B40] shadow-lg hover:shadow-xl'}
+                            ${isSharing ? 'opacity-50 cursor-not-allowed' : ''}`}
+                        >
+                          {isSharing ? (
+                            <>
+                              <svg className="animate-spin h-5 w-5 mr-1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4zm16 0a8 8 0 01-8 8v-8h8z"></path>
+                              </svg>
+                              {adventure.is_public ? 'Making Private...' : 'Making Public...'}
+                            </>
+                          ) : (
+                            <>
+                              <Share2 size={16} />
+                              {adventure.is_public ? 'Make Private' : 'Share Adventure'}
+                            </>
+                          )}
+                        </button>
                       </div>
-                      <button
-                        onClick={handleShare}
-                        disabled={isSharing}
-                        className={`px-4 py-2 rounded-lg flex items-center gap-2 transition-all 
-                          ${adventure.is_public ? 'bg-red-500 text-white hover:bg-red-600' : 'bg-[#46a080] text-white hover:bg-[#019863]'}
-                          ${isSharing ? 'opacity-50 cursor-not-allowed' : ''}`}
-                      >
-                        {isSharing ? (
-                          <>
-                            <svg className="animate-spin h-5 w-5 mr-1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-                              <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                              <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4zm16 0a8 8 0 01-8 8v-8h8z"></path>
-                            </svg>
-                            {adventure.is_public ? 'Making Private...' : 'Making Public...'}
-                          </>
-                        ) : (
-                          <>
-                            <Share2 size={16} />
-                            {adventure.is_public ? 'Make Private' : 'Share Adventure'}
-                          </>
-                        )}
-                      </button>
                     </div>
                   </div>
                 )}
