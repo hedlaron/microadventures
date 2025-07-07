@@ -23,7 +23,8 @@
     "tilt@latest",
     "yq-go@latest",
     "uv@latest",
-    "python@3.13"
+    "python@3.13",
+    "trufflehog@latest"
   ],
   "shell": {
     "init_hook": [
