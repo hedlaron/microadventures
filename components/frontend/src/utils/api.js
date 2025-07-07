@@ -1,6 +1,14 @@
 import axios from 'axios';
 import { useCallback } from 'react';
 
+// Global variable to store logout function
+let globalLogout = null;
+
+// Function to set the global logout function
+export const setGlobalLogout = (logoutFn) => {
+  globalLogout = logoutFn;
+};
+
 // Dynamic API URL detection
 const getApiUrl = () => {
     // Check if we're in development (localhost)
@@ -32,6 +40,24 @@ console.log('Environment detection:', {
     host: window.location.host,
     detectedApiUrl: API_URL
 });
+
+// Set up axios response interceptor for global 401 handling
+axios.interceptors.response.use(
+    (response) => response,
+    (error) => {
+        if (error.response && error.response.status === 401 && globalLogout) {
+            console.log('401 detected, logging out user and redirecting to homepage');
+            // Clear token and call logout to update auth state
+            localStorage.removeItem('token');
+            globalLogout();
+            // Redirect to homepage - use window.location to ensure it works from anywhere
+            if (window.location.pathname !== '/') {
+                window.location.href = '/';
+            }
+        }
+        return Promise.reject(error);
+    }
+);
 
 const loginUser = async (credentials) => {
     try {

@@ -1,5 +1,5 @@
 import React, { createContext, useState, useContext, useEffect } from 'react';
-import { loginUser, registerUser, fetchUserProfile } from '../utils/api';
+import { loginUser, registerUser, fetchUserProfile, setGlobalLogout } from '../utils/api';
 
 const AuthContext = createContext();
 
@@ -64,7 +64,14 @@ export function AuthProvider({ children }) {
   const logout = () => {
     setCurrentUser(null);
     localStorage.removeItem('token');
+    // Clear any pending errors when user logs out
+    setError('');
   };
+
+  // Register logout function with API interceptor
+  useEffect(() => {
+    setGlobalLogout(logout);
+  }, []);
 
   const openLoginModal = () => {
     setIsLoginModalOpen(true);
