@@ -1,0 +1,3 @@
+serviceAccount:
+  annotations:
+    iam.gke.io/gcp-service-account: external-secrets@microadventures.iam.gserviceaccount.com

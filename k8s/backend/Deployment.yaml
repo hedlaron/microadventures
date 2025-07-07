@@ -22,16 +22,16 @@ spec:
           env:
             - name: PORT
               value: "8000"
-            # PostgreSQL connection (from secrets)
+            # PostgreSQL connection (from GCP secrets)
             - name: POSTGRESQL_USERNAME
               valueFrom:
                 secretKeyRef:
-                  name: postgresql-secrets
+                  name: microadventures-gcp-secrets
                   key: POSTGRES_USER
             - name: POSTGRESQL_PASSWORD
               valueFrom:
                 secretKeyRef:
-                  name: postgresql-secrets
+                  name: microadventures-gcp-secrets
                   key: POSTGRES_PASSWORD
             - name: POSTGRESQL_SERVER
               valueFrom:
@@ -64,17 +64,23 @@ spec:
                 configMapKeyRef:
                   name: postgresql-config
                   key: BACKEND_CORS_ORIGINS
-            # Secrets (from secrets)
+            # Secrets (from GCP secrets)
             - name: JWT_SECRET_KEY
               valueFrom:
                 secretKeyRef:
-                  name: postgresql-secrets
-                  key: SECRET_KEY
+                  name: microadventures-gcp-secrets
+                  key: JWT_SECRET_KEY
             - name: OPENAI_API_KEY
               valueFrom:
                 secretKeyRef:
-                  name: postgresql-secrets
+                  name: microadventures-gcp-secrets
                   key: OPENAI_API_KEY
+            # Database URL (from GCP secrets)
+            - name: DATABASE_URL
+              valueFrom:
+                secretKeyRef:
+                  name: microadventures-gcp-secrets
+                  key: DATABASE_URL
           ports:
             - containerPort: 8000
               protocol: TCP

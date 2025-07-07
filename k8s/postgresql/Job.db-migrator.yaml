@@ -12,16 +12,16 @@ spec:
           imagePullPolicy: Always
           command: ["uv", "run", "alembic", "upgrade", "heads"]
           env:
-            # PostgreSQL connection (required for migration)
+            # PostgreSQL connection (required for migration) - from GCP secrets
             - name: POSTGRESQL_USERNAME
               valueFrom:
                 secretKeyRef:
-                  name: postgresql-secrets
+                  name: microadventures-gcp-secrets
                   key: POSTGRES_USER
             - name: POSTGRESQL_PASSWORD
               valueFrom:
                 secretKeyRef:
-                  name: postgresql-secrets
+                  name: microadventures-gcp-secrets
                   key: POSTGRES_PASSWORD
             - name: POSTGRESQL_SERVER
               valueFrom:
@@ -57,13 +57,19 @@ spec:
             - name: JWT_SECRET_KEY
               valueFrom:
                 secretKeyRef:
-                  name: postgresql-secrets
-                  key: SECRET_KEY
+                  name: microadventures-gcp-secrets
+                  key: JWT_SECRET_KEY
             - name: OPENAI_API_KEY
               valueFrom:
                 secretKeyRef:
-                  name: postgresql-secrets
+                  name: microadventures-gcp-secrets
                   key: OPENAI_API_KEY
+            # Database URL (from GCP secrets)
+            - name: DATABASE_URL
+              valueFrom:
+                secretKeyRef:
+                  name: microadventures-gcp-secrets
+                  key: DATABASE_URL
       imagePullSecrets:
         - name: dockerconfigjson
       restartPolicy: OnFailure
