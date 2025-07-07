@@ -26,33 +26,33 @@ spec:
             - name: POSTGRESQL_SERVER
               valueFrom:
                 configMapKeyRef:
-                  name: postgresql-config
-                  key: POSTGRES_HOST
+                  name: backend-config
+                  key: POSTGRESQL_SERVER
             - name: POSTGRESQL_PORT
               valueFrom:
                 configMapKeyRef:
-                  name: postgresql-config
-                  key: POSTGRES_PORT
+                  name: backend-config
+                  key: POSTGRESQL_PORT
             - name: POSTGRESQL_DATABASE
               valueFrom:
                 configMapKeyRef:
-                  name: postgresql-config
-                  key: POSTGRES_DB
+                  name: backend-config
+                  key: POSTGRESQL_DATABASE
             # Application config
             - name: DOMAIN
               valueFrom:
                 configMapKeyRef:
-                  name: postgresql-config
+                  name: backend-config
                   key: DOMAIN
             - name: ENVIRONMENT
               valueFrom:
                 configMapKeyRef:
-                  name: postgresql-config
+                  name: backend-config
                   key: ENVIRONMENT
             - name: BACKEND_CORS_ORIGINS
               valueFrom:
                 configMapKeyRef:
-                  name: postgresql-config
+                  name: backend-config
                   key: BACKEND_CORS_ORIGINS
             - name: JWT_SECRET_KEY
               valueFrom:

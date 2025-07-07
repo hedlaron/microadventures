@@ -1,0 +1,41 @@
+version: '3'
+
+tasks:
+  apply-configmap:
+    desc: "Apply the backend ConfigMap"
+    cmds:
+      - kubectl apply -f ConfigMap.yaml
+
+  apply-deployment:
+    desc: "Apply the backend deployment"
+    deps: [apply-configmap]
+    cmds:
+      - kubectl apply -f Deployment.yaml
+
+  status:
+    desc: "Check backend deployment status"
+    cmds:
+      - kubectl get deployment backend -n microadventures
+      - kubectl get pods -l app=backend -n microadventures
+
+  logs:
+    desc: "View backend logs"
+    cmds:
+      - kubectl logs -l app=backend -n microadventures --tail=50 -f
+
+  describe:
+    desc: "Describe backend deployment"
+    cmds:
+      - kubectl describe deployment backend -n microadventures
+
+  restart:
+    desc: "Restart the backend deployment"
+    cmds:
+      - kubectl rollout restart deployment/backend -n microadventures
+
+  deploy:
+    desc: "Deploy backend (ConfigMap + Deployment)"
+    deps: [apply-configmap, apply-deployment]
+    cmds:
+      - echo "Backend deployment complete!"
+      - task: status

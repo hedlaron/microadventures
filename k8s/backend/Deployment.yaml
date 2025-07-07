@@ -20,9 +20,28 @@ spec:
           image: hedlaron/microadventures-backend:foobarbaz
           imagePullPolicy: Always
           env:
+            # Application configuration (from backend ConfigMap)
             - name: PORT
-              value: "8000"
-            # PostgreSQL connection (from GCP secrets)
+              valueFrom:
+                configMapKeyRef:
+                  name: backend-config
+                  key: PORT
+            - name: DOMAIN
+              valueFrom:
+                configMapKeyRef:
+                  name: backend-config
+                  key: DOMAIN
+            - name: ENVIRONMENT
+              valueFrom:
+                configMapKeyRef:
+                  name: backend-config
+                  key: ENVIRONMENT
+            - name: BACKEND_CORS_ORIGINS
+              valueFrom:
+                configMapKeyRef:
+                  name: backend-config
+                  key: BACKEND_CORS_ORIGINS
+            # PostgreSQL connection (from GCP secrets for sensitive data)
             - name: POSTGRESQL_USERNAME
               valueFrom:
                 secretKeyRef:
@@ -33,37 +52,22 @@ spec:
                 secretKeyRef:
                   name: microadventures-gcp-secrets
                   key: POSTGRES_PASSWORD
+            # PostgreSQL connection (from backend ConfigMap for non-sensitive data)
             - name: POSTGRESQL_SERVER
               valueFrom:
                 configMapKeyRef:
-                  name: postgresql-config
-                  key: POSTGRES_HOST
+                  name: backend-config
+                  key: POSTGRESQL_SERVER
             - name: POSTGRESQL_PORT
               valueFrom:
                 configMapKeyRef:
-                  name: postgresql-config
-                  key: POSTGRES_PORT
+                  name: backend-config
+                  key: POSTGRESQL_PORT
             - name: POSTGRESQL_DATABASE
               valueFrom:
                 configMapKeyRef:
-                  name: postgresql-config
-                  key: POSTGRES_DB
-            # Application config (from configmap)
-            - name: DOMAIN
-              valueFrom:
-                configMapKeyRef:
-                  name: postgresql-config
-                  key: DOMAIN
-            - name: ENVIRONMENT
-              valueFrom:
-                configMapKeyRef:
-                  name: postgresql-config
-                  key: ENVIRONMENT
-            - name: BACKEND_CORS_ORIGINS
-              valueFrom:
-                configMapKeyRef:
-                  name: postgresql-config
-                  key: BACKEND_CORS_ORIGINS
+                  name: backend-config
+                  key: POSTGRESQL_DATABASE
             # Secrets (from GCP secrets)
             - name: JWT_SECRET_KEY
               valueFrom:

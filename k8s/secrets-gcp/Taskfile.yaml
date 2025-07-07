@@ -1,0 +1,71 @@
+version: '3'
+
+tasks:
+  deploy:
+    desc: "Deploy GCP Secrets configuration (from deploy.sh)"
+    cmds:
+      - echo "Deploying GCP Secrets configuration..."
+      - echo "1. Applying ClusterSecretStore..."
+      - kubectl apply -f ClusterSecretStore.yaml
+      - echo "2. Applying ServiceAccount..."
+      - kubectl apply -f ServiceAccount.yaml
+      - echo "3. Applying ExternalSecret..."
+      - kubectl apply -f ExternalSecret.yaml
+      - echo "4. Waiting for secrets to sync..."
+      - sleep 15
+      - echo "5. Verifying secrets..."
+      - kubectl get externalsecret microadventures-gcp-secrets -n microadventures
+      - kubectl describe secret microadventures-gcp-secrets -n microadventures
+      - echo "GCP Secrets deployment complete!"
+      - echo "The microadventures-gcp-secrets secret is now available for use in deployments."
+
+  verify:
+    desc: "Verify GCP Secrets are working (from verify.sh)"
+    cmds:
+      - echo "Verifying GCP Secrets configuration..."
+      - echo "1. Checking if ExternalSecret exists..."
+      - kubectl get externalsecret microadventures-gcp-secrets -n microadventures
+      - echo "2. Checking ExternalSecret status..."
+      - kubectl get externalsecret microadventures-gcp-secrets -n microadventures -o jsonpath='{.status.conditions[*].type}' && echo
+      - echo "3. Checking if Kubernetes secret was created..."
+      - kubectl get secret microadventures-gcp-secrets -n microadventures
+      - echo "4. Checking secret keys..."
+      - kubectl get secret microadventures-gcp-secrets -n microadventures -o jsonpath='{.data}' | jq -r 'keys[]'
+      - echo "GCP Secrets verification complete!"
+
+  get-secret-values:
+    desc: "Retrieve the microadventures secret values from the Kubernetes API"
+    cmds:
+      - kubectl get secrets microadventures-gcp-secrets -n microadventures -o yaml | yq
+      - echo "Database URL:"
+      - kubectl get secrets microadventures-gcp-secrets -n microadventures -o yaml | yq '.data.DATABASE_URL' | base64 -d && echo
+      - echo "JWT Secret Key:"
+      - kubectl get secrets microadventures-gcp-secrets -n microadventures -o yaml | yq '.data.JWT_SECRET_KEY' | base64 -d && echo
+
+  install-external-secrets:
+    desc: "Install external secrets operator"
+    cmds:
+      - helm repo add external-secrets https://charts.external-secrets.io
+      - |
+        helm upgrade --install external-secrets \
+          external-secrets/external-secrets \
+          -n external-secrets \
+          --values values.yaml \
+          --create-namespace \
+          --version 0.9.19
+
+  apply-cluster-secret-store:
+    desc: "Apply the ClusterSecretStore configuration"
+    cmds:
+      - kubectl apply -f ClusterSecretStore.yaml
+
+  apply-external-secret:
+    desc: "Apply the ExternalSecret configuration"
+    cmds:
+      - kubectl apply -f ExternalSecret.yaml
+
+  delete-namespace:
+    desc: "Delete the namespace to clean up (WARNING - This will delete all resources)"
+    cmds:
+      - echo "WARNING - Deleting the namespace recursively deletes the resources inside of it!"
+      - kubectl delete ns microadventures
