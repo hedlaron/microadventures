@@ -51,6 +51,7 @@ tasks:
     deps: [ensure-gcp-secrets]
     cmds:
       - echo "Applying database migration job with GCP secrets..."
+      - kubectl delete job db-migrator -n microadventures --ignore-not-found=true
       - kubectl apply -f ConfigMap.postgresql.yaml
       - kubectl apply -f Job.db-migrator.yaml
       - echo "Migration job applied. The job uses microadventures-gcp-secrets for database credentials."

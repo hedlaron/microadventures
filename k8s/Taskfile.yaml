@@ -22,12 +22,18 @@ tasks:
   backend:apply:
     desc: "Apply kubernetes resource manifests for backend application"
     cmds:
-      - "kubectl apply -f ./backend"
+      - "kubectl apply -f ./backend/ConfigMap.yaml"
+      - "kubectl apply -f ./backend/Deployment.yaml"
+      - "kubectl apply -f ./backend/IngressRoute.yaml"
+      - "kubectl apply -f ./backend/Service.yaml"
 
   frontend:apply:
     desc: "Apply kubernetes resource manifests for frontend application"
     cmds:
-      - "kubectl apply -f ./frontend"
+      - "kubectl apply -f ./frontend/ConfigMap.yaml"
+      - "kubectl apply -f ./frontend/Deployment.yaml"
+      - "kubectl apply -f ./frontend/IngressRoute.yaml"
+      - "kubectl apply -f ./frontend/Service.yaml"
 
   backend:create-image-pull-secret:
     desc: "Create image pull secret to pull from private registry"

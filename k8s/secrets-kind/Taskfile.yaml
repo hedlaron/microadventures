@@ -1,71 +1,92 @@
 version: "3"
 
-# USED ONLY FOR GCP
-
-env:
-  BORDER: double
-  BORDER_FOREGROUND: "212"
-  PADDING: "1 1"
-  MARGIN: "1 1"
-
 tasks:
-  01-install-external-secrets:
-    desc: "Install external secrets operator"
+  list:
+    desc: "List available tasks for kind cluster hardening"
     cmds:
-      - helm repo add external-secrets https://charts.external-secrets.io
+      - task --list
+
+  prerequisites:
+    desc: "Check prerequisites for kind cluster hardening"
+    cmds:
+      - echo "Checking prerequisites..."
+      - echo "1. Kind cluster:"
+      - kubectl cluster-info --context kind-kind
+      - echo "2. GCP service account (gcloud CLI):"
+      - gcloud auth list
+      - echo "3. Helm (if still needed for other components):"
+      - helm version --short
+
+  create-microadventures-namespace:
+    desc: "Create microadventures namespace in kind cluster"
+    cmds:
+      - echo "Creating microadventures namespace..."
+      - kubectl config use-context kind-kind
+      - kubectl create namespace microadventures --dry-run=client -o yaml | kubectl apply -f -
+      - echo "✅ microadventures namespace created"
+
+  create-gcp-secrets-manually:
+    desc: "Manually retrieve secrets from GCP Secret Manager and create Kubernetes secret"
+    deps: [create-microadventures-namespace]
+    cmds:
+      - echo "Retrieving secrets from GCP Secret Manager and creating Kubernetes secret..."
+      - kubectl config use-context kind-kind
       - |
-        helm upgrade --install external-secrets \
-          external-secrets/external-secrets \
-          -n external-secrets \
-          --values values.yaml \
-          --create-namespace \
-          --version 0.9.19
+        DATABASE_URL=$(gcloud secrets versions access latest --secret=database-url)
+        JWT_SECRET_KEY=$(gcloud secrets versions access latest --secret=jwt-secret-key)
+        OPENAI_API_KEY=$(gcloud secrets versions access latest --secret=openai-api-key)
+        POSTGRES_USER=$(gcloud secrets versions access latest --secret=postgresql-user)
+        POSTGRES_PASSWORD=$(gcloud secrets versions access latest --secret=postgresql-password)
 
-  02-create-iam-service-account:
-    desc: "Create GCP IAM service account and attach necessary permissions"
-    cmds:
-      - |
-        gcloud iam service-accounts create external-secrets \
-          --display-name "External Secrets Service Account"
-      - cmd: gum style "Attach roles/secretmanager.secretAccessor to IAM service account"
-        silent: true
-      - |
-        gcloud projects add-iam-policy-binding microadventures \
-          --member="serviceAccount:external-secrets@microadventures.iam.gserviceaccount.com" \
-          --role="roles/secretmanager.secretAccessor"
-      - cmd: gum style "Attach roles/iam.workloadIdentityUser to kubernetes service account"
-        silent: true
-      - |
-        gcloud iam service-accounts add-iam-policy-binding external-secrets@microadventures.iam.gserviceaccount.com \
-          --role roles/iam.workloadIdentityUser \
-          --member "serviceAccount:microadventures.svc.id.goog[external-secrets/external-secrets]"
+        kubectl create secret generic microadventures-gcp-secrets -n microadventures \
+          --from-literal=DATABASE_URL="${DATABASE_URL}" \
+          --from-literal=JWT_SECRET_KEY="${JWT_SECRET_KEY}" \
+          --from-literal=OPENAI_API_KEY="${OPENAI_API_KEY}" \
+          --from-literal=POSTGRES_USER="${POSTGRES_USER}" \
+          --from-literal=POSTGRES_PASSWORD="${POSTGRES_PASSWORD}" \
+          --dry-run=client -o yaml | kubectl apply -f -
+      - echo "✅ Kubernetes secret 'microadventures-gcp-secrets' created/updated."
 
-  03-annotate-kubernetes-service-account:
+  verify-secrets:
+    desc: "Verify that the Kubernetes secret was created"
     cmds:
-      - cmd: gum style "Annotate k8s service account to allow it to use IAM serivce account via workload identity"
-        silent: true
-      - kubectl apply -f ServiceAccount.yaml
-    desc: "Add annotation to kubernetes service account for workload identity"
+      - echo "Verifying Kubernetes secret..."
+      - kubectl config use-context kind-kind
+      - kubectl get secret microadventures-gcp-secrets -n microadventures
+      - echo "✅ Secret verification complete!"
 
-  04-apply-cluster-secret-store:
-    desc: "Apply the ClusterSecretStore configuration"
+  test-secret-values:
+    desc: "Test secret values (for debugging - shows actual values)"
     cmds:
-      - kubectl apply -f ClusterSecretStore.yaml
+      - echo "🔍 Testing secret values from Kubernetes secret..."
+      - kubectl config use-context kind-kind
+      - echo "Database URL:"
+      - kubectl get secret microadventures-gcp-secrets -n microadventures -o jsonpath='{.data.DATABASE_URL}' | base64 -d && echo
+      - echo "PostgreSQL User:"
+      - kubectl get secret microadventures-gcp-secrets -n microadventures -o jsonpath='{.data.POSTGRES_USER}' | base64 -d && echo
+      - echo "JWT Secret Key:"
+      - kubectl get secret microadventures-gcp-secrets -n microadventures -o jsonpath='{.data.JWT_SECRET_KEY}' | base64 -d && echo
+      - echo "✅ Secret values test complete!"
 
-  05-apply-external-secret:
-    desc: "Apply the ExternalSecret configuration"
+  cleanup:
+    desc: "Clean up manually created secrets and namespaces (WARNING: Destructive)"
     cmds:
-      - kubectl apply -f ExternalSecret.yaml
+      - echo "🚨 This will remove manually created secrets and namespaces from kind cluster"
+      - kubectl config use-context kind-kind
+      - echo "Deleting microadventures-gcp-secrets..."
+      - kubectl delete secret microadventures-gcp-secrets -n microadventures --ignore-not-found
+      - echo "Deleting microadventures namespace..."
+      - kubectl delete namespace microadventures --ignore-not-found
+      - echo "Deleting external-secrets namespace (if exists)..."
+      - kubectl delete namespace external-secrets --ignore-not-found
+      - echo "Deleting cert-manager namespace (if exists)..."
+      - kubectl delete namespace cert-manager --ignore-not-found
+      - echo "✅ Cleanup complete"
 
-  07-get-secret-value:
-    desc: "Retrieve the secret value from the Kubernetes api"
+  setup-kind-secrets:
+    desc: "Complete setup for kind cluster with GCP secrets (manual approach)"
+    deps: [prerequisites, create-gcp-secrets-manually]
     cmds:
-      - kubectl get secrets external-secrets-example-k8s -o yaml | yq
-      - kubectl get secrets external-secrets-example-k8s -o yaml | yq '.data.key-k8s' | base64 -d
-
-  08-delete-namespace:
-    desc: "Delete the namespace to clean up"
-    cmds:
-      - cmd: gum style "🚨 Deleting the namespace recursively deletes the resources inside of it! 🚨 "
-        silent: true
-      - kubectl delete ns external-secrets
+      - echo "🎉 Kind cluster GCP secrets setup complete!"
+      - echo "✅ Kubernetes secret 'microadventures-gcp-secrets' available in cluster"
+      - task: verify-secrets
