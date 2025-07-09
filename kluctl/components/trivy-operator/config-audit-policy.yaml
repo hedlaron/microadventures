@@ -1,0 +1,38 @@
+apiVersion: aquasecurity.github.io/v1alpha1
+kind: ConfigAuditPolicy
+metadata:
+  name: microadventures-policies
+  namespace: trivy-system
+spec:
+  rules:
+    - id: microadventures-ensure-resources-set
+      name: Ensure all containers have resource limits and requests
+      match:
+        resources: { kinds: ["Deployment", "StatefulSet", "DaemonSet"] }
+      validate:
+        message: "Every container must have resource limits and requests set"
+        pattern:
+          spec:
+            template:
+              spec:
+                containers:
+                  - resources:
+                      limits:
+                        memory: "?*"
+                        cpu: "?*"
+                      requests:
+                        memory: "?*"
+                        cpu: "?*"
+    
+    - id: microadventures-secure-port
+      name: Ensure services don't expose ports unnecessarily
+      match:
+        resources: { kinds: ["Service"] }
+      validate:
+        message: "Services should not expose ports other than standard app ports"
+        deny:
+          conditions:
+            all:
+              - key: "spec.ports[*].port"
+                operator: "equals"
+                value: 22

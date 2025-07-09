@@ -1,0 +1,11 @@
+backend_replicas: 1
+backend_tag: latest
+backend_image_pull_policy: IfNotPresent
+use_self_signed_certs: true
+domain: "local-microadventures.aronhedl.com"
+ingress_host: "local-microadventures.aronhedl.com"
+environment: development
+secret_source: kind
+
+# Trivy Operator configuration
+install_trivy_operator: true

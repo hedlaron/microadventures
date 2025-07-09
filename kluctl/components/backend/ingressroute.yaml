@@ -1,0 +1,19 @@
+apiVersion: traefik.containo.us/v1alpha1
+kind: IngressRoute
+metadata:
+  name: backend
+  namespace: microadventures
+spec:
+  entryPoints:
+    - websecure
+  routes:
+    - kind: Rule
+      match: Host(`{{ args.ingress_host }}`) && PathPrefix(`/backend`)
+      middlewares:
+        - name: strip-api-prefixes
+      services:
+        - kind: Service
+          name: backend
+          port: 8000
+          scheme: http
+  tls: {{ { "secretName": "microadventures-tls-selfsigned" } if args.use_self_signed_certs else { "certResolver": "letsencrypt" } }}

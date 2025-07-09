@@ -1,0 +1,8 @@
+kind: KluctlDeployment
+name: postgresql
+
+resources:
+  - path: postgres-namespace.yaml
+  - path: postgres-values.yaml
+  - path: postgres-helm.yaml
+  - path: db-migrator-job.yaml

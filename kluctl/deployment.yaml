@@ -1,0 +1,24 @@
+kind: Deployment
+name: microadventures
+
+# Ordered list of deployments to process
+deployments:
+  # First set up the namespace
+  - path: components/common
+    tags: [common, namespace]
+  
+  # Database (PostgreSQL)
+  - path: components/postgresql
+    tags: [db, postgresql]
+  
+  # Backend application
+  - path: components/backend
+    tags: [backend]
+  
+  # Frontend application
+  - path: components/frontend
+    tags: [frontend]
+  
+  # Security scanning with Trivy Operator
+  - path: components/trivy-operator
+    tags: [security, trivy]

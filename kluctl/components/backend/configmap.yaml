@@ -1,0 +1,19 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: backend-config
+  namespace: microadventures
+data:
+  # Database connection settings (non-sensitive)
+  POSTGRESQL_SERVER: "{{ 'postgres-postgresql.postgres.svc.cluster.local' }}"
+  POSTGRESQL_PORT: "5432"
+  POSTGRESQL_DATABASE: microadventures
+  
+  # Application configuration
+  PORT: "8000"
+  DOMAIN: "{{ args.domain }}"
+  ENVIRONMENT: "{{ args.environment }}"
+  BACKEND_CORS_ORIGINS: "{{ 'http://localhost:5173,https://' + args.domain if args.environment == 'development' else 'https://' + args.domain }}"
+  
+  # Health check settings
+  HEALTH_CHECK_PATH: "/health"

@@ -1,0 +1,18 @@
+apiVersion: traefik.containo.us/v1alpha1
+kind: IngressRoute
+metadata:
+  name: frontend
+  namespace: microadventures
+spec:
+  entryPoints:
+    - web
+    - websecure
+  routes:
+    - kind: Rule
+      match: Host(`{{ args.domain }}`)
+      services:
+        - kind: Service
+          name: frontend
+          port: 8080
+          scheme: http
+  tls: {}
