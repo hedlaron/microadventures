@@ -1,6 +1,13 @@
 version: '3'
 
 tasks:
+  default:
+    desc: "Show backend deployment tasks"
+    cmds:
+      - echo "Use task backend:taskname to run backend tasks"
+      - echo "Available tasks - deploy, status, logs, restart, describe"
+      - echo "Example - task backend:deploy"
+
   apply-configmap:
     desc: "Apply the backend ConfigMap"
     cmds:
@@ -12,11 +19,22 @@ tasks:
     cmds:
       - kubectl apply -f Deployment.yaml
 
+  apply-service:
+    desc: "Apply the backend Service"
+    cmds:
+      - kubectl apply -f Service.yaml
+
+  apply-ingressroute:
+    desc: "Apply the backend IngressRoute"
+    cmds:
+      - kubectl apply -f IngressRoute.yaml
+
   status:
     desc: "Check backend deployment status"
     cmds:
       - kubectl get deployment backend -n microadventures
       - kubectl get pods -l app=backend -n microadventures
+      - kubectl get svc backend -n microadventures
 
   logs:
     desc: "View backend logs"
@@ -32,10 +50,16 @@ tasks:
     desc: "Restart the backend deployment"
     cmds:
       - kubectl rollout restart deployment/backend -n microadventures
+      - kubectl rollout status deployment/backend -n microadventures
+
+  port-forward:
+    desc: "Port forward backend to localhost:8000"
+    cmds:
+      - kubectl port-forward service/backend 8000:8000 -n microadventures
 
   deploy:
-    desc: "Deploy backend (ConfigMap + Deployment)"
-    deps: [apply-configmap, apply-deployment]
+    desc: "Deploy backend (ConfigMap + Deployment + Service + IngressRoute)"
+    deps: [apply-configmap, apply-deployment, apply-service, apply-ingressroute]
     cmds:
       - echo "Backend deployment complete!"
       - task: status

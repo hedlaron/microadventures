@@ -1,0 +1,14 @@
+version: "3"
+
+tasks:
+  setup:
+    desc: "Complete HTTPS setup for GKE (production)"
+    cmds:
+      - cd .. && task common:gke:setup
+      - echo "GKE setup complete"
+
+  setup-staging:
+    desc: "Complete HTTPS setup for GKE (staging)"
+    cmds:
+      - cd .. && task common:gke:setup-staging
+      - echo "GKE staging setup complete"

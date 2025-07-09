@@ -1,0 +1,8 @@
+version: "3"
+
+tasks:
+  setup:
+    desc: "Complete HTTPS setup for Kind (local development)"
+    cmds:
+      - cd .. && task common:kind:setup
+      - echo "Kind setup complete"
