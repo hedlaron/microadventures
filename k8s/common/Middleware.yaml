@@ -8,3 +8,13 @@ spec:
     forceSlash: false
     prefixes:
       - /backend
+---
+apiVersion: traefik.containo.us/v1alpha1
+kind: Middleware
+metadata:
+  name: redirect-to-https
+  namespace: traefik
+spec:
+  redirectScheme:
+    scheme: https
+    permanent: true

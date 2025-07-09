@@ -1,0 +1,17 @@
+apiVersion: traefik.containo.us/v1alpha1
+kind: IngressRoute
+metadata:
+  name: redirect-main-to-https
+  namespace: microadventures
+spec:
+  entryPoints:
+    - web
+  routes:
+    - match: Host(`microadventures.aronhedl.com`) && !PathPrefix(`/.well-known/acme-challenge`)
+      kind: Rule
+      services:
+        - name: frontend
+          port: 80
+      middlewares:
+        - name: redirect-to-https
+          namespace: traefik

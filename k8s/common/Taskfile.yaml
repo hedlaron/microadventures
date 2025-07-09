@@ -1,6 +1,7 @@
 version: "3"
 
 tasks:
+  # Common infrastructure tasks
   apply-namespace:
     desc: "Apply Kubernetes Namespace"
     cmds:
@@ -17,3 +18,210 @@ tasks:
     desc: "Deploy Traefik middleware"
     cmds:
       - "kubectl apply -f Middleware.yaml"
+
+  deploy-cert-manager:
+    desc: "Deploy Cert-Manager using Helm"
+    cmds:
+      - helm repo add jetstack https://charts.jetstack.io
+      - helm repo update
+      - helm upgrade --install cert-manager jetstack/cert-manager --version v1.12.2 --namespace cert-manager --create-namespace --set installCRDs=true
+      - echo "Waiting for cert-manager to be ready..."
+      - kubectl wait --for=condition=ready pod -l app=cert-manager -n cert-manager --timeout=300s
+      - kubectl wait --for=condition=ready pod -l app=webhook -n cert-manager --timeout=300s
+      - echo "cert-manager is ready!"
+
+  wait-for-cert-manager:
+    desc: "Wait for cert-manager to be ready"
+    cmds:
+      - kubectl wait --for=condition=ready pod -l app=cert-manager -n cert-manager --timeout=300s
+      - kubectl wait --for=condition=ready pod -l app=webhook -n cert-manager --timeout=300s
+      - echo "cert-manager is ready!"
+
+  check-cert-manager:
+    desc: "Check cert-manager readiness"
+    cmds:
+      - echo "=== Cert-Manager Pods ==="
+      - kubectl get pods -n cert-manager
+      - echo "=== Cert-Manager Services ==="
+      - kubectl get services -n cert-manager
+      - echo "=== Cert-Manager Webhooks ==="
+      - kubectl get validatingwebhookconfiguration | grep cert-manager
+      - kubectl get mutatingwebhookconfiguration | grep cert-manager
+
+  restart-cert-manager:
+    desc: "Restart cert-manager components"
+    cmds:
+      - kubectl rollout restart deployment/cert-manager -n cert-manager
+      - kubectl rollout restart deployment/cert-manager-webhook -n cert-manager
+      - kubectl rollout restart deployment/cert-manager-cainjector -n cert-manager
+      - echo "Waiting for cert-manager to be ready after restart..."
+      - kubectl wait --for=condition=ready pod -l app=cert-manager -n cert-manager --timeout=300s
+      - kubectl wait --for=condition=ready pod -l app=webhook -n cert-manager --timeout=300s
+
+  apply-cluster-issuer:
+    desc: "Apply ClusterIssuer for HTTPS certificates"
+    cmds:
+      - kubectl apply -f ClusterIssuer.yaml
+
+  apply:
+    desc: "Apply common resources (namespace, cluster issuer, middleware)"
+    deps:
+      - apply-namespace
+      - apply-cluster-issuer
+      - apply-traefik-middleware
+    cmds:
+      - echo "Common resources applied successfully!"
+
+  # Kind-specific tasks (local development)
+  apply-kind:
+    desc: "Apply Kind-specific resources (self-signed certificates)"
+    deps:
+      - wait-for-cert-manager
+    cmds:
+      - kubectl apply -f kind/Certificate.selfsigned.yaml
+      - kubectl apply -f kind/IngressRoute.selfsigned.yaml
+      - echo "Kind-specific resources applied! Self-signed certificates configured."
+      - echo "Access your app at - https://localhost:8443 (accept the self-signed certificate)"
+
+  setup-kind:
+    desc: "Complete HTTPS setup for Kind (local development)"
+    deps:
+      - deploy-cert-manager
+      - apply
+      - apply-kind
+    cmds:
+      - echo "Kind HTTPS setup complete!"
+      - echo "Your application is ready at - https://localhost:8443"
+      - echo "Note - You'll need to accept the self-signed certificate warning in your browser."
+
+  # GKE-specific tasks (production)
+  apply-gke:
+    desc: "Apply GKE-specific resources (Let's Encrypt certificates)"
+    deps:
+      - wait-for-cert-manager
+    cmds:
+      - kubectl apply -f gke/Certificate.main.prod.yaml
+      - kubectl apply -f gke/IngressRoute.main.prod.yaml
+      - kubectl apply -f gke/IngressRoute.main.redirect.yaml
+      - echo "GKE-specific resources applied! Let's Encrypt certificates configured."
+      - echo "Certificates will be issued automatically by Let's Encrypt."
+
+  apply-gke-staging:
+    desc: "Apply GKE staging resources (Let's Encrypt staging certificates)"
+    deps:
+      - wait-for-cert-manager
+    cmds:
+      - kubectl apply -f gke/Certificate.main.staging.yaml
+      - kubectl apply -f gke/IngressRoute.main.prod.yaml
+      - kubectl apply -f gke/IngressRoute.main.redirect.yaml
+      - echo "GKE staging resources applied! Let's Encrypt staging certificates configured."
+      - echo "Note - Staging certificates will show as untrusted but allow testing."
+
+  setup-gke:
+    desc: "Complete HTTPS setup for GKE (production)"
+    deps:
+      - deploy-cert-manager
+      - apply
+      - apply-gke
+    cmds:
+      - echo "GKE HTTPS setup complete!"
+      - echo "Your certificates are being issued by Let's Encrypt."
+      - echo "Check certificate status with - task check-certs"
+
+  setup-gke-staging:
+    desc: "Complete HTTPS setup for GKE (staging)"
+    deps:
+      - deploy-cert-manager
+      - apply
+      - apply-gke-staging
+    cmds:
+      - echo "GKE staging HTTPS setup complete!"
+      - echo "Staging certificates are being issued by Let's Encrypt."
+      - echo "Check certificate status with - task check-certs"
+
+  # Monitoring and troubleshooting
+  check-certs:
+    desc: "Check the status of certificates"
+    cmds:
+      - echo "=== Certificate Status Check ==="
+      - echo "1. Checking cert-manager status..."
+      - kubectl get pods -n cert-manager -l app=cert-manager
+      - echo "2. Checking ClusterIssuers..."
+      - kubectl get clusterissuers
+      - echo "3. Checking certificates..."
+      - kubectl get certificates -A
+      - echo "4. Certificate details (production)..."
+      - kubectl describe certificate microadventures-cert-main-prod -n microadventures 2>/dev/null || echo "Production certificate not found"
+      - echo "5. Certificate details (staging)..."
+      - kubectl describe certificate microadventures-cert-main-staging -n microadventures 2>/dev/null || echo "Staging certificate not found"
+      - echo "6. Certificate details (self-signed)..."
+      - kubectl describe certificate microadventures-cert-selfsigned -n microadventures 2>/dev/null || echo "Self-signed certificate not found"
+      - echo "7. Checking TLS secrets..."
+      - kubectl get secrets -n microadventures | grep tls || echo "No TLS secrets found"
+      - echo "8. Checking certificate orders..."
+      - kubectl get orders -A
+      - echo "9. Checking certificate requests..."
+      - kubectl get certificaterequests -A
+      - echo "10. Checking ACME challenges..."
+      - kubectl get challenges -A
+
+  troubleshoot-webhook:
+    desc: "Troubleshoot cert-manager webhook issues"
+    cmds:
+      - echo "=== Cert-Manager Webhook Troubleshooting ==="
+      - echo "1. Checking webhook pods..."
+      - kubectl get pods -n cert-manager -l app=webhook
+      - echo "2. Checking webhook logs..."
+      - kubectl logs -n cert-manager -l app=webhook --tail=20
+      - echo "3. Checking webhook service..."
+      - kubectl describe service -n cert-manager cert-manager-webhook
+      - echo "4. Checking webhook configuration..."
+      - kubectl get validatingwebhookconfiguration | grep cert-manager
+      - echo "5. Verifying webhook connectivity..."
+      - kubectl exec -it $(kubectl get pod -l app=cert-manager -n cert-manager -o jsonpath="{.items[0].metadata.name}") -n cert-manager -- wget -T 5 -qO- https://cert-manager-webhook.cert-manager.svc:443/mutate --no-check-certificate || echo "Connection to webhook failed"
+      - echo "=== Current webhook readiness ==="
+      - kubectl get pods -n cert-manager -l app=webhook -o jsonpath='{.items[0].status.conditions[?(@.type=="Ready")].status}' 2>/dev/null || echo "Webhook pod not found"
+
+  status:
+    desc: "Check overall status of HTTPS setup"
+    cmds:
+      - echo "=== Traefik Status ==="
+      - kubectl get pods -n traefik
+      - echo "=== Cert-Manager Status ==="
+      - kubectl get pods -n cert-manager
+      - echo "=== Certificates ==="
+      - kubectl get certificates -n microadventures
+      - echo "=== TLS Secrets ==="
+      - kubectl get secrets -n microadventures | grep tls || echo "No TLS secrets found"
+      - echo "=== IngressRoutes ==="
+      - kubectl get ingressroutes -n microadventures
+
+  logs-cert-manager:
+    desc: "Show cert-manager logs"
+    cmds:
+      - kubectl logs -n cert-manager -l app=cert-manager --tail=50
+
+  test-certificate:
+    desc: "Test certificate with openssl (requires domain to be accessible)"
+    cmds:
+      - echo "Testing certificate for microadventures.aronhedl.com..."
+      - openssl s_client -connect microadventures.aronhedl.com:443 -servername microadventures.aronhedl.com -showcerts </dev/null 2>/dev/null | openssl x509 -noout -text | grep -E "(Subject|Issuer|Not Before|Not After)"
+
+  # Legacy tasks (deprecated - kept for compatibility)
+  setup-https:
+    desc: "DEPRECATED: Use 'task setup-gke' instead"
+    cmds:
+      - echo "This task is deprecated. Use 'task setup-gke' for production or 'task setup-kind' for local development."
+      - task setup-gke
+
+  setup-https-staging:
+    desc: "DEPRECATED: Use 'task setup-gke-staging' instead"
+    cmds:
+      - echo "This task is deprecated. Use 'task setup-gke-staging' for staging setup."
+      - task setup-gke-staging
+
+  setup-https-local:
+    desc: "DEPRECATED: Use 'task setup-kind' instead"
+    cmds:
+      - echo "This task is deprecated. Use 'task setup-kind' for local development."
+      - task setup-kind
