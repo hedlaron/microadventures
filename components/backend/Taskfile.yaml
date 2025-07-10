@@ -2,7 +2,7 @@ version: "3"
 
 vars:
   IMAGE_REPO: hedlaron/microadventures-backend
-  IMAGE_TAG: foobarbaz
+  IMAGE_TAG: latest
 
 tasks:
   build-container-image:

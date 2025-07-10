@@ -6,7 +6,7 @@ targets:
       backend_tag: latest
       backend_image_pull_policy: IfNotPresent
       frontend_replicas: 1
-      frontend_tag: v1.3
+      frontend_tag: latest
       frontend_image_pull_policy: IfNotPresent
       use_self_signed_certs: true
       domain: "local-microadventures.aronhedl.com"
@@ -23,5 +23,20 @@ targets:
   - name: gcp
     context: gke_microadventures_europe-west3-a_microadventures
     args:
-      $defaults:
-        - values/gcp.yaml
+      backend_replicas: 2
+      backend_tag: latest
+      backend_image_pull_policy: Always
+      frontend_replicas: 2
+      frontend_tag: latest
+      frontend_image_pull_policy: Always
+      use_self_signed_certs: false
+      domain: "microadventures.aronhedl.com"
+      ingress_host: "microadventures.aronhedl.com"
+      environment: production
+      environmentType: prod
+      secret_source: gcp
+      postgres_storage_class: "standard-rwo"
+      postgres_metrics_enabled: true
+      postgres_secret_name: "microadventures-gcp-secrets"
+      email: "dev-hedlaron@gmail.com"
+      install_trivy_operator: true

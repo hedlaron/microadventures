@@ -371,3 +371,122 @@ tasks:
       - task: setup-https-ingress-kind
       - |
         echo "Complete deployment finished! Access your app at: https://local-microadventures.aronhedl.com/"
+
+  # GCP-specific tasks
+  cleanup:gcp:
+    desc: "Clean up all resources in GCP cluster"
+    cmds:
+      - |
+        echo "Cleaning up GCP cluster resources..."
+        kubectl delete namespace microadventures --ignore-not-found=true
+        kubectl delete namespace postgres --ignore-not-found=true
+        kubectl delete namespace cert-manager --ignore-not-found=true
+        kubectl delete namespace traefik --ignore-not-found=true
+        kubectl delete namespace trivy-system --ignore-not-found=true
+        
+        echo "Waiting for namespaces to be fully deleted..."
+        kubectl wait --for=delete namespace/microadventures --timeout=120s || true
+        kubectl wait --for=delete namespace/postgres --timeout=120s || true
+        kubectl wait --for=delete namespace/cert-manager --timeout=120s || true
+        kubectl wait --for=delete namespace/traefik --timeout=120s || true
+        kubectl wait --for=delete namespace/trivy-system --timeout=120s || true
+        
+        echo "GCP cleanup completed!"
+
+  setup-infrastructure:gcp:
+    desc: "Setup infrastructure for GCP deployment (cert-manager, traefik)"
+    cmds:
+      - |
+        echo "Setting up infrastructure for GCP deployment..."
+        
+        # Install cert-manager
+        echo "Installing cert-manager..."
+        kubectl apply -f https://github.com/cert-manager/cert-manager/releases/download/v1.16.1/cert-manager.yaml
+        
+        # Wait for cert-manager to be ready
+        echo "Waiting for cert-manager to be ready..."
+        kubectl wait --for=condition=ready pod -l app=cert-manager -n cert-manager --timeout=300s
+        kubectl wait --for=condition=ready pod -l app=cainjector -n cert-manager --timeout=300s
+        kubectl wait --for=condition=ready pod -l app=webhook -n cert-manager --timeout=300s
+        
+        # Install Traefik with correct port configuration
+        echo "Installing Traefik..."
+        helm repo add traefik https://helm.traefik.io/traefik
+        helm repo update
+        helm upgrade --install traefik traefik/traefik \
+          --namespace traefik \
+          --create-namespace \
+          --set service.type=LoadBalancer \
+          --set ports.web.port=8000 \
+          --set ports.web.exposedPort=80 \
+          --set ports.websecure.port=8443 \
+          --set ports.websecure.exposedPort=443 \
+          --set providers.kubernetesIngress.enabled=true \
+          --set providers.kubernetesCRD.enabled=true \
+          --set globalArguments="--log.level=INFO" \
+          --timeout=120s
+        
+        echo "Traefik installation initiated. Checking status..."
+        kubectl get pods -n traefik
+        echo "Infrastructure setup completed!"
+
+  setup-secrets:gcp:
+    desc: "Setup secrets for GCP cluster from GCP Secret Manager"
+    cmds:
+      - kubectl create namespace microadventures --dry-run=client -o yaml | kubectl apply -f -
+      - kubectl create namespace postgres --dry-run=client -o yaml | kubectl apply -f -
+      - |
+        echo "Retrieving secrets from GCP Secret Manager..."
+        DATABASE_URL=$(gcloud secrets versions access latest --secret="database-url" --format="get(payload.data)" | base64 -d)
+        JWT_SECRET_KEY=$(gcloud secrets versions access latest --secret="jwt-secret-key" --format="get(payload.data)" | base64 -d)
+        OPENAI_API_KEY=$(gcloud secrets versions access latest --secret="openai-api-key" --format="get(payload.data)" | base64 -d)
+        POSTGRESQL_USER=$(gcloud secrets versions access latest --secret="postgresql-user" --format="get(payload.data)" | base64 -d)
+        POSTGRESQL_PASSWORD=$(gcloud secrets versions access latest --secret="postgresql-password" --format="get(payload.data)" | base64 -d)
+        
+        echo "Creating Kubernetes secret in microadventures namespace..."
+        kubectl create secret generic microadventures-gcp-secrets \
+          --namespace=microadventures \
+          --from-literal=DATABASE_URL="$DATABASE_URL" \
+          --from-literal=JWT_SECRET_KEY="$JWT_SECRET_KEY" \
+          --from-literal=OPENAI_API_KEY="$OPENAI_API_KEY" \
+          --from-literal=POSTGRES_USER="$POSTGRESQL_USER" \
+          --from-literal=POSTGRES_PASSWORD="$POSTGRESQL_PASSWORD" \
+          --dry-run=client -o yaml | kubectl apply -f -
+        
+        echo "Creating Kubernetes secret in postgres namespace..."
+        kubectl create secret generic microadventures-gcp-secrets \
+          --namespace=postgres \
+          --from-literal=DATABASE_URL="$DATABASE_URL" \
+          --from-literal=JWT_SECRET_KEY="$JWT_SECRET_KEY" \
+          --from-literal=OPENAI_API_KEY="$OPENAI_API_KEY" \
+          --from-literal=postgresql-user="$POSTGRESQL_USER" \
+          --from-literal=postgresql-password="$POSTGRESQL_PASSWORD" \
+          --dry-run=client -o yaml | kubectl apply -f -
+        
+        echo "Secrets setup completed successfully in both namespaces!"
+
+  deploy-complete:gcp:
+    desc: "Complete one-command deployment to GCP with all infrastructure"
+    cmds:
+      - |
+        if [ -z "$DOCKER_USERNAME" ] || [ -z "$DOCKER_EMAIL" ] || [ -z "$DOCKER_PASSWORD" ]; then
+          echo "Environment variables DOCKER_USERNAME, DOCKER_EMAIL, and DOCKER_PASSWORD are required."
+          echo "Usage: DOCKER_USERNAME=your_username DOCKER_EMAIL=your_email DOCKER_PASSWORD=your_password task deploy-complete:gcp"
+          exit 1
+        fi
+      - task: setup-infrastructure:gcp
+      - task: setup-secrets:gcp
+      - task: create-image-pull-secret
+      - task: deploy:gcp
+      - |
+        echo "Complete GCP deployment finished!"
+        echo ""
+        echo "Getting external IP address..."
+        EXTERNAL_IP=$(kubectl get service traefik -n traefik -o jsonpath='{.status.loadBalancer.ingress[0].ip}')
+        if [ -n "$EXTERNAL_IP" ]; then
+          echo "Traefik LoadBalancer IP: $EXTERNAL_IP"
+          echo "Please update your DNS to point microadventures.aronhedl.com to $EXTERNAL_IP"
+          echo "Then access your app at: https://microadventures.aronhedl.com/"
+        else
+          echo "Waiting for LoadBalancer IP to be assigned..."
+        fi

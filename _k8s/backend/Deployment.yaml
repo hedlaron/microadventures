@@ -17,7 +17,7 @@ spec:
     spec:
       containers:
         - name: backend
-          image: hedlaron/microadventures-backend:foobarbaz
+          image: hedlaron/microadventures-backend:latest
           imagePullPolicy: Always
           env:
             # Application configuration (from backend ConfigMap)

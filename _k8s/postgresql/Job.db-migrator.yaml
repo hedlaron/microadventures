@@ -8,7 +8,7 @@ spec:
     spec:
       containers:
         - name: migrate
-          image: hedlaron/microadventures-backend:foobarbaz
+          image: hedlaron/microadventures-backend:latest
           imagePullPolicy: Always
           command: ["uv", "run", "alembic", "upgrade", "heads"]
           env:
