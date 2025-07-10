@@ -1,0 +1,61 @@
+# PostgreSQL Helm Chart Values for Microadventures
+# https://github.com/bitnami/charts/tree/main/bitnami/postgresql
+
+## PostgreSQL Primary configuration
+primary:
+  name: primary
+  
+  ## Resource limits and requests
+  resources:
+    limits:
+      ephemeral-storage: 1Gi
+      memory: 500Mi
+      cpu: 500m
+    requests:
+      cpu: 100m
+      ephemeral-storage: 50Mi
+      memory: 128Mi
+  
+  ## Persistence configuration
+  persistence:
+    enabled: true
+    size: 2Gi
+    storageClass: "{{ args.postgres_storage_class }}"
+    accessModes:
+      - ReadWriteOnce
+  
+  ## Service configuration
+  service:
+    type: ClusterIP
+    ports:
+      postgresql: 5432
+
+## Architecture (standalone for development)
+architecture: standalone
+
+## Authentication configuration
+auth:
+  enablePostgresUser: true
+  database: "microadventures"
+  username: "postgres"
+  # Use existing secret instead of hardcoded values
+  existingSecret: "{{ args.postgres_secret_name }}"
+  secretKeys:
+    adminPasswordKey: "postgresql-password"
+    userPasswordKey: "postgresql-password"
+    replicationPasswordKey: "postgresql-password"
+
+## Metrics configuration 
+metrics:
+  enabled: {{ args.postgres_metrics_enabled }}
+
+## Init database configuration
+initdb:
+  scripts:
+    init.sql: |
+      -- Initialize microadventures database
+      CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
+      CREATE EXTENSION IF NOT EXISTS "postgis";
+      
+      -- Grant permissions
+      GRANT ALL PRIVILEGES ON DATABASE microadventures TO postgres;

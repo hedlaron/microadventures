@@ -3,10 +3,10 @@ targets:
     context: kind-kind # Use your actual kind context name here
     args:
       $defaults:
-        - values/kind.yaml
+        - k8s/values/kind.yaml
 
   - name: gcp
-    context: gcp_cluster_context # Replace with your actual GCP cluster context
+    context: gke_microadventures_europe-west3-a_microadventures # Replace with your actual GCP cluster context
     args:
       $defaults:
-        - values/gcp.yaml
+        - k8s/values/gcp.yaml

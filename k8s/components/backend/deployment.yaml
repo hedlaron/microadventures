@@ -1,0 +1,91 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: backend
+  namespace: microadventures
+  labels:
+    app: backend
+spec:
+  replicas: {{ args.backend_replicas | default(1) }}
+  selector:
+    matchLabels:
+      app: backend
+  template:
+    metadata:
+      labels:
+        app: backend
+    spec:
+      containers:
+        - name: backend
+          image: hedlaron/microadventures-backend:{{ args.backend_tag | default("latest") }}
+          imagePullPolicy: {{ args.backend_image_pull_policy | default("Always") }}
+          env:
+            # Application configuration (from backend ConfigMap)
+            - name: PORT
+              valueFrom:
+                configMapKeyRef:
+                  name: backend-config
+                  key: PORT
+            - name: DOMAIN
+              valueFrom:
+                configMapKeyRef:
+                  name: backend-config
+                  key: DOMAIN
+            - name: ENVIRONMENT
+              valueFrom:
+                configMapKeyRef:
+                  name: backend-config
+                  key: ENVIRONMENT
+            - name: BACKEND_CORS_ORIGINS
+              valueFrom:
+                configMapKeyRef:
+                  name: backend-config
+                  key: BACKEND_CORS_ORIGINS
+            # PostgreSQL connection (environment-specific secrets)
+            - name: POSTGRESQL_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: microadventures-{{ args.secret_source | default("kind") }}-secrets
+                  key: POSTGRES_USER
+            - name: POSTGRESQL_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: microadventures-{{ args.secret_source | default("kind") }}-secrets
+                  key: POSTGRES_PASSWORD
+            - name: POSTGRESQL_SERVER
+              valueFrom:
+                configMapKeyRef:
+                  name: backend-config
+                  key: POSTGRESQL_SERVER
+            - name: POSTGRESQL_PORT
+              valueFrom:
+                configMapKeyRef:
+                  name: backend-config
+                  key: POSTGRESQL_PORT
+            - name: POSTGRESQL_DATABASE
+              valueFrom:
+                configMapKeyRef:
+                  name: backend-config
+                  key: POSTGRESQL_DATABASE
+            # Application secrets (from GCP secrets)
+            - name: JWT_SECRET_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: microadventures-{{ args.secret_source | default("kind") }}-secrets
+                  key: JWT_SECRET_KEY
+            - name: OPENAI_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: microadventures-{{ args.secret_source | default("kind") }}-secrets
+                  key: OPENAI_API_KEY
+          ports:
+            - containerPort: 8000
+              protocol: TCP
+          resources:
+            limits:
+              memory: 500Mi
+            requests:
+              cpu: 100m
+              memory: 200Mi
+      imagePullSecrets:
+        - name: dockerconfigjson

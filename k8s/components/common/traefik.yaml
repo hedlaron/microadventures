@@ -1,0 +1,26 @@
+apiVersion: kluctl.io/v1beta1
+kind: HelmChart
+metadata:
+  name: traefik
+  namespace: traefik
+spec:
+  repo: https://helm.traefik.io/traefik
+  chart: traefik
+  version: 25.0.0  # Update version as needed
+  releaseName: traefik
+  createNamespace: true
+  values:
+    ingressRoute:
+      dashboard:
+        enabled: false
+    providers:
+      kubernetesIngress:
+        enabled: true
+      kubernetesCRD:
+        enabled: true
+    ports:
+      web:
+        redirectTo: websecure
+      websecure:
+        tls:
+          enabled: true

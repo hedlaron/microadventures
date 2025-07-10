@@ -1,0 +1,48 @@
+apiVersion: kluctl.io/v1beta1
+kind: HelmChart
+metadata:
+  name: trivy-operator
+  namespace: trivy-system
+spec:
+  repo: https://aquasecurity.github.io/helm-charts
+  chart: trivy-operator
+  version: 0.18.3  # Update to the latest version as needed
+  releaseName: trivy-operator
+  createNamespace: true
+  values:
+    trivy:
+      ignoreUnfixed: true
+      severity: "CRITICAL,HIGH"
+      timeout: "10m0s"
+    
+    # Resource settings
+    resources:
+      requests:
+        cpu: "100m"
+        memory: "100Mi"
+      limits:
+        cpu: "500m"
+        memory: "500Mi"
+    
+    # Operator configuration
+    operator:
+      replicas: 1
+      scanner:
+        aqua:
+          enabled: false
+      
+      # Which resources to scan
+      scanJobTTL: "24h"
+      scanJobsConcurrentLimit: 10
+      vulnerabilityScannerEnabled: true
+      configAuditScannerEnabled: true
+      exposedSecretScannerEnabled: true
+      rbacAssessmentScannerEnabled: true
+      
+      # Webhook settings
+      webhook:
+        enabled: false
+    
+    # Configure metrics
+    metrics:
+      enabled: true

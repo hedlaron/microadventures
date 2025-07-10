@@ -10,6 +10,7 @@ ingress_host: "local-microadventures.aronhedl.com"
 environment: local
 environmentType: non-prod
 secret_source: kind
+deployment_timestamp: "{{ now | date '20060102-150405' }}"
 postgres_storage_class: "standard"
 
 # Trivy Operator configuration

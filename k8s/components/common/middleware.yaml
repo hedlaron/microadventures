@@ -1,0 +1,20 @@
+apiVersion: traefik.io/v1alpha1
+kind: Middleware
+metadata:
+  name: strip-api-prefixes
+  namespace: microadventures
+spec:
+  stripPrefix:
+    prefixes:
+      - /backend
+    forceSlash: false
+---
+apiVersion: traefik.io/v1alpha1
+kind: Middleware
+metadata:
+  name: https-redirect
+  namespace: microadventures
+spec:
+  redirectScheme:
+    scheme: https
+    permanent: true
