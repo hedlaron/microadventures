@@ -1,0 +1,49 @@
+# Kluctl generated files
+helm-rendered.yaml
+**/helm-rendered.yaml
+
+# Helm chart cache
+.helm-charts/
+**/.helm-charts/
+
+# Kluctl cache and temporary files
+.kluctl-cache/
+**/.kluctl-cache/
+.kluctl/
+**/.kluctl/
+
+# Kustomize build output
+kustomization-*.yaml
+
+# Temporary files
+*.tmp
+*.temp
+.DS_Store
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS generated files
+Thumbs.db
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+
+# Logs
+*.log
+
+# Runtime secrets (if any get written to files)
+secrets.yaml
+secret-*.yaml
+*-secrets.yaml
+
+# Backup files
+*.bak
+*.backup

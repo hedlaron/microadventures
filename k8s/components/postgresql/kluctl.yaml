@@ -3,6 +3,6 @@ name: postgresql
 
 resources:
   - path: postgres-namespace.yaml
-  - path: postgres-values.yaml
-  - path: postgres-helm.yaml
+  - path: helm-values.yaml
+  - path: helm-chart.yaml
   - path: db-migrator-job.yaml
