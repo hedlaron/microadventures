@@ -6,6 +6,6 @@ resources:
   - path: deployment.yaml
   - path: service.yaml
   - path: ingressroute-selfsigned.yaml
-    when: args.use_self_signed_certs == true
+    when: use_self_signed_certs == true
   - path: ingressroute-letsencrypt.yaml
-    when: args.use_self_signed_certs == false
+    when: use_self_signed_certs == false

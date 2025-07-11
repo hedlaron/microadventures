@@ -9,7 +9,7 @@ spec:
     - websecure
   routes:
     - kind: Rule
-      match: Host(`{{ args.domain }}`) && !PathPrefix(`/api`)
+      match: Host(`{{ domain }}`) && !PathPrefix(`/api`)
       priority: 1
       services:
         - kind: Service

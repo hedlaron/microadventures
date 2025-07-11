@@ -6,7 +6,7 @@ metadata:
   labels:
     app: backend
 spec:
-  replicas: {{ args.backend_replicas | default(1) }}
+  replicas: {{ backend_replicas | default(1) }}
   selector:
     matchLabels:
       app: backend
@@ -17,8 +17,8 @@ spec:
     spec:
       containers:
         - name: backend
-          image: hedlaron/microadventures-backend:{{ args.backend_tag | default("latest") }}
-          imagePullPolicy: {{ args.backend_image_pull_policy | default("Always") }}
+          image: hedlaron/microadventures-backend:{{ backend_tag | default("latest") }}
+          imagePullPolicy: {{ backend_image_pull_policy | default("Always") }}
           env:
             # Application configuration (from backend ConfigMap)
             - name: PORT
@@ -45,12 +45,12 @@ spec:
             - name: POSTGRESQL_USERNAME
               valueFrom:
                 secretKeyRef:
-                  name: microadventures-{{ args.secret_source | default("kind") }}-secrets
+                  name: microadventures-{{ secret_source | default("kind") }}-secrets
                   key: POSTGRES_USER
             - name: POSTGRESQL_PASSWORD
               valueFrom:
                 secretKeyRef:
-                  name: microadventures-{{ args.secret_source | default("kind") }}-secrets
+                  name: microadventures-{{ secret_source | default("kind") }}-secrets
                   key: POSTGRES_PASSWORD
             - name: POSTGRESQL_SERVER
               valueFrom:
@@ -71,12 +71,12 @@ spec:
             - name: JWT_SECRET_KEY
               valueFrom:
                 secretKeyRef:
-                  name: microadventures-{{ args.secret_source | default("kind") }}-secrets
+                  name: microadventures-{{ secret_source | default("kind") }}-secrets
                   key: JWT_SECRET_KEY
             - name: OPENAI_API_KEY
               valueFrom:
                 secretKeyRef:
-                  name: microadventures-{{ args.secret_source | default("kind") }}-secrets
+                  name: microadventures-{{ secret_source | default("kind") }}-secrets
                   key: OPENAI_API_KEY
           ports:
             - containerPort: 8000

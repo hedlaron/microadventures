@@ -8,7 +8,7 @@ spec:
     - websecure
   routes:
     - kind: Rule
-      match: Host(`{{ args.ingress_host }}`) && PathPrefix(`/api`)
+      match: Host(`{{ ingress_host }}`) && PathPrefix(`/api`)
       priority: 10
       middlewares:
         - name: strip-api-prefixes

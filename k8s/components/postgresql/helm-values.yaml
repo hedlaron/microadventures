@@ -20,7 +20,7 @@ primary:
   persistence:
     enabled: true
     size: 2Gi
-    storageClass: "{{ args.postgres_storage_class }}"
+    storageClass: "{{ postgres_storage_class }}"
     accessModes:
       - ReadWriteOnce
   
@@ -39,7 +39,7 @@ auth:
   database: "microadventures"
   username: "postgres"
   # Use existing secret instead of hardcoded values
-  existingSecret: "{{ args.postgres_secret_name }}"
+  existingSecret: "{{ postgres_secret_name }}"
   secretKeys:
     adminPasswordKey: "postgresql-password"
     userPasswordKey: "postgresql-password"
@@ -47,7 +47,7 @@ auth:
 
 ## Metrics configuration 
 metrics:
-  enabled: {{ args.postgres_metrics_enabled }}
+  enabled: {{ postgres_metrics_enabled }}
 
 ## Init database configuration
 initdb:

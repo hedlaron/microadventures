@@ -11,9 +11,9 @@ data:
   
   # Application configuration
   PORT: "8000"
-  DOMAIN: "{{ args.domain }}"
-  ENVIRONMENT: "{{ args.environment }}"
-  BACKEND_CORS_ORIGINS: "{{ 'http://localhost:5173,https://' + args.domain if args.environment == 'development' else 'https://' + args.domain }}"
+  DOMAIN: "{{ domain }}"
+  ENVIRONMENT: "{{ environment }}"
+  BACKEND_CORS_ORIGINS: "{{ 'http://localhost:5173,https://' + domain if environment == 'development' else 'https://' + domain }}"
   
   # Health check settings
   HEALTH_CHECK_PATH: "/health"

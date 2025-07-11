@@ -8,7 +8,7 @@ spec:
     - websecure
   routes:
     - kind: Rule
-      match: Host(`{{ args.ingress_host }}`)
+      match: Host(`{{ ingress_host }}`)
       services:
         - kind: Service
           name: frontend

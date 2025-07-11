@@ -6,90 +6,99 @@ tasks:
     desc: "Show usage information"
     cmds:
       - |
-        gum style --border {{.BORDER}} --border-foreground {{.BORDER_FOREGROUND}} --padding "{{.PADDING}}" --margin "{{.MARGIN}}" "$(cat <<EOF
-        🚀 Microadventures Kluctl Tasks
+        cat << EOF
+        🚀 Microadventures Kluctl Deployment
 
-        Usage: task [namespace]:[task]
+        📦 Helm Charts Management:
+        - helm-pull            # Pull all Helm charts (automatically runs before deployments)
 
         🏗️  Main deployment tasks:
-        - deploy-complete      # 🎯 ONE-COMMAND COMPLETE DEPLOYMENT (recommended)
-        - deploy:kind          # Deploy to local Kind cluster (infrastructure must exist)
-        - deploy:gcp           # Deploy to GCP cluster
+        - deploy:local         # Deploy to local Kind cluster
+        - deploy:production    # Deploy to GCP production cluster
+        - diff:local           # Show diff for local deployment
+        - diff:production      # Show diff for production deployment
+        - render:local         # Render manifests for local deployment
+        - render:production    # Render manifests for production deployment
+
+        🔧 Utility tasks:
+        - validate:config      # Validate the Kluctl configuration
         - status               # Check status of deployments
-        - diff:kind            # Show diff for kind deployment
-        - diff:gcp             # Show diff for GCP deployment
-
-        🏭 Infrastructure Setup:
-        - setup-infrastructure # Install Traefik + cert-manager
-        - setup-traefik        # Install Traefik ingress controller only
-        - setup-cert-manager   # Install cert-manager only
-
-        🔐 HTTPS Setup for Local Development:
-        1. task setup-cluster-issuer-kind  # Create cluster issuers (self-signed)
-        2. task setup-certificates-kind    # Create self-signed certificates
-        3. task setup-https-ingress-kind   # Create HTTPS routes and redirects
         
         📊 Component tasks:
         - logs:backend         # View backend logs
         - logs:frontend        # View frontend logs
-        - port-forward:backend # Port forward backend service
-        - port-forward:frontend # Port forward frontend service
+        - logs:postgres        # View postgres logs
         - restart:backend      # Restart backend deployment
         - restart:frontend     # Restart frontend deployment
 
-        🔧 Utility tasks:
-        - validate:config      # Validate the Kluctl configuration
-        - render:kind          # Render manifests for kind
-        - render:gcp           # Render manifests for GCP
-        - check-certs          # Check certificate status
-        
         🔒 Security tasks:
         - security:scan        # View Trivy security scan results
 
-        💡 Quick Start for Local Development with HTTPS:
-        DOCKER_USERNAME=user DOCKER_EMAIL=email DOCKER_PASSWORD=pass task deploy-complete
-
-        Then access: https://local-microadventures.aronhedl.com/
-
+        💡 Usage Examples:
+        - task deploy:local           # Deploy to local Kind
+        - task deploy:production      # Deploy to GCP
+        - task logs:backend           # View backend logs
+        
         Run 'task --list' to see all available tasks
         EOF
-        )"
+
+  # Helm charts management
+  helm-pull:
+    desc: "Pull all Helm charts used by kluctl"
+    cmds:
+      - echo "🔄 Pulling Helm charts..."
+      - kluctl helm-pull
 
   # Deployment tasks
-  deploy:kind:
+  deploy:local:
     desc: "Deploy to local Kind cluster"
+    deps: [helm-pull]
     cmds:
-      - kluctl deploy -t kind
+      - echo "🚀 Deploying to local Kind environment..."
+      - kluctl deploy -t local
 
-  deploy:gcp:
-    desc: "Deploy to GCP cluster"
+  deploy:production:
+    desc: "Deploy to GCP production cluster"
+    deps: [helm-pull]
     cmds:
-      - kluctl deploy -t gcp
+      - echo "🚀 Deploying to production GCP environment..."
+      - kluctl deploy -t production
 
-  diff:kind:
-    desc: "Show diff for kind deployment"
+  # Diff tasks
+  diff:local:
+    desc: "Show diff for local deployment"
+    deps: [helm-pull]
     cmds:
-      - kluctl diff -t kind
+      - kluctl diff -t local
 
-  diff:gcp:
-    desc: "Show diff for GCP deployment"
+  diff:production:
+    desc: "Show diff for production deployment"
+    deps: [helm-pull]
     cmds:
-      - kluctl diff -t gcp
+      - kluctl diff -t production
 
-  render:kind:
-    desc: "Render manifests for kind deployment"
+  # Render tasks
+  render:local:
+    desc: "Render manifests for local deployment"
+    deps: [helm-pull]
     cmds:
-      - kluctl render -t kind
+      - kluctl render -t local
 
-  render:gcp:
-    desc: "Render manifests for GCP deployment"
+  render:production:
+    desc: "Render manifests for production deployment"
+    deps: [helm-pull]
     cmds:
-      - kluctl render -t gcp
+      - kluctl render -t production
 
-  validate:config:
+  validate:config:local:
     desc: "Validate the Kluctl configuration"
     cmds:
-      - kluctl validate
+      - kluctl validate -t local
+
+  validate:config:production:
+    desc: "Validate the Kluctl configuration"
+    cmds:
+      - kluctl validate -t production
 
   # Status tasks
   status:
@@ -100,16 +109,21 @@ tasks:
       - kubectl get pods -n postgres
       - kubectl get pods -n trivy-system
 
-  # Backend tasks
+  # Component tasks
   logs:backend:
     desc: "View backend logs"
     cmds:
       - kubectl logs -l app=backend -n microadventures --tail=50 -f
 
-  describe:backend:
-    desc: "Describe backend deployment"
+  logs:frontend:
+    desc: "View frontend logs"
     cmds:
-      - kubectl describe deployment backend -n microadventures
+      - kubectl logs -l app=frontend -n microadventures --tail=50 -f
+
+  logs:postgres:
+    desc: "View postgres logs"
+    cmds:
+      - kubectl logs -l app=postgres-postgresql -n postgres --tail=50 -f
 
   restart:backend:
     desc: "Restart the backend deployment"
@@ -117,376 +131,25 @@ tasks:
       - kubectl rollout restart deployment/backend -n microadventures
       - kubectl rollout status deployment/backend -n microadventures
 
-  port-forward:backend:
-    desc: "Port forward backend to localhost:8000"
-    cmds:
-      - kubectl port-forward service/backend 8000:8000 -n microadventures
-
-  # Frontend tasks
-  logs:frontend:
-    desc: "View frontend logs"
-    cmds:
-      - kubectl logs -l app=frontend -n microadventures --tail=50 -f
-
-  describe:frontend:
-    desc: "Describe frontend deployment"
-    cmds:
-      - kubectl describe deployment frontend -n microadventures
-
   restart:frontend:
     desc: "Restart the frontend deployment"
     cmds:
       - kubectl rollout restart deployment/frontend -n microadventures
       - kubectl rollout status deployment/frontend -n microadventures
 
-  port-forward:frontend:
-    desc: "Port forward frontend to localhost:3000"
-    cmds:
-      - kubectl port-forward service/frontend 3000:8080 -n microadventures
-
-  # Database tasks
-  logs:postgres:
-    desc: "View postgres logs"
-    cmds:
-      - kubectl logs -l app=postgres-postgresql -n postgres --tail=50 -f
-
-  port-forward:postgres:
-    desc: "Port forward PostgreSQL to localhost:5432"
-    cmds:
-      - kubectl port-forward service/postgres-postgresql 5432:5432 -n postgres
-
-  # Registry management
-  create-image-pull-secret:
-    desc: "Create image pull secret to pull from private registry"
-    cmds:
-      - |
-        if [ -z "$DOCKER_USERNAME" ] || [ -z "$DOCKER_EMAIL" ] || [ -z "$DOCKER_PASSWORD" ]; then
-          echo "Environment variables DOCKER_USERNAME, DOCKER_EMAIL, and DOCKER_PASSWORD are required."
-          echo "Usage: DOCKER_USERNAME=your_username DOCKER_EMAIL=your_email DOCKER_PASSWORD=your_password task create-image-pull-secret"
-          exit 1
-        fi
-      - kubectl create namespace microadventures --dry-run=client -o yaml | kubectl apply -f -
-      - kubens microadventures || echo "Namespace microadventures already exists, continuing..."
-      - |
-        kubectl create secret -n microadventures docker-registry dockerconfigjson \
-          --docker-email=${DOCKER_EMAIL} \
-          --docker-username=${DOCKER_USERNAME} \
-          --docker-password=${DOCKER_PASSWORD} \
-          --docker-server=https://index.docker.io/v1/ \
-          --dry-run=client -o yaml | kubectl apply -f -
-        echo "Docker registry secret created successfully!"
-
   # Security tasks
   security:scan:
     desc: "View Trivy security scan results"
     cmds:
-      - |
-        gum style --border {{.BORDER}} --border-foreground {{.BORDER_FOREGROUND}} --padding "{{.PADDING}}" --margin "{{.MARGIN}}" "$(cat <<EOF
-        🔐 Trivy Security Scan Results
-
-        Vulnerability Reports:
-        EOF
-        )"
+      - echo "🔐 Trivy Security Scan Results"
+      - echo "Vulnerability Reports:"
       - kubectl get vulnerabilityreport -A
-      - |
-        gum style --border {{.BORDER}} --border-foreground {{.BORDER_FOREGROUND}} --padding "{{.PADDING}}" --margin "{{.MARGIN}}" "$(cat <<EOF
-        
-        Configuration Audit Reports:
-        EOF
-        )"
+      - echo ""
+      - echo "Configuration Audit Reports:"
       - kubectl get configauditreport -A
-      - |
-        gum style --border {{.BORDER}} --border-foreground {{.BORDER_FOREGROUND}} --padding "{{.PADDING}}" --margin "{{.MARGIN}}" "$(cat <<EOF
-        
-        RBAC Assessment Reports:
-        EOF
-        )"
+      - echo ""
+      - echo "RBAC Assessment Reports:"
       - kubectl get rbacassessmentreport -A
-      - |
-        gum style --border {{.BORDER}} --border-foreground {{.BORDER_FOREGROUND}} --padding "{{.PADDING}}" --margin "{{.MARGIN}}" "$(cat <<EOF
-        
-        Exposed Secrets Reports:
-        EOF
-        )"
+      - echo ""
+      - echo "Exposed Secrets Reports:"
       - kubectl get exposedsecretreport -A
-
-  security:detail:
-    desc: "Get detailed information about a vulnerability report"
-    interactive: true
-
-  # Full stack deployment
-  full-stack-deploy:
-    desc: "Complete deployment with all infrastructure and ingress"
-    cmds:
-      - |
-        if [ -z "$DOCKER_USERNAME" ] || [ -z "$DOCKER_EMAIL" ] || [ -z "$DOCKER_PASSWORD" ]; then
-          echo "Environment variables DOCKER_USERNAME, DOCKER_EMAIL, and DOCKER_PASSWORD are required."
-          echo "Usage: DOCKER_USERNAME=your_username DOCKER_EMAIL=your_email DOCKER_PASSWORD=your_password task full-stack-deploy"
-          exit 1
-        fi
-      - task: create-image-pull-secret
-      - task: deploy:kind
-
-  # HTTPS Setup tasks
-  setup-cert-manager:
-    desc: "Install cert-manager"
-    cmds:
-      - kubectl apply --validate=false -f https://github.com/cert-manager/cert-manager/releases/download/v1.14.2/cert-manager.yaml
-      - |
-        echo "Waiting for cert-manager to be ready..."
-        sleep 30
-        kubectl wait --for=condition=ready pod -l app=cert-manager -n cert-manager --timeout=300s || echo "cert-manager pods not ready yet, continuing..."
-      - |
-        kubectl wait --for=condition=ready pod -l app=cainjector -n cert-manager --timeout=120s || echo "cainjector pods not ready yet, continuing..."
-      - |
-        kubectl wait --for=condition=ready pod -l app=webhook -n cert-manager --timeout=120s || echo "webhook pods not ready yet, continuing..."
-      - echo "cert-manager installation completed!"
-
-  setup-cluster-issuer-kind:
-    desc: "Create cluster issuers (self-signed)"
-    cmds:
-      - kubectl apply -f components/common/cluster-issuer.yaml
-      - echo "Cluster issuers created successfully!"
-
-  setup-certificates-kind:
-    desc: "Create self-signed certificates"
-    cmds:
-      - kubectl apply -f components/common/certificate-selfsigned.yaml
-      - kubectl wait --for=condition=ready certificate local-microadventures-tls -n microadventures --timeout=300s
-      - echo "Self-signed certificates created successfully!"
-
-  setup-https-ingress-kind:
-    desc: "Create HTTPS routes and redirects"
-    cmds:
-      - kubectl apply -f components/common/ingressroute-https-selfsigned.yaml
-      - kubectl apply -f components/common/ingressroute-http-redirect.yaml
-      - echo "HTTPS ingress routes created successfully!"
-
-  check-certs:
-    desc: "Check certificate status"
-    cmds:
-      - kubectl get certificates -A
-      - kubectl get certificaterequests -A
-      - kubectl describe certificate local-microadventures-tls -n microadventures
-
-  # Infrastructure setup tasks
-  setup-traefik:
-    desc: "Install Traefik ingress controller"
-    cmds:
-      - kubectl apply --validate=false -f https://raw.githubusercontent.com/traefik/traefik/v3.0/docs/content/reference/dynamic-configuration/kubernetes-crd-definition-v1.yml
-      - helm repo add traefik https://traefik.github.io/charts || true
-      - helm repo update
-      - |
-        # Retry Helm install with shorter timeout to handle TLS issues
-        for i in {1..3}; do
-          echo "Attempting Traefik installation (attempt $i/3)..."
-          if helm upgrade --install traefik traefik/traefik \
-            --namespace traefik \
-            --create-namespace \
-            --set service.type=LoadBalancer \
-            --set providers.kubernetesIngress.publishedService.enabled=true \
-            --set ingressClass.enabled=true \
-            --set ingressClass.isDefaultClass=true \
-            --timeout=120s \
-            --wait; then
-            echo "Traefik installed successfully!"
-            break
-          else
-            echo "Attempt $i failed, waiting 10 seconds before retry..."
-            sleep 10
-          fi
-        done
-
-  setup-crds:
-    desc: "Install all required Custom Resource Definitions (CRDs)"
-    cmds:
-      - echo "Installing Trivy Operator CRDs..."
-      - |
-        # Install Trivy Operator CRDs
-        kubectl apply -f https://raw.githubusercontent.com/aquasecurity/trivy-operator/main/deploy/static/trivy-operator.yaml --dry-run=client -o yaml | kubectl apply -f - || echo "Trivy CRDs installation failed (non-critical)"
-      - echo "Installing kluctl CRDs..."  
-      - |
-        # Install kluctl CRDs if available
-        curl -s https://api.github.com/repos/kluctl/kluctl/releases/latest | grep -o 'https://github.com/kluctl/kluctl/releases/download/[^"]*install.yaml' | head -1 | xargs kubectl apply -f - || echo "kluctl CRDs installation failed (non-critical)"
-      - echo "All CRDs installed (errors are non-critical)"
-
-  setup-infrastructure:
-    desc: "Install all required infrastructure components"
-    cmds:
-      - task: setup-crds
-      - task: setup-traefik
-      - task: setup-cert-manager
-      - echo "All infrastructure components installed!"
-
-  # Secrets setup task
-  setup-secrets:
-    desc: "Setup secrets for Kind cluster from GCP Secret Manager"
-    cmds:
-      - kubectl create namespace microadventures --dry-run=client -o yaml | kubectl apply -f -
-      - kubectl create namespace postgres --dry-run=client -o yaml | kubectl apply -f -
-      - |
-        echo "Retrieving secrets from GCP Secret Manager..."
-        DATABASE_URL=$(gcloud secrets versions access latest --secret="database-url" --format="get(payload.data)" | base64 -d)
-        JWT_SECRET_KEY=$(gcloud secrets versions access latest --secret="jwt-secret-key" --format="get(payload.data)" | base64 -d)
-        OPENAI_API_KEY=$(gcloud secrets versions access latest --secret="openai-api-key" --format="get(payload.data)" | base64 -d)
-        POSTGRESQL_USER=$(gcloud secrets versions access latest --secret="postgresql-user" --format="get(payload.data)" | base64 -d)
-        POSTGRESQL_PASSWORD=$(gcloud secrets versions access latest --secret="postgresql-password" --format="get(payload.data)" | base64 -d)
-        
-        echo "Creating Kubernetes secret in microadventures namespace..."
-        kubectl create secret generic microadventures-gcp-secrets \
-          --namespace=microadventures \
-          --from-literal=DATABASE_URL="$DATABASE_URL" \
-          --from-literal=JWT_SECRET_KEY="$JWT_SECRET_KEY" \
-          --from-literal=OPENAI_API_KEY="$OPENAI_API_KEY" \
-          --from-literal=POSTGRES_USER="$POSTGRESQL_USER" \
-          --from-literal=POSTGRES_PASSWORD="$POSTGRESQL_PASSWORD" \
-          --dry-run=client -o yaml | kubectl apply -f -
-        
-        echo "Creating Kubernetes secret in postgres namespace..."
-        kubectl create secret generic microadventures-gcp-secrets \
-          --namespace=postgres \
-          --from-literal=DATABASE_URL="$DATABASE_URL" \
-          --from-literal=JWT_SECRET_KEY="$JWT_SECRET_KEY" \
-          --from-literal=OPENAI_API_KEY="$OPENAI_API_KEY" \
-          --from-literal=postgresql-user="$POSTGRESQL_USER" \
-          --from-literal=postgresql-password="$POSTGRESQL_PASSWORD" \
-          --dry-run=client -o yaml | kubectl apply -f -
-        
-        echo "Secrets setup completed successfully in both namespaces!"
-
-  # One-command deployment
-  deploy-complete:
-    desc: "Complete one-command deployment with all infrastructure"
-    cmds:
-      - |
-        if [ -z "$DOCKER_USERNAME" ] || [ -z "$DOCKER_EMAIL" ] || [ -z "$DOCKER_PASSWORD" ]; then
-          echo "Environment variables DOCKER_USERNAME, DOCKER_EMAIL, and DOCKER_PASSWORD are required."
-          echo "Usage: DOCKER_USERNAME=your_username DOCKER_EMAIL=your_email DOCKER_PASSWORD=your_password task deploy-complete"
-          exit 1
-        fi
-      - task: setup-infrastructure
-      - task: setup-secrets
-      - task: create-image-pull-secret
-      - task: deploy:kind
-      - task: setup-https-ingress-kind
-      - |
-        echo "Complete deployment finished! Access your app at: https://local-microadventures.aronhedl.com/"
-
-  # GCP-specific tasks
-  cleanup:gcp:
-    desc: "Clean up all resources in GCP cluster"
-    cmds:
-      - |
-        echo "Cleaning up GCP cluster resources..."
-        kubectl delete namespace microadventures --ignore-not-found=true
-        kubectl delete namespace postgres --ignore-not-found=true
-        kubectl delete namespace cert-manager --ignore-not-found=true
-        kubectl delete namespace traefik --ignore-not-found=true
-        kubectl delete namespace trivy-system --ignore-not-found=true
-        
-        echo "Waiting for namespaces to be fully deleted..."
-        kubectl wait --for=delete namespace/microadventures --timeout=120s || true
-        kubectl wait --for=delete namespace/postgres --timeout=120s || true
-        kubectl wait --for=delete namespace/cert-manager --timeout=120s || true
-        kubectl wait --for=delete namespace/traefik --timeout=120s || true
-        kubectl wait --for=delete namespace/trivy-system --timeout=120s || true
-        
-        echo "GCP cleanup completed!"
-
-  setup-infrastructure:gcp:
-    desc: "Setup infrastructure for GCP deployment (cert-manager, traefik)"
-    cmds:
-      - |
-        echo "Setting up infrastructure for GCP deployment..."
-        
-        # Install cert-manager
-        echo "Installing cert-manager..."
-        kubectl apply -f https://github.com/cert-manager/cert-manager/releases/download/v1.16.1/cert-manager.yaml
-        
-        # Wait for cert-manager to be ready
-        echo "Waiting for cert-manager to be ready..."
-        kubectl wait --for=condition=ready pod -l app=cert-manager -n cert-manager --timeout=300s
-        kubectl wait --for=condition=ready pod -l app=cainjector -n cert-manager --timeout=300s
-        kubectl wait --for=condition=ready pod -l app=webhook -n cert-manager --timeout=300s
-        
-        # Install Traefik with correct port configuration
-        echo "Installing Traefik..."
-        helm repo add traefik https://helm.traefik.io/traefik
-        helm repo update
-        helm upgrade --install traefik traefik/traefik \
-          --namespace traefik \
-          --create-namespace \
-          --set service.type=LoadBalancer \
-          --set ports.web.port=8000 \
-          --set ports.web.exposedPort=80 \
-          --set ports.websecure.port=8443 \
-          --set ports.websecure.exposedPort=443 \
-          --set providers.kubernetesIngress.enabled=true \
-          --set providers.kubernetesCRD.enabled=true \
-          --set globalArguments="--log.level=INFO" \
-          --timeout=120s
-        
-        echo "Traefik installation initiated. Checking status..."
-        kubectl get pods -n traefik
-        echo "Infrastructure setup completed!"
-
-  setup-secrets:gcp:
-    desc: "Setup secrets for GCP cluster from GCP Secret Manager"
-    cmds:
-      - kubectl create namespace microadventures --dry-run=client -o yaml | kubectl apply -f -
-      - kubectl create namespace postgres --dry-run=client -o yaml | kubectl apply -f -
-      - |
-        echo "Retrieving secrets from GCP Secret Manager..."
-        DATABASE_URL=$(gcloud secrets versions access latest --secret="database-url" --format="get(payload.data)" | base64 -d)
-        JWT_SECRET_KEY=$(gcloud secrets versions access latest --secret="jwt-secret-key" --format="get(payload.data)" | base64 -d)
-        OPENAI_API_KEY=$(gcloud secrets versions access latest --secret="openai-api-key" --format="get(payload.data)" | base64 -d)
-        POSTGRESQL_USER=$(gcloud secrets versions access latest --secret="postgresql-user" --format="get(payload.data)" | base64 -d)
-        POSTGRESQL_PASSWORD=$(gcloud secrets versions access latest --secret="postgresql-password" --format="get(payload.data)" | base64 -d)
-        
-        echo "Creating Kubernetes secret in microadventures namespace..."
-        kubectl create secret generic microadventures-gcp-secrets \
-          --namespace=microadventures \
-          --from-literal=DATABASE_URL="$DATABASE_URL" \
-          --from-literal=JWT_SECRET_KEY="$JWT_SECRET_KEY" \
-          --from-literal=OPENAI_API_KEY="$OPENAI_API_KEY" \
-          --from-literal=POSTGRES_USER="$POSTGRESQL_USER" \
-          --from-literal=POSTGRES_PASSWORD="$POSTGRESQL_PASSWORD" \
-          --dry-run=client -o yaml | kubectl apply -f -
-        
-        echo "Creating Kubernetes secret in postgres namespace..."
-        kubectl create secret generic microadventures-gcp-secrets \
-          --namespace=postgres \
-          --from-literal=DATABASE_URL="$DATABASE_URL" \
-          --from-literal=JWT_SECRET_KEY="$JWT_SECRET_KEY" \
-          --from-literal=OPENAI_API_KEY="$OPENAI_API_KEY" \
-          --from-literal=postgresql-user="$POSTGRESQL_USER" \
-          --from-literal=postgresql-password="$POSTGRESQL_PASSWORD" \
-          --dry-run=client -o yaml | kubectl apply -f -
-        
-        echo "Secrets setup completed successfully in both namespaces!"
-
-  deploy-complete:gcp:
-    desc: "Complete one-command deployment to GCP with all infrastructure"
-    cmds:
-      - |
-        if [ -z "$DOCKER_USERNAME" ] || [ -z "$DOCKER_EMAIL" ] || [ -z "$DOCKER_PASSWORD" ]; then
-          echo "Environment variables DOCKER_USERNAME, DOCKER_EMAIL, and DOCKER_PASSWORD are required."
-          echo "Usage: DOCKER_USERNAME=your_username DOCKER_EMAIL=your_email DOCKER_PASSWORD=your_password task deploy-complete:gcp"
-          exit 1
-        fi
-      - task: setup-infrastructure:gcp
-      - task: setup-secrets:gcp
-      - task: create-image-pull-secret
-      - task: deploy:gcp
-      - |
-        echo "Complete GCP deployment finished!"
-        echo ""
-        echo "Getting external IP address..."
-        EXTERNAL_IP=$(kubectl get service traefik -n traefik -o jsonpath='{.status.loadBalancer.ingress[0].ip}')
-        if [ -n "$EXTERNAL_IP" ]; then
-          echo "Traefik LoadBalancer IP: $EXTERNAL_IP"
-          echo "Please update your DNS to point microadventures.aronhedl.com to $EXTERNAL_IP"
-          echo "Then access your app at: https://microadventures.aronhedl.com/"
-        else
-          echo "Waiting for LoadBalancer IP to be assigned..."
-        fi

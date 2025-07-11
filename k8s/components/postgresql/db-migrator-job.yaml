@@ -12,7 +12,7 @@ spec:
           command: ['sh', '-c', 'until nc -z postgres-postgresql.postgres.svc.cluster.local 5432; do echo waiting for postgres; sleep 2; done;']
       containers:
         - name: migrate
-          image: hedlaron/microadventures-backend:{{ args.backend_tag | default("latest") }}
+          image: hedlaron/microadventures-backend:{{ backend_tag | default("latest") }}
           imagePullPolicy: Always
           command: ["uv", "run", "alembic", "upgrade", "heads"]
           env:
@@ -20,12 +20,12 @@ spec:
             - name: POSTGRESQL_USERNAME
               valueFrom:
                 secretKeyRef:
-                  name: microadventures-{{ args.secret_source | default("kind") }}-secrets
+                  name: microadventures-{{ secret_source | default("kind") }}-secrets
                   key: POSTGRES_USER
             - name: POSTGRESQL_PASSWORD
               valueFrom:
                 secretKeyRef:
-                  name: microadventures-{{ args.secret_source | default("kind") }}-secrets
+                  name: microadventures-{{ secret_source | default("kind") }}-secrets
                   key: POSTGRES_PASSWORD
             - name: POSTGRESQL_SERVER
               valueFrom:
@@ -46,17 +46,17 @@ spec:
             # - name: DATABASE_URL
             #   valueFrom:
             #     secretKeyRef:
-            #       name: microadventures-{{ args.secret_source | default("kind") }}-secrets
+            #       name: microadventures-{{ secret_source | default("kind") }}-secrets
             #       key: DATABASE_URL
             - name: JWT_SECRET_KEY
               valueFrom:
                 secretKeyRef:
-                  name: microadventures-{{ args.secret_source | default("kind") }}-secrets
+                  name: microadventures-{{ secret_source | default("kind") }}-secrets
                   key: JWT_SECRET_KEY
             - name: OPENAI_API_KEY
               valueFrom:
                 secretKeyRef:
-                  name: microadventures-{{ args.secret_source | default("kind") }}-secrets
+                  name: microadventures-{{ secret_source | default("kind") }}-secrets
                   key: OPENAI_API_KEY
             # Application config
             - name: DOMAIN

@@ -3,6 +3,6 @@ name: trivy-operator
 
 resources:
   - path: trivy-operator-helm.yaml
-    when: args.install_trivy_operator == true
+    when: install_trivy_operator == true
   - path: config-audit-policy.yaml
-    when: args.install_trivy_operator == true
+    when: install_trivy_operator == true

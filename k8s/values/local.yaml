@@ -1,0 +1,18 @@
+# Kind (local development) environment values
+backend_replicas: 1
+backend_tag: latest
+backend_image_pull_policy: IfNotPresent
+frontend_replicas: 1
+frontend_tag: latest
+frontend_image_pull_policy: IfNotPresent
+use_self_signed_certs: true
+domain: "local-microadventures.aronhedl.com"
+ingress_host: "local-microadventures.aronhedl.com"
+environment: local
+environmentType: non-prod
+secret_source: gcp
+postgres_storage_class: "standard"
+postgres_metrics_enabled: false
+postgres_secret_name: "microadventures-gcp-secrets"
+email: "dev-hedlaron@gmail.com"
+install_trivy_operator: true

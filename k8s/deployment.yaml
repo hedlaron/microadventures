@@ -1,4 +1,5 @@
-
+vars: 
+  - file: values/{{ args.environment }}.yaml  # Common variables for all deployments
 
 # Ordered list of deployments to process
 deployments:
@@ -18,6 +19,9 @@ deployments:
   - path: components/frontend
     tags: [frontend]
   
-  # Security scanning with Trivy Operator (disabled - requires CRDs)
-  # - path: components/trivy-operator
-  #   tags: [security, trivy]
+  # Security scanning with Trivy Operator
+  - path: components/trivy-operator
+    tags: [security, trivy]
+
+commonLabels:
+  app: microadventures

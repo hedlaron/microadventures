@@ -4,7 +4,7 @@ metadata:
   name: letsencrypt-staging
 spec:
   acme:
-    email: {{ args.email | default('dev-hedlaron@gmail.com') }}
+    email: {{ email | default('dev-hedlaron@gmail.com') }}
     server: https://acme-staging-v02.api.letsencrypt.org/directory
     privateKeySecretRef:
       name: letsencrypt-staging-account-key
@@ -20,7 +20,7 @@ metadata:
   name: letsencrypt-prod
 spec:
   acme:
-    email: {{ args.email | default('dev-hedlaron@gmail.com') }}
+    email: {{ email | default('dev-hedlaron@gmail.com') }}
     server: https://acme-v02.api.letsencrypt.org/directory
     privateKeySecretRef:
       name: letsencrypt-prod-account-key

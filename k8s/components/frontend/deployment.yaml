@@ -6,7 +6,7 @@ metadata:
   labels:
     app: frontend
 spec:
-  replicas: {{ args.frontend_replicas | default(1) }}
+  replicas: {{ frontend_replicas | default(1) }}
   selector:
     matchLabels:
       app: frontend
@@ -16,7 +16,7 @@ spec:
         app: frontend
     spec:
       containers:
-        - image: hedlaron/microadventures-frontend:{{ args.frontend_tag | default("latest") }}
+        - image: hedlaron/microadventures-frontend:{{ frontend_tag | default("latest") }}
           name: frontend
           ports:
             - containerPort: 8080
