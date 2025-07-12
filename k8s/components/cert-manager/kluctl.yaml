@@ -1,0 +1,7 @@
+kind: KluctlDeployment
+name: cert-manager
+
+resources:
+  - path: namespace.yaml
+  - path: helm-values.yaml
+  - path: helm-chart.yaml

@@ -3,6 +3,13 @@ vars:
 
 # Ordered list of deployments to process
 deployments:
+  # Infrastructure components (cert-manager and Traefik) - deployed first
+  - path: components/cert-manager
+    tags: [infrastructure, cert-manager]
+  
+  - path: components/traefik
+    tags: [infrastructure, traefik]
+  
   # First set up the namespace
   - path: components/common
     tags: [common, namespace]

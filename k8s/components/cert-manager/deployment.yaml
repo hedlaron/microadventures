@@ -1,0 +1,12 @@
+helmChart:
+  repo: https://charts.jetstack.io
+  chartName: cert-manager
+  chartVersion: "1.15.3"
+  releaseName: cert-manager
+  namespace: cert-manager
+  output: helm-rendered.yaml
+  values:
+    installCRDs: true
+    global:
+      leaderElection:
+        namespace: cert-manager

@@ -2,7 +2,11 @@ kind: KluctlDeployment
 name: trivy-operator
 
 resources:
-  - path: trivy-operator-helm.yaml
+  - path: namespace.yaml
+    when: install_trivy_operator == true
+  - path: helm-values.yaml
+    when: install_trivy_operator == true
+  - path: helm-chart.yaml
     when: install_trivy_operator == true
   - path: config-audit-policy.yaml
     when: install_trivy_operator == true

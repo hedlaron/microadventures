@@ -16,3 +16,10 @@ postgres_metrics_enabled: false
 postgres_secret_name: "microadventures-gcp-secrets"
 email: "dev-hedlaron@gmail.com"
 install_trivy_operator: true
+
+# Docker registry credentials (accessed from environment variables via Kluctl args)
+# Pass these as command line arguments: kluctl deploy -t local -a docker_username=$DOCKER_USERNAME -a docker_password=$DOCKER_PASSWORD -a docker_email=$DOCKER_EMAIL
+docker_username: "{{ args.docker_username | default('') }}"
+docker_password: "{{ args.docker_password | default('') }}"
+docker_email: "{{ args.docker_email | default('') }}"
+docker_auth: "{% if args.docker_username and args.docker_password %}{{ (args.docker_username + ':' + args.docker_password) | b64encode }}{% endif %}"
