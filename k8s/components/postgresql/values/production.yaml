@@ -1,5 +1,5 @@
 # PostgreSQL component - Production environment values
-postgres_storage_class: "fast-ssd"
+postgres_storage_class: "standard-rwo"
 postgres_metrics_enabled: true
 postgres_secret_name: "microadventures-gcp-secrets"
 

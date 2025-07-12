@@ -78,11 +78,34 @@ tasks:
       - kluctl deploy -t local -a environment=local -a docker_username="${DOCKER_USERNAME}" -a docker_password="${DOCKER_PASSWORD}" -a docker_email="${DOCKER_EMAIL}"
 
   deploy:production:
-    desc: "Deploy to GCP production cluster"
+    desc: "Deploy to production GCP cluster"
     deps: [helm-pull]
+    env:
+      DOCKER_USERNAME: ${DOCKER_USERNAME}
+      DOCKER_PASSWORD: ${DOCKER_PASSWORD}
+      DOCKER_EMAIL: ${DOCKER_EMAIL}
+    preconditions:
+      - sh: test -n "${DOCKER_USERNAME}"
+        msg: "DOCKER_USERNAME environment variable must be set"
+      - sh: test -n "${DOCKER_PASSWORD}"
+        msg: "DOCKER_PASSWORD environment variable must be set"
+      - sh: test -n "${DOCKER_EMAIL}"
+        msg: "DOCKER_EMAIL environment variable must be set"
     cmds:
-      - echo "🚀 Deploying to production GCP environment..."
+      - echo "Setting up GCP IAM for secret manager access..."
+      - task gcp:setup-iam
+      - echo "Deploying to production..."
       - kluctl deploy -t production -a environment=production -a docker_username="$DOCKER_USERNAME" -a docker_password="$DOCKER_PASSWORD" -a docker_email="$DOCKER_EMAIL"
+
+  gcp:setup-iam:
+    desc: "Setup GCP IAM for secret manager"
+    cmds:
+      - echo "Creating service account..."
+      - gcloud iam service-accounts create microadventures-secret-manager --project=microadventures || echo "Service account exists"
+      - echo "Granting secret manager role..."  
+      - gcloud projects add-iam-policy-binding microadventures --member="serviceAccount:microadventures-secret-manager@microadventures.iam.gserviceaccount.com" --role="roles/secretmanager.secretAccessor"
+      - echo "Setting up workload identity..."
+      - gcloud iam service-accounts add-iam-policy-binding microadventures-secret-manager@microadventures.iam.gserviceaccount.com --role roles/iam.workloadIdentityUser --member "serviceAccount:microadventures.svc.id.goog[microadventures/secret-sync-sa]" --project=microadventures
 
   # Diff tasks
   diff:local:
