@@ -10,5 +10,4 @@ resources:
   - ingressroute-https-selfsigned.yaml
   - ingressroute-http-redirect.yaml
   # - traefik.yaml  # Installed via Taskfile
-  - docker-registry-secret.yaml
   - microadventures-secrets.yaml

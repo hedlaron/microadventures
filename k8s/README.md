@@ -2,11 +2,22 @@
 
 This directory contains the Kluctl deployment configuration for the Microadventures application.
 
+## 🔐 Secret Management
+
+For **production/GCP deployments**, secrets should be managed via **External Secrets Operator** to sync from GCP Secret Manager:
+
+1. **Set up External Secrets Operator**: See `secrets-gcp/README.md` for complete setup instructions
+2. **Create secrets in GCP Secret Manager**: Store your actual secrets (postgres password, JWT key, OpenAI key)
+3. **Disable static secrets**: Once External Secrets is working, the static secrets in `components/common/manifests/microadventures-secrets.yaml` can be removed
+
+For **local/development**, you can temporarily use static secrets by replacing the placeholder values in the secrets file.
+
 ## Prerequisites
 
 - Kluctl CLI installed (via devbox)
 - Access to the target Kubernetes cluster
 - Docker image pull credentials
+- **For GCP**: External Secrets Operator configured (see `secrets-gcp/`)
 
 ## Structure
 

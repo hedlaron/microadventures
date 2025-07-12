@@ -1,0 +1,5 @@
+# Deploy static secrets for local, External Secrets for production
+when: "{{ args.environment == 'local' }}"
+
+deployments:
+  - path: manifests

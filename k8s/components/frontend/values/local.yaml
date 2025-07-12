@@ -1,0 +1,15 @@
+# Frontend component - Local environment values
+frontend_replicas: 1
+frontend_tag: latest
+frontend_image_pull_policy: IfNotPresent
+frontend_image: hedlaron/microadventures-frontend:latest
+
+# Environment and secrets
+environment: local
+environmentType: non-prod
+secret_source: gcp
+
+# Docker registry credentials (passed as Kluctl args)
+docker_username: "{{ args.docker_username | default('') }}"
+docker_password: "{{ args.docker_password | default('') }}"
+docker_email: "{{ args.docker_email | default('') }}"

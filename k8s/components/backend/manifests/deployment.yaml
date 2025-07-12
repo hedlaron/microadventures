@@ -1,22 +1,47 @@
-apiVersion: batch/v1
-kind: Job
+apiVersion: apps/v1
+kind: Deployment
 metadata:
-  name: db-migrator
+  name: backend
   namespace: microadventures
+  labels:
+    app: backend
 spec:
+  replicas: {{ backend_replicas | default(1) }}
+  selector:
+    matchLabels:
+      app: backend
   template:
+    metadata:
+      labels:
+        app: backend
     spec:
-      initContainers:
-        - name: wait-for-postgres
-          image: busybox
-          command: ['sh', '-c', 'until nc -z postgres-postgresql.postgres.svc.cluster.local 5432; do echo waiting for postgres; sleep 2; done;']
       containers:
-        - name: migrate
+        - name: backend
           image: hedlaron/microadventures-backend:{{ backend_tag | default("latest") }}
-          imagePullPolicy: Always
-          command: ["uv", "run", "alembic", "upgrade", "heads"]
+          imagePullPolicy: {{ backend_image_pull_policy | default("Always") }}
           env:
-            # PostgreSQL connection (required for migration) - from GCP secrets
+            # Application configuration (from backend ConfigMap)
+            - name: PORT
+              valueFrom:
+                configMapKeyRef:
+                  name: backend-config
+                  key: PORT
+            - name: DOMAIN
+              valueFrom:
+                configMapKeyRef:
+                  name: backend-config
+                  key: DOMAIN
+            - name: ENVIRONMENT
+              valueFrom:
+                configMapKeyRef:
+                  name: backend-config
+                  key: ENVIRONMENT
+            - name: BACKEND_CORS_ORIGINS
+              valueFrom:
+                configMapKeyRef:
+                  name: backend-config
+                  key: BACKEND_CORS_ORIGINS
+            # PostgreSQL connection (environment-specific secrets)
             - name: POSTGRESQL_USERNAME
               valueFrom:
                 secretKeyRef:
@@ -42,12 +67,7 @@ spec:
                 configMapKeyRef:
                   name: backend-config
                   key: POSTGRESQL_DATABASE
-            # Application secrets (required for backend application)
-            # - name: DATABASE_URL
-            #   valueFrom:
-            #     secretKeyRef:
-            #       name: microadventures-{{ secret_source | default("kind") }}-secrets
-            #       key: DATABASE_URL
+            # Application secrets (from GCP secrets)
             - name: JWT_SECRET_KEY
               valueFrom:
                 secretKeyRef:
@@ -58,18 +78,14 @@ spec:
                 secretKeyRef:
                   name: microadventures-{{ secret_source | default("kind") }}-secrets
                   key: OPENAI_API_KEY
-            # Application config
-            - name: DOMAIN
-              valueFrom:
-                configMapKeyRef:
-                  name: backend-config
-                  key: DOMAIN
-            - name: ENVIRONMENT
-              valueFrom:
-                configMapKeyRef:
-                  name: backend-config
-                  key: ENVIRONMENT
-      restartPolicy: Never
+          ports:
+            - containerPort: 8000
+              protocol: TCP
+          resources:
+            limits:
+              memory: 500Mi
+            requests:
+              cpu: 100m
+              memory: 200Mi
       imagePullSecrets:
-        - name: dockerconfigjson
-  backoffLimit: 4
+        - name: microadventures-docker-secret

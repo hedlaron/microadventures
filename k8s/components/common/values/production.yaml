@@ -1,0 +1,4 @@
+# Common component - Production environment values
+use_self_signed_certs: false
+install_trivy_operator: true
+email: "dev-hedlaron@gmail.com"

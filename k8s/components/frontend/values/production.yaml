@@ -1,0 +1,16 @@
+# Frontend component - Production environment values
+frontend_replicas: 3
+frontend_tag: latest
+frontend_image_pull_policy: Always
+frontend_image: hedlaron/microadventures-frontend:latest
+
+# Environment and secrets
+environment: production
+environmentType: prod
+secret_source: gcp
+
+# Docker registry credentials (passed as Kluctl args)
+docker_username: "{{ args.docker_username | default('') }}"
+docker_password: "{{ args.docker_password | default('') }}"
+docker_email: "{{ args.docker_email | default('') }}"
+docker_auth: "{% if args.docker_username and args.docker_password %}{{ (args.docker_username + ':' + args.docker_password) | b64encode }}{% endif %}"

@@ -4,4 +4,5 @@ kind: Kustomization
 resources:
   - postgres-namespace.yaml
   - helm-rendered.yaml
+  - db-migrator-configmap.yaml
   - db-migrator-job.yaml

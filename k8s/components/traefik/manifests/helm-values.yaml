@@ -13,3 +13,4 @@ ports:
 ingressRoute:
   dashboard:
     enabled: false
+installCRDs: true

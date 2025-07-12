@@ -1,46 +1,54 @@
----
-version: '3'
+version: "3"
 
 tasks:
-  default:
+  help:
     desc: "Show usage information"
     cmds:
-      - |
-        cat << EOF
-        🚀 Microadventures Kluctl Deployment
+    - |
+      cat << EOF
+      🚀 Microadventures Kluctl Deployment
 
-        📦 Helm Charts Management:
-        - helm-pull            # Pull all Helm charts (automatically runs before deployments)
+      📦 Helm Charts Management:
+      - helm-pull            # Pull all Helm charts (automatically runs before deployments)
 
-        🏗️  Main deployment tasks:
-        - deploy:local         # Deploy to local Kind cluster
-        - deploy:production    # Deploy to GCP production cluster
-        - diff:local           # Show diff for local deployment
-        - diff:production      # Show diff for production deployment
-        - render:local         # Render manifests for local deployment
-        - render:production    # Render manifests for production deployment
+      🔐 Secret Management:
+      - secrets:deploy       # Install and configure External Secrets Operator (production)
+      - secrets:install      # Install External Secrets Operator only
+      - secrets:configure    # Configure GCP Secret Manager integration
+      - secrets:status       # Check External Secrets status
+      - secrets:logs         # View External Secrets Operator logs
+      - secrets:describe     # Describe external secrets status
+      - secrets:uninstall    # Remove External Secrets Operator
 
-        🔧 Utility tasks:
-        - validate:config      # Validate the Kluctl configuration
-        - status               # Check status of deployments
-        
-        📊 Component tasks:
-        - logs:backend         # View backend logs
-        - logs:frontend        # View frontend logs
-        - logs:postgres        # View postgres logs
-        - restart:backend      # Restart backend deployment
-        - restart:frontend     # Restart frontend deployment
+      🏗️  Main deployment tasks:
+      - deploy:local         # Deploy to local Kind cluster (includes cert-manager & Traefik)
+      - deploy:production    # Deploy to GCP production cluster
+      - diff:local           # Show diff for local deployment
+      - diff:production      # Show diff for production deployment
+      - render:local         # Render manifests for local deployment
+      - render:production    # Render manifests for production deployment
 
-        🔒 Security tasks:
-        - security:scan        # View Trivy security scan results
+      🔧 Utility tasks:
+      - validate:config      # Validate the Kluctl configuration
+      - status               # Check status of deployments
+      
+      📊 Component tasks:
+      - logs:backend         # View backend logs
+      - logs:frontend        # View frontend logs
+      - logs:postgres        # View postgres logs
+      - restart:backend      # Restart backend deployment
+      - restart:frontend     # Restart frontend deployment
 
-        💡 Usage Examples:
-        - task deploy:local           # Deploy to local Kind
-        - task deploy:production      # Deploy to GCP
-        - task logs:backend           # View backend logs
-        
-        Run 'task --list' to see all available tasks
-        EOF
+      🔒 Security tasks:
+      - security:scan        # View Trivy security scan results
+
+      💡 Usage Examples:
+      - task deploy:local           # Deploy to local Kind
+      - task deploy:production      # Deploy to GCP
+      - task logs:backend           # View backend logs
+      
+      Run 'task --list' to see all available tasks
+      EOF
 
   # Helm charts management
   helm-pull:
@@ -51,18 +59,29 @@ tasks:
 
   # Deployment tasks
   deploy:local:
-    desc: "Deploy to local Kind cluster"
+    desc: "Deploy to local Kind cluster (requires DOCKER_USERNAME, DOCKER_PASSWORD, DOCKER_EMAIL env vars). Usage: DOCKER_USERNAME=$DOCKER_USERNAME DOCKER_PASSWORD=$DOCKER_PASSWORD DOCKER_EMAIL=$DOCKER_EMAIL task deploy:local"
     deps: [helm-pull]
+    env:
+      DOCKER_USERNAME: ${DOCKER_USERNAME}
+      DOCKER_PASSWORD: ${DOCKER_PASSWORD}
+      DOCKER_EMAIL: ${DOCKER_EMAIL}
+    preconditions:
+      - sh: test -n "${DOCKER_USERNAME}"
+        msg: "DOCKER_USERNAME environment variable must be set"
+      - sh: test -n "${DOCKER_PASSWORD}"
+        msg: "DOCKER_PASSWORD environment variable must be set"
+      - sh: test -n "${DOCKER_EMAIL}"
+        msg: "DOCKER_EMAIL environment variable must be set"
     cmds:
       - echo "🚀 Deploying to local Kind environment..."
-      - kluctl deploy -t local
+      - kluctl deploy -t local -a environment=local -a docker_username="${DOCKER_USERNAME}" -a docker_password="${DOCKER_PASSWORD}" -a docker_email="${DOCKER_EMAIL}"
 
   deploy:production:
     desc: "Deploy to GCP production cluster"
     deps: [helm-pull]
     cmds:
       - echo "🚀 Deploying to production GCP environment..."
-      - kluctl deploy -t production
+      - kluctl deploy -t production -a environment=production -a docker_username="$DOCKER_USERNAME" -a docker_password="$DOCKER_PASSWORD" -a docker_email="$DOCKER_EMAIL"
 
   # Diff tasks
   diff:local:
@@ -105,6 +124,8 @@ tasks:
     desc: "Check status of deployments"
     cmds:
       - kubectl get ns
+      - kubectl get pods -n cert-manager
+      - kubectl get pods -n traefik
       - kubectl get pods -n microadventures
       - kubectl get pods -n postgres
       - kubectl get pods -n trivy-system
@@ -153,3 +174,93 @@ tasks:
       - echo ""
       - echo "Exposed Secrets Reports:"
       - kubectl get exposedsecretreport -A
+
+  # External Secrets Operator Management
+  secrets:install:
+    desc: "Install External Secrets Operator for production"
+    cmds:
+      - echo "Installing External Secrets Operator..."
+      - helm repo add external-secrets https://charts.external-secrets.io
+      - helm repo update
+      - |
+        helm upgrade --install external-secrets external-secrets/external-secrets \
+          --namespace external-secrets-system \
+          --create-namespace \
+          --set installCRDs=true
+
+  secrets:configure:
+    desc: "Configure GCP Secret Manager integration"
+    cmds:
+      - echo "Applying External Secrets configuration..."
+      - kubectl apply -f secrets-gcp/service-account.yaml
+      - kubectl apply -f secrets-gcp/cluster-secret-store.yaml
+      - kubectl apply -f secrets-gcp/external-secrets.yaml
+
+  secrets:deploy:
+    desc: "Install and configure External Secrets Operator"
+    cmds:
+      - task: secrets:install
+      - echo "Waiting for External Secrets Operator to be ready..."
+      - kubectl wait --for=condition=available --timeout=300s deployment/external-secrets -n external-secrets-system
+      - task: secrets:configure
+
+  secrets:status:
+    desc: "Check External Secrets status"
+    cmds:
+      - echo "External Secrets Operator Status:"
+      - kubectl get pods -n external-secrets-system || echo "External Secrets not installed"
+      - echo ""
+      - echo "External Secrets:"
+      - kubectl get externalsecrets -A || echo "No External Secrets found"
+      - echo ""
+      - echo "Secret Stores:"
+      - kubectl get clustersecretstore || echo "No Secret Stores found"
+
+  secrets:sync-local:
+    desc: "Sync secrets from GCP Secret Manager for local development"
+    cmds:
+      - echo "Syncing secrets from GCP Secret Manager for local development..."
+      - |
+        POSTGRES_USER=$(gcloud secrets versions access latest --secret="postgres-user" 2>/dev/null || echo "postgres")
+        POSTGRES_PASSWORD=$(gcloud secrets versions access latest --secret="postgres-password" 2>/dev/null || echo "microadventures-local-fallback")
+        JWT_SECRET=$(gcloud secrets versions access latest --secret="jwt-secret-key" 2>/dev/null || echo "local-jwt-secret-fallback")
+        OPENAI_KEY=$(gcloud secrets versions access latest --secret="openai-api-key" 2>/dev/null || echo "local-openai-fallback")
+        
+        kubectl create secret generic microadventures-gcp-secrets \
+          --from-literal=POSTGRES_USER="$POSTGRES_USER" \
+          --from-literal=POSTGRES_PASSWORD="$POSTGRES_PASSWORD" \
+          --from-literal=JWT_SECRET_KEY="$JWT_SECRET" \
+          --from-literal=OPENAI_API_KEY="$OPENAI_KEY" \
+          --namespace=microadventures \
+          --dry-run=client -o yaml | kubectl apply -f -
+        
+        kubectl create secret generic microadventures-gcp-secrets \
+          --from-literal=postgresql-password="$POSTGRES_PASSWORD" \
+          --from-literal=POSTGRES_USER="$POSTGRES_USER" \
+          --from-literal=POSTGRES_PASSWORD="$POSTGRES_PASSWORD" \
+          --namespace=postgres \
+          --dry-run=client -o yaml | kubectl apply -f -
+        
+        echo "Secrets synced from GCP Secret Manager"
+
+  secrets:logs:
+    desc: "View External Secrets Operator logs"
+    cmds:
+      - kubectl logs -l app.kubernetes.io/name=external-secrets -n external-secrets-system --tail=100 -f
+
+  secrets:describe:
+    desc: "Describe external secrets status"
+    cmds:
+      - echo "External Secrets Details:"
+      - kubectl describe externalsecrets -n microadventures || echo "No External Secrets in microadventures namespace"
+      - kubectl describe externalsecrets -n postgres || echo "No External Secrets in postgres namespace"
+
+  secrets:uninstall:
+    desc: "Remove External Secrets Operator"
+    cmds:
+      - echo "Removing External Secrets configuration..."
+      - kubectl delete -f secrets-gcp/external-secrets.yaml --ignore-not-found=true
+      - kubectl delete -f secrets-gcp/cluster-secret-store.yaml --ignore-not-found=true
+      - kubectl delete -f secrets-gcp/service-account.yaml --ignore-not-found=true
+      - echo "Uninstalling External Secrets Operator..."
+      - helm uninstall external-secrets -n external-secrets-system --ignore-not-found

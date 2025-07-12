@@ -1,0 +1,25 @@
+helmChart:
+  repo: https://traefik.github.io/charts
+  chartName: traefik
+  chartVersion: "28.3.0"
+  releaseName: traefik
+  namespace: kube-system
+  output: helm-rendered.yaml
+  values:
+    deployment:
+      enabled: true
+    service:
+      enabled: true
+      type: LoadBalancer
+    ports:
+      web:
+        port: 8000
+        expose: true
+        exposedPort: 80
+      websecure:
+        port: 8443
+        expose: true
+        exposedPort: 443
+    ingressRoute:
+      dashboard:
+        enabled: false

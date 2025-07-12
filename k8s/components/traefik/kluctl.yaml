@@ -1,7 +1,0 @@
-kind: KluctlDeployment
-name: traefik
-
-resources:
-  - path: namespace.yaml
-  - path: helm-values.yaml
-  - path: helm-chart.yaml

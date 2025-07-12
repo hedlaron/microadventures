@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: backend-config
+  namespace: microadventures
+data:
+  # Database connection settings (non-sensitive) - for db-migrator
+  POSTGRESQL_SERVER: "postgres-postgresql.postgres"
+  POSTGRESQL_PORT: "5432"
+  POSTGRESQL_DATABASE: "microadventures"
+  
+  # Application configuration - minimal values needed for db-migrator
+  DOMAIN: "{{ domain }}"
+  ENVIRONMENT: "{{ environment }}"

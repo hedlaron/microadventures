@@ -1,0 +1,9 @@
+# Common component - Local environment values
+use_self_signed_certs: true
+install_trivy_operator: true
+email: "dev-hedlaron@gmail.com"
+
+# Docker registry credentials (accessed from environment variables via Kluctl args)
+docker_username: "{{ args.docker_username | default('') }}"
+docker_password: "{{ args.docker_password | default('') }}"
+docker_email: "{{ args.docker_email | default('') }}"

@@ -1,0 +1,14 @@
+# PostgreSQL component - Local environment values
+postgres_storage_class: "standard"
+postgres_metrics_enabled: false
+postgres_secret_name: "microadventures-gcp-secrets"
+
+# Environment
+environment: local
+environmentType: non-prod
+secret_source: gcp
+
+# Docker registry credentials (passed as Kluctl args)
+docker_username: "{{ args.docker_username | default('') }}"
+docker_password: "{{ args.docker_password | default('') }}"
+docker_email: "{{ args.docker_email | default('') }}"

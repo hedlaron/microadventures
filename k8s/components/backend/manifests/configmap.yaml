@@ -5,7 +5,7 @@ metadata:
   namespace: microadventures
 data:
   # Database connection settings (non-sensitive)
-  POSTGRESQL_SERVER: "{{ 'postgres-postgresql.postgres.svc.cluster.local' }}"
+  POSTGRESQL_SERVER: "postgres-postgresql.postgres"
   POSTGRESQL_PORT: "5432"
   POSTGRESQL_DATABASE: microadventures
   

@@ -1,0 +1,86 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: db-migrator
+  namespace: microadventures
+  annotations:
+    kluctl.io/hook: post-deploy
+    kluctl.io/hook-weight: "50"
+spec:
+  template:
+    spec:
+      initContainers:
+        - name: wait-for-postgres
+          image: postgres:15-alpine
+          command: 
+            - sh
+            - -c
+            - |
+              until pg_isready -h postgres-postgresql.postgres.svc.cluster.local -p 5432 -U postgres; do
+                echo "Waiting for PostgreSQL to be ready..."
+                sleep 5
+              done
+              echo "PostgreSQL is ready!"
+      containers:
+        - name: migrate
+          image: hedlaron/microadventures-backend:{{ backend_tag | default("latest") }}
+          imagePullPolicy: Always
+          command: ["uv", "run", "alembic", "upgrade", "heads"]
+          env:
+            # PostgreSQL connection (required for migration) - from GCP secrets
+            - name: POSTGRESQL_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: microadventures-{{ secret_source | default("kind") }}-secrets
+                  key: POSTGRES_USER
+            - name: POSTGRESQL_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: microadventures-{{ secret_source | default("kind") }}-secrets
+                  key: POSTGRES_PASSWORD
+            - name: POSTGRESQL_SERVER
+              valueFrom:
+                configMapKeyRef:
+                  name: backend-config
+                  key: POSTGRESQL_SERVER
+            - name: POSTGRESQL_PORT
+              valueFrom:
+                configMapKeyRef:
+                  name: backend-config
+                  key: POSTGRESQL_PORT
+            - name: POSTGRESQL_DATABASE
+              valueFrom:
+                configMapKeyRef:
+                  name: backend-config
+                  key: POSTGRESQL_DATABASE
+            # Application secrets (required for backend application)
+            # - name: DATABASE_URL
+            #   valueFrom:
+            #     secretKeyRef:
+            #       name: microadventures-{{ secret_source | default("kind") }}-secrets
+            #       key: DATABASE_URL
+            - name: JWT_SECRET_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: microadventures-{{ secret_source | default("kind") }}-secrets
+                  key: JWT_SECRET_KEY
+            - name: OPENAI_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: microadventures-{{ secret_source | default("kind") }}-secrets
+                  key: OPENAI_API_KEY
+            # Application config
+            - name: DOMAIN
+              valueFrom:
+                configMapKeyRef:
+                  name: backend-config
+                  key: DOMAIN
+            - name: ENVIRONMENT
+              valueFrom:
+                configMapKeyRef:
+                  name: backend-config
+                  key: ENVIRONMENT
+      restartPolicy: Never
+      imagePullSecrets:
+        - name: microadventures-docker-secret
+  backoffLimit: 4

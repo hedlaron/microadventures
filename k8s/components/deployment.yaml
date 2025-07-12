@@ -1,0 +1,16 @@
+deployments:
+  - include: namespaces
+  - barrier: true
+  - include: secrets-sync
+  - barrier: true
+  - include: cert-manager
+  - barrier: true
+  - include: postgresql
+  - barrier: true
+  - include: traefik
+  - barrier: true
+  - include: common
+  - barrier: true
+  - include: backend
+  - include: frontend
+  - include: trivy-operator   
