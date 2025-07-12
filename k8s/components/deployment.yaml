@@ -1,6 +1,8 @@
 deployments:
   - include: namespaces
   - barrier: true
+  - include: docker-registry
+  - barrier: true
   - include: secrets-sync
   - barrier: true
   - include: cert-manager

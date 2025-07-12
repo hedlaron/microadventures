@@ -1,5 +1,5 @@
-# Deploy static secrets for local, External Secrets for production
-when: "{{ args.environment == 'local' }}"
+# Deploy GCP secret sync for production only
+when: "{{ args.environment == 'production' }}"
 
 deployments:
   - path: manifests

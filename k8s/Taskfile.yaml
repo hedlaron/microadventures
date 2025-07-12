@@ -15,6 +15,7 @@ tasks:
       - secrets:deploy       # Install and configure External Secrets Operator (production)
       - secrets:install      # Install External Secrets Operator only
       - secrets:configure    # Configure GCP Secret Manager integration
+      - secrets:sync-local   # Sync secrets from GCP for local development (auto-runs with deploy:local)
       - secrets:status       # Check External Secrets status
       - secrets:logs         # View External Secrets Operator logs
       - secrets:describe     # Describe external secrets status
@@ -60,7 +61,7 @@ tasks:
   # Deployment tasks
   deploy:local:
     desc: "Deploy to local Kind cluster (requires DOCKER_USERNAME, DOCKER_PASSWORD, DOCKER_EMAIL env vars). Usage: DOCKER_USERNAME=$DOCKER_USERNAME DOCKER_PASSWORD=$DOCKER_PASSWORD DOCKER_EMAIL=$DOCKER_EMAIL task deploy:local"
-    deps: [helm-pull]
+    deps: [helm-pull, secrets:sync-local]
     env:
       DOCKER_USERNAME: ${DOCKER_USERNAME}
       DOCKER_PASSWORD: ${DOCKER_PASSWORD}
@@ -221,10 +222,35 @@ tasks:
     cmds:
       - echo "Syncing secrets from GCP Secret Manager for local development..."
       - |
-        POSTGRES_USER=$(gcloud secrets versions access latest --secret="postgres-user" 2>/dev/null || echo "postgres")
-        POSTGRES_PASSWORD=$(gcloud secrets versions access latest --secret="postgres-password" 2>/dev/null || echo "microadventures-local-fallback")
-        JWT_SECRET=$(gcloud secrets versions access latest --secret="jwt-secret-key" 2>/dev/null || echo "local-jwt-secret-fallback")
-        OPENAI_KEY=$(gcloud secrets versions access latest --secret="openai-api-key" 2>/dev/null || echo "local-openai-fallback")
+        echo "Fetching secrets from GCP Secret Manager..."
+        
+        POSTGRES_USER=$(gcloud secrets versions access latest --secret="postgresql-user" --project="microadventures")
+        if [ $? -ne 0 ]; then
+          echo "ERROR: Failed to fetch postgresql-user from GCP Secret Manager"
+          exit 1
+        fi
+        
+        POSTGRES_PASSWORD=$(gcloud secrets versions access latest --secret="postgresql-password" --project="microadventures")
+        if [ $? -ne 0 ]; then
+          echo "ERROR: Failed to fetch postgresql-password from GCP Secret Manager"
+          exit 1
+        fi
+        
+        JWT_SECRET=$(gcloud secrets versions access latest --secret="jwt-secret-key" --project="microadventures")
+        if [ $? -ne 0 ]; then
+          echo "ERROR: Failed to fetch jwt-secret-key from GCP Secret Manager"
+          exit 1
+        fi
+        
+        OPENAI_KEY=$(gcloud secrets versions access latest --secret="openai-api-key" --project="microadventures")
+        if [ $? -ne 0 ]; then
+          echo "ERROR: Failed to fetch openai-api-key from GCP Secret Manager"
+          exit 1
+        fi
+        
+        echo "Successfully fetched all secrets from GCP Secret Manager"
+        
+        kubectl create namespace microadventures || echo "Namespace microadventures already exists"
         
         kubectl create secret generic microadventures-gcp-secrets \
           --from-literal=POSTGRES_USER="$POSTGRES_USER" \

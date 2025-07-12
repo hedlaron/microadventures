@@ -1,0 +1,3 @@
+# Deploy Docker registry secret for both local and production
+deployments:
+  - path: manifests
