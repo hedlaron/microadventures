@@ -251,6 +251,7 @@ tasks:
         echo "Successfully fetched all secrets from GCP Secret Manager"
         
         kubectl create namespace microadventures || echo "Namespace microadventures already exists"
+        kubectl create namespace postgres || echo "Namespace postgres already exists"
         
         kubectl create secret generic microadventures-gcp-secrets \
           --from-literal=POSTGRES_USER="$POSTGRES_USER" \

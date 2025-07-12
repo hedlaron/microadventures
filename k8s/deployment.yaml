@@ -3,6 +3,7 @@ vars:
 
 # Ordered list of deployments to process
 deployments:
+  - include: components/namespaces
   - include: components/secrets-sync
   - include: components
 
