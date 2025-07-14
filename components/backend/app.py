@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 from starlette.middleware.cors import CORSMiddleware
 from core.config_loader import settings
-
+import os
 from auth.routes.auth_router import auth_router
 from user.routes.user_router import user_router
 from adventure.routes.adventure_router import router as adventure_router
@@ -41,3 +41,9 @@ app.include_router(adventure_router, prefix='/api', tags=['Adventures'])
 @app.get("/health", tags=['Health Checks'])
 def read_root():
     return {"health": "true"}
+
+@app.get("/api/version")
+async def get_version():
+    """Get the current backend version from environment variable or default"""
+    version = os.getenv("APP_VERSION", "latest")
+    return {"version": version}
