@@ -1,7 +1,7 @@
 helmChart:
   repo: https://charts.jetstack.io
   chartName: cert-manager
-  chartVersion: "v1.13.2"
+  chartVersion: "v1.15.3"
   releaseName: cert-manager
   namespace: cert-manager
   output: helm-rendered.yaml
