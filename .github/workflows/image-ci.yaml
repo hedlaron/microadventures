@@ -78,8 +78,10 @@ jobs:
 
   build-tag-push:
     runs-on: ubuntu-latest
+    timeout-minutes: 45
     needs: [generate-image-tag, determine-components]
     strategy:
+      fail-fast: false
       matrix:
         path: ${{ fromJson(needs.determine-components.outputs.components) }}
 
@@ -109,6 +111,7 @@ jobs:
           IMAGE_TAG: ${{ needs.generate-image-tag.outputs.image_tag }}
         working-directory: ${{ matrix.path }}
         run: |
+          echo "Building image for ${{ matrix.path }} with tag ${IMAGE_TAG}"
           task build-container-image-multi-arch IMAGE_TAG=${IMAGE_TAG}
 
   update-tags:

@@ -1,7 +1,7 @@
 # syntax=docker/dockerfile:1.5
 
 # Multi-stage build for React/Vite microadventures frontend
-FROM node:20-alpine AS build
+FROM node:20 AS build
 
 # Set working directory
 WORKDIR /usr/src/app
@@ -12,7 +12,7 @@ COPY package*.json ./
 # Install dependencies with cache mount for better performance
 RUN --mount=type=cache,target=/usr/src/app/.npm \
   npm set cache /usr/src/app/.npm && \
-  npm ci --only=production --omit=dev
+  npm ci
 
 # Copy source code
 COPY . .
