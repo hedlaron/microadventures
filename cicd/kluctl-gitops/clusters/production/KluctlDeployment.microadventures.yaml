@@ -27,4 +27,3 @@ spec:
   # let it automatically clean up orphan KluctlDeployment resources
   prune: true
   delete: true
-  helmChartsDir: .helm-charts
