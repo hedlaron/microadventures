@@ -24,4 +24,5 @@ args:
 
 discriminator: kluctl-{{ target.name }}
 
-helmChartsDir: helm-charts
+helm:
+  helmChartsDir: helm-charts
