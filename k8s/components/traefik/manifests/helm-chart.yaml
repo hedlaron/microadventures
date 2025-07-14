@@ -5,5 +5,4 @@ helmChart:
   releaseName: traefik
   namespace: traefik
   output: helm-rendered.yaml
-values:
-    - helm-values.yaml
+  valuesFile: helm-values.yaml
