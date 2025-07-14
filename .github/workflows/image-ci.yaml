@@ -3,7 +3,7 @@ name: image-ci
 on:
   push:
     branches:
-      - "main"
+      - "master"
     tags:
       - "[0-9]*.[0-9]*.[0-9]*"
     paths:
@@ -89,7 +89,7 @@ jobs:
         env:
           IMAGE_TAG: ${{ needs.generate-image-tag.outputs.image_tag }}
         run: |
-          # Update staging tags for push to main or release tag
+          # Update staging tags for push to master or release tag
           # task update-staging-image-tags NEW_TAG=${IMAGE_TAG}            
 
           # Update production tags only for release tags
@@ -100,6 +100,6 @@ jobs:
       - name: Create Pull Request
         uses: peter-evans/create-pull-request@v6
         with:
-          base: main
+          base: master
           token: ${{ secrets.MICROADVENTURES_GHA_PAT }}
           title: "Update image tags to (${{ needs.generate-image-tag.outputs.image_tag }})"
