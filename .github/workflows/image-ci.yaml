@@ -27,6 +27,9 @@ on:
 
 jobs:
   generate-image-tag:
+    # initial tag created manually --> git tag -a v0.0.1 -m "Initial tag"
+    # --> git push origin --tags
+    # subsequent tags created automatically by this workflow
     runs-on: ubuntu-latest
     timeout-minutes: 3
     outputs:
