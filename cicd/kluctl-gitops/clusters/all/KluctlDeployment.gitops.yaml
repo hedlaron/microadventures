@@ -4,6 +4,7 @@ metadata:
   name: gitops
   namespace: kluctl-gitops
 spec:
+  helmChartsDir: .helm-charts
   interval: 5m
   source:
     git:
