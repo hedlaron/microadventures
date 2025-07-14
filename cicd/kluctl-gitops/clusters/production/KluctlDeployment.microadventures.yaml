@@ -1,7 +1,7 @@
 apiVersion: gitops.kluctl.io/v1beta1
 kind: KluctlDeployment
 metadata:
-  name: demo-app
+  name: microadventures
   namespace: kluctl-gitops
 spec:
   interval: 5m
