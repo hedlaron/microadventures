@@ -18,8 +18,12 @@ spec:
           name: git-credentials
   target: {{args.cluster_name}}
   args:
-    # this passes the cluster_name initially passed via `kluctl deploy -a cluster_name=xxx.example.com` into the KluctlDeployment
-    cluster_name: {{args.cluster_name}}
+    # Map cluster_name to the correct target and provide required arguments
+    environment: {{args.cluster_name}}
+    environmentType: prod
+    docker_username: "{{ args.docker_username | default('') }}"
+    docker_password: "{{ args.docker_password | default('') }}"
+    docker_email: "{{ args.docker_email | default('') }}"
   context: default
   # let it automatically clean up orphan KluctlDeployment resources
   prune: true

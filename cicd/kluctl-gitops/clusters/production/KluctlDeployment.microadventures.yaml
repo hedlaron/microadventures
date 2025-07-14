@@ -16,7 +16,13 @@ spec:
       - host: github.com
         secretRef:
           name: git-credentials
-  target: production
+  target: {{args.cluster_name}}
+  args:
+    environment: {{args.cluster_name}}
+    environmentType: prod
+    docker_username: "{{ args.docker_username | default('') }}"
+    docker_password: "{{ args.docker_password | default('') }}"
+    docker_email: "{{ args.docker_email | default('') }}"
   context: default
   # let it automatically clean up orphan KluctlDeployment resources
   prune: true
