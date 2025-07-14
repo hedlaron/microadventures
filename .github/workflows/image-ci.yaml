@@ -64,12 +64,11 @@ jobs:
           - components/frontend
     
     # Skip components based on manual trigger input
-    if: ${{ 
+    if: |
       github.event_name != 'workflow_dispatch' || 
       github.event.inputs.component == 'all' ||
       (github.event.inputs.component == 'backend' && matrix.path == 'components/backend') ||
       (github.event.inputs.component == 'frontend' && matrix.path == 'components/frontend')
-    }}
 
     steps:
       - name: Checkout
