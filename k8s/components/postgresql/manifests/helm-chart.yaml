@@ -5,4 +5,3 @@ helmChart:
   releaseName: postgres
   namespace: postgres
   output: helm-rendered.yaml
-  updateDeps: true
