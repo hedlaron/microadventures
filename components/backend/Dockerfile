@@ -5,6 +5,6 @@ WORKDIR /app
 
 COPY . /app
 
-RUN uv sync --no-dev --compile-bytecode
+RUN uv sync --no-dev
 
 CMD ["uv", "run", "server.py"]
