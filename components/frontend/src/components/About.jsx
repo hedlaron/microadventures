@@ -11,7 +11,7 @@ const About = ({ onClose }) => {
         const data = await response.json();
         setBackendVersion(data.version || 'Unknown');
       } catch (error) {
-        console.error('Failed to fetch backend version:', error);
+        console.error('Failed to fetch backend version: ', error);
         setBackendVersion('Error fetching version');
       }
     };
