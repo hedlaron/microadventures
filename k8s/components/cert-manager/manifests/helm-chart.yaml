@@ -5,4 +5,5 @@ helmChart:
   releaseName: cert-manager
   namespace: cert-manager
   output: helm-rendered.yaml
-  valuesFile: helm-values.yaml
+  values:
+    - helm-values.yaml

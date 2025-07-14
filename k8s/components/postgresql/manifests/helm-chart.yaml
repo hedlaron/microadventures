@@ -5,4 +5,5 @@ helmChart:
   releaseName: postgres
   namespace: postgres
   output: helm-rendered.yaml
-  valuesFile: helm-values.yaml
+  values:
+    - helm-values.yaml
