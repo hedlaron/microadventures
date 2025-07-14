@@ -23,3 +23,5 @@ args:
     default: ""
 
 discriminator: kluctl-{{ target.name }}
+
+helmChartsDir: .helm-charts
