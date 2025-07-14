@@ -1,0 +1,3 @@
+backend:
+  version: foobarbaz # PRODUCTION_IMAGE_TAG  
+  replicas: 2

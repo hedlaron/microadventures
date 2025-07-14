@@ -1,0 +1,15 @@
+# .kluctl.yaml
+targets:
+  - name: production
+    args:
+      cluster_name: production
+    # Adding a context to .kluctl.yaml helps prevent accidentally deploying to the wrong cluster!
+    context: gke_microadventures_europe-west3-a_microadventures
+
+args:
+  # This allows us to deploy the GitOps deployment to different clusters. It is used to include dedicated deployment
+  # items for the selected cluster.
+  - name: cluster_name
+
+# Without a discriminator, pruning won't work. Make sure the rendered result is unique on the target cluster
+discriminator: gitops-{{ args.cluster_name | slugify }}
