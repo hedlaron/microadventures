@@ -32,6 +32,7 @@ tasks:
         fi
         echo "Deploying production cluster with GitHub credentials..."
         echo "Using GitHub username: {{.GITHUB_USERNAME}}"
+        kluctl helm-pull
         kluctl deploy -t production --yes -a github_username="{{.GITHUB_USERNAME}}" -a github_pat="{{.GITHUB_PAT}}"
 
   get-cluster-status:

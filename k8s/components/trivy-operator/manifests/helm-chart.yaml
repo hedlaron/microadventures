@@ -5,4 +5,3 @@ helmChart:
   releaseName: trivy-operator
   namespace: trivy-system
   output: helm-rendered.yaml
-  valuesFile: helm-values.yaml
