@@ -22,3 +22,5 @@ args:
 
 # Without a discriminator, pruning won't work. Make sure the rendered result is unique on the target cluster
 discriminator: gitops-{{ args.cluster_name | slugify }}
+
+helmChartsDir: .helm-charts
