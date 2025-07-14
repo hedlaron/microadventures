@@ -9,6 +9,13 @@ spec:
     git:
       url: https://github.com/hedlaron/microadventures.git
       path: k8s
+      ref:
+        branch: master
+  credentials:
+    git:
+      - host: github.com
+        secretRef:
+          name: git-credentials
   target: production
   context: default
   # let it automatically clean up orphan KluctlDeployment resources

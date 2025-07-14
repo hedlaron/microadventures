@@ -9,6 +9,13 @@ spec:
     git:
       url: https://github.com/hedlaron/microadventures.git
       path: k8s
+      ref:
+        branch: master
+  credentials:
+    git:
+      - host: github.com
+        secretRef:
+          name: git-credentials
   target: {{args.cluster_name}}
   args:
     # this passes the cluster_name initially passed via `kluctl deploy -a cluster_name=xxx.example.com` into the KluctlDeployment

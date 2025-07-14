@@ -10,6 +10,15 @@ args:
   # This allows us to deploy the GitOps deployment to different clusters. It is used to include dedicated deployment
   # items for the selected cluster.
   - name: cluster_name
+  - name: github_username
+  - name: github_pat
+  # Docker registry args (optional, with empty defaults)
+  - name: docker_username
+    default: ""
+  - name: docker_password
+    default: ""
+  - name: docker_email
+    default: ""
 
 # Without a discriminator, pruning won't work. Make sure the rendered result is unique on the target cluster
 discriminator: gitops-{{ args.cluster_name | slugify }}

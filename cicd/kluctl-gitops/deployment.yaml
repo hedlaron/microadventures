@@ -1,5 +1,6 @@
 # deployment.yaml
 deployments:
   - path: namespaces
+  - path: secrets
   - barrier: true
   - include: clusters

@@ -14,5 +14,12 @@ targets:
 args:
   - name: environment
   - name: environmentType
+  # Docker registry args (optional, with empty defaults)
+  - name: docker_username
+    default: ""
+  - name: docker_password
+    default: ""
+  - name: docker_email
+    default: ""
 
 discriminator: kluctl-{{ target.name }}

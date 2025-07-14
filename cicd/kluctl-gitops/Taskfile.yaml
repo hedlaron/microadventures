@@ -2,10 +2,6 @@ version: "3"
 
 tasks:
   # TODO add stage
-  deploy-production-cluster:
-    desc: "Deploy kluctl gitops production target"
-    cmds:
-      - kluctl deploy -t production
 
   get-webui-password:
     desc: "Get password for kluctl web ui admin user"
@@ -16,3 +12,40 @@ tasks:
     desc: "Port forward web UI to localhost"
     cmds:
       - kubectl -n kluctl-system port-forward svc/kluctl-webui 8080
+
+  deploy-production-cluster:
+    desc: "Deploy kluctl gitops production target with git credentials"
+    vars:
+      GITHUB_USERNAME: '{{.GITHUB_USERNAME | default ""}}'
+      GITHUB_PAT: '{{.GITHUB_PAT | default ""}}'
+    cmds:
+      - |
+        if [ -z "{{.GITHUB_USERNAME}}" ]; then
+          echo "Error: GITHUB_USERNAME is required"
+          echo "Usage: task deploy-production-cluster GITHUB_USERNAME=\$GITHUB_USERNAME GITHUB_PAT=\$GITHUB_PAT"
+          exit 1
+        fi
+        if [ -z "{{.GITHUB_PAT}}" ]; then
+          echo "Error: GITHUB_PAT is required"
+          echo "Usage: task deploy-production-cluster GITHUB_USERNAME=\$GITHUB_USERNAME GITHUB_PAT=\$GITHUB_PAT"
+          exit 1
+        fi
+        echo "Deploying production cluster with GitHub credentials..."
+        echo "Using GitHub username: {{.GITHUB_USERNAME}}"
+        kluctl deploy -t production --yes -a github_username="{{.GITHUB_USERNAME}}" -a github_pat="{{.GITHUB_PAT}}"
+
+  get-cluster-status:
+    desc: "Get status of all clusters"
+    cmds:
+      - kubectl get kluctldeployments -A
+      - kubectl get pods -n kluctl-system
+
+  get-git-credentials:
+    desc: "Get the stored GitHub credentials from the secret"
+    cmds:
+      - echo "GitHub Username:"
+      - kubectl -n kluctl-gitops get secret git-credentials -o jsonpath='{.data.username}' | base64 -d
+      - echo ""
+      - echo "GitHub PAT (first 10 chars):"
+      - kubectl -n kluctl-gitops get secret git-credentials -o jsonpath='{.data.password}' | base64 -d | cut -c1-10
+      - echo "..."
