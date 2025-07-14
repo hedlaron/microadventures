@@ -13,7 +13,7 @@ on:
 jobs:
   generate-image-tag:
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    timeout-minutes: 3
     outputs:
       image_tag: ${{ steps.generate-image-tag.outputs.image_tag }}
     steps:
