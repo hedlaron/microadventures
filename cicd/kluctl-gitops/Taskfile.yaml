@@ -109,3 +109,108 @@ tasks:
       - echo "GitHub PAT (first 10 chars):"
       - kubectl -n kluctl-gitops get secret git-credentials -o jsonpath='{.data.password}' | base64 -d | cut -c1-10
       - echo "..."
+
+  # Troubleshooting tasks
+  force-reconcile:
+    desc: "Force reconciliation of all GitOps deployments"
+    cmds:
+      - echo "Forcing reconciliation of GitOps deployments..."
+      - kubectl annotate kluctldeployment gitops reconcile.kluctl.io/requestReconcile="$(date +%s)" -n kluctl-gitops --overwrite
+      - kubectl annotate kluctldeployment microadventures reconcile.kluctl.io/requestReconcile="$(date +%s)" -n kluctl-gitops --overwrite
+      - echo "Reconciliation requests sent. Check status with task get-deployment-status"
+
+  force-reconcile-microadventures:
+    desc: "Force reconciliation of microadventures deployment only"
+    cmds:
+      - echo "Forcing reconciliation of microadventures deployment..."
+      - kubectl annotate kluctldeployment microadventures reconcile.kluctl.io/requestReconcile="$(date +%s)" -n kluctl-gitops --overwrite
+      - echo "Reconciliation request sent. Check status with task get-deployment-status"
+
+  get-deployment-status:
+    desc: "Get detailed status of all GitOps deployments"
+    cmds:
+      - echo "=== KluctlDeployment Status ==="
+      - kubectl get kluctldeployments -A
+      - echo ""
+      - echo "=== GitOps Deployment Details ==="
+      - kubectl get kluctldeployment gitops -n kluctl-gitops -o wide
+      - echo ""
+      - echo "=== Microadventures Deployment Details ==="
+      - kubectl get kluctldeployment microadventures -n kluctl-gitops -o wide
+
+  get-deployment-errors:
+    desc: "Get last errors from GitOps deployments"
+    cmds:
+      - echo "=== GitOps Deployment Last Error ==="
+      - kubectl get kluctldeployment gitops -n kluctl-gitops -o jsonpath='{.status.lastPrepareError}' || echo "No prepare errors"
+      - echo ""
+      - kubectl get kluctldeployment gitops -n kluctl-gitops -o jsonpath='{.status.lastDeployResult.error}' || echo "No deploy errors"
+      - echo ""
+      - echo "=== Microadventures Deployment Last Error ==="
+      - kubectl get kluctldeployment microadventures -n kluctl-gitops -o jsonpath='{.status.lastPrepareError}' || echo "No prepare errors"
+      - echo ""
+      - kubectl get kluctldeployment microadventures -n kluctl-gitops -o jsonpath='{.status.lastDeployResult.error}' || echo "No deploy errors"
+      - echo ""
+
+  get-controller-logs:
+    desc: "Get logs from kluctl controller"
+    cmds:
+      - echo "=== Kluctl Controller Logs (last 50 lines) ==="
+      - kubectl logs -n kluctl-system -l app.kubernetes.io/name=kluctl-controller --tail=50
+
+  restart-controller:
+    desc: "Restart the kluctl controller (helps with stuck deployments)"
+    cmds:
+      - echo "Restarting kluctl controller..."
+      - kubectl delete pods -n kluctl-system -l app.kubernetes.io/name=kluctl-controller
+      - echo "Controller restart initiated. Waiting for pod to be ready..."
+      - kubectl wait --for=condition=ready pod -l app.kubernetes.io/name=kluctl-controller -n kluctl-system --timeout=60s || echo "Timeout waiting for controller, check manually"
+      - echo "Controller restarted. Check status with task get-deployment-status"
+
+  get-app-status:
+    desc: "Get status of all application pods and resources"
+    cmds:
+      - echo "=== Application Pods Status ==="
+      - kubectl get pods -n microadventures -o wide
+      - echo ""
+      - echo "=== Application Services ==="
+      - kubectl get services -n microadventures
+      - echo ""
+      - echo "=== Recent Jobs (including Docker secret jobs) ==="
+      - kubectl get jobs -n microadventures --sort-by=.metadata.creationTimestamp
+      - echo ""
+      - echo "=== Docker Registry Secret ==="
+      - kubectl get secret microadventures-docker-secret -n microadventures -o jsonpath='{.metadata.creationTimestamp}' && echo " (created)"
+
+  get-docker-secret-logs:
+    desc: "Get logs from latest Docker registry secret job"
+    cmds:
+      - echo "=== Latest Docker Registry Secret Job Logs ==="
+      - kubectl logs job/create-docker-registry-secret -n microadventures || echo "No Docker secret job found"
+
+  get-recent-events:
+    desc: "Get recent events for troubleshooting"
+    cmds:
+      - echo "=== Recent Events in kluctl-gitops namespace ==="
+      - kubectl get events -n kluctl-gitops --sort-by=.metadata.creationTimestamp --field-selector type!=Normal | tail -20
+      - echo ""
+      - echo "=== Recent Events in microadventures namespace ==="
+      - kubectl get events -n microadventures --sort-by=.metadata.creationTimestamp --field-selector type!=Normal | tail -20
+      - echo ""
+      - echo "=== Recent Events in kluctl-system namespace ==="
+      - kubectl get events -n kluctl-system --sort-by=.metadata.creationTimestamp --field-selector type!=Normal | tail -20
+
+  full-status-check:
+    desc: "Comprehensive status check for troubleshooting"
+    cmds:
+      - task: get-deployment-status
+      - echo ""
+      - task: get-app-status
+      - echo ""
+      - task: get-deployment-errors
+      - echo ""
+      - echo "=== Observed Commits ==="
+      - kubectl get kluctldeployment gitops -n kluctl-gitops -o jsonpath='{.status.observedCommit}' && echo " (gitops)"
+      - kubectl get kluctldeployment microadventures -n kluctl-gitops -o jsonpath='{.status.observedCommit}' && echo " (microadventures)"
+      - echo ""
+      - echo "Run 'task get-recent-events' for error events or 'task get-controller-logs' for controller logs"
