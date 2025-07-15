@@ -35,6 +35,27 @@ tasks:
         kluctl helm-pull
         kluctl deploy -t production --yes -a github_username="{{.GITHUB_USERNAME}}" -a github_pat="{{.GITHUB_PAT}}"
 
+  render-production-cluster:
+    desc: "Render kluctl gitops production target for validation"
+    vars:
+      GITHUB_USERNAME: '{{.GITHUB_USERNAME | default ""}}'
+      GITHUB_PAT: '{{.GITHUB_PAT | default ""}}'
+    cmds:
+      - |
+        if [ -z "{{.GITHUB_USERNAME}}" ]; then
+          echo "Error: GITHUB_USERNAME is required"
+          echo "Usage: task render-production-cluster GITHUB_USERNAME=\$GITHUB_USERNAME GITHUB_PAT=\$GITHUB_PAT"
+          exit 1
+        fi
+        if [ -z "{{.GITHUB_PAT}}" ]; then
+          echo "Error: GITHUB_PAT is required"
+          echo "Usage: task render-production-cluster GITHUB_USERNAME=\$GITHUB_USERNAME GITHUB_PAT=\$GITHUB_PAT"
+          exit 1
+        fi
+        echo "Rendering production cluster with GitHub credentials..."
+        echo "Using GitHub username: {{.GITHUB_USERNAME}}"
+        kluctl render -t production -a github_username="{{.GITHUB_USERNAME}}" -a github_pat="{{.GITHUB_PAT}}"
+
   get-cluster-status:
     desc: "Get status of all clusters"
     cmds:
