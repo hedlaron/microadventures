@@ -1,0 +1,3 @@
+frontend:
+  version: foobarbaz # STAGING_IMAGE_TAG  
+  replicas: 2
