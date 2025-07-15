@@ -8,6 +8,10 @@ helm-rendered.yaml
 .kluctl/
 **/.kluctl/
 
+# Exception: Include helm charts directory
+!helm-charts/
+!**/helm-charts/
+
 # Kustomize build output
 kustomization-*.yaml
 
