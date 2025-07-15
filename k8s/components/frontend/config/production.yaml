@@ -1,3 +1,3 @@
 frontend:
-  version: foobarbaz # PRODUCTION_IMAGE_TAG  
+  version: 0.0.1-63-g4b0c91c # PRODUCTION_IMAGE_TAG  
   replicas: 2
