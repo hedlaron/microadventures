@@ -1,3 +1,2 @@
 deployments:
   - path: manifests
-    when: "{{ args.environment == 'production' }}"
