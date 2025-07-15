@@ -2,7 +2,6 @@
 frontend_replicas: 3
 frontend_tag: latest
 frontend_image_pull_policy: Always
-frontend_image: hedlaron/microadventures-frontend:latest
 
 # Environment and secrets
 environment: production

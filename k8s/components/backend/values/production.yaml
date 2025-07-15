@@ -2,7 +2,6 @@
 backend_replicas: 3
 backend_tag: latest
 backend_image_pull_policy: Always
-backend_image: hedlaron/microadventures-backend:latest
 
 # Environment and secrets
 environment: production
