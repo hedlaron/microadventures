@@ -5,6 +5,8 @@ const About = ({ onClose }) => {
   const [frontendVersion, setFrontendVersion] = useState('dev-local');
 
   useEffect(() => {
+    console.log('All import.meta.env:', import.meta.env);
+    console.log('VITE_APP_VERSION:', import.meta.env.VITE_APP_VERSION);
     const fetchBackendVersion = async () => {
       try {
         console.log('Fetching backend version from /api/backend/version');
@@ -28,15 +30,20 @@ const About = ({ onClose }) => {
     };
 
     // Check if we're in production environment
-    const isProduction = window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1';
+    const hostname = window.location.hostname;
+    console.log('Current hostname:', hostname);
+    const isProduction = hostname !== 'localhost' && hostname !== '127.0.0.1';
+    console.log('Is production?', isProduction);
     
     if (isProduction) {
       // In production, get frontend version from build-time environment variable
       const buildTimeVersion = import.meta.env.VITE_APP_VERSION || 'unknown';
+      console.log('Build time version:', buildTimeVersion);
       setFrontendVersion(buildTimeVersion);
       fetchBackendVersion();
     } else {
       // Local development
+      console.log('Detected as local development environment');
       setFrontendVersion('dev-local');
       setBackendVersion('dev-local');
     }
