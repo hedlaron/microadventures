@@ -10,10 +10,9 @@ deployments:
       subDir: install/webui
       ref:
         tag: v2.27.0
-    vars:
-      - values:
-          webui_args:
-            - --cookie-secure=false
+    args:
+      webui_args:
+        - --cookie-secure=false
   - barrier: true
   # Include things that are required on all clusters (e.g., the KluctlDeployment for the GitOps deployment itself)
   - path: all
