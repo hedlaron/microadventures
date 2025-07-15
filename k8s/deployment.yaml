@@ -4,8 +4,6 @@ vars:
 # Ordered list of deployments to process
 deployments:
   - include: components/namespaces
-  - include: components/secrets-sync
-    when: "{{ args.environment == 'production' }}"
   - include: components
 
 commonLabels:
