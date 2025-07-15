@@ -33,7 +33,7 @@ tasks:
         echo "Deploying production cluster with GitHub credentials..."
         echo "Using GitHub username: {{.GITHUB_USERNAME}}"
         kluctl helm-pull
-        kluctl deploy -t production --yes -a github_username="{{.GITHUB_USERNAME}}" -a github_pat="{{.GITHUB_PAT}}"
+        kluctl deploy -t production --yes -a environment=production -a environmentType=prod -a github_username="{{.GITHUB_USERNAME}}" -a github_pat="{{.GITHUB_PAT}}"
 
   render-production-cluster:
     desc: "Render kluctl gitops production target for validation"
@@ -54,7 +54,7 @@ tasks:
         fi
         echo "Rendering production cluster with GitHub credentials..."
         echo "Using GitHub username: {{.GITHUB_USERNAME}}"
-        kluctl render -t production -a github_username="{{.GITHUB_USERNAME}}" -a github_pat="{{.GITHUB_PAT}}"
+        kluctl render -t production -a environment=production -a environmentType=prod -a github_username="{{.GITHUB_USERNAME}}" -a github_pat="{{.GITHUB_PAT}}"
 
   get-cluster-status:
     desc: "Get status of all clusters"
