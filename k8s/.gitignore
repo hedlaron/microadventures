@@ -2,10 +2,6 @@
 helm-rendered.yaml
 **/helm-rendered.yaml
 
-# Helm chart cache
-.helm-charts/
-**/.helm-charts/
-
 # Kluctl cache and temporary files
 .kluctl-cache/
 **/.kluctl-cache/
