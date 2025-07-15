@@ -7,16 +7,22 @@ const About = ({ onClose }) => {
   useEffect(() => {
     const fetchBackendVersion = async () => {
       try {
+        console.log('Fetching backend version from /api/backend/version');
         const response = await fetch('/api/backend/version');
+        console.log('Response status:', response.status);
+        console.log('Response ok:', response.ok);
+        
         if (response.ok) {
           const data = await response.json();
+          console.log('Response data:', data);
           setBackendVersion(data.version || 'unknown');
         } else {
+          console.log('API response not ok, status:', response.status);
           // API not available (local development)
           setBackendVersion('dev-local');
         }
       } catch (error) {
-        console.log('Version API not available (local development)');
+        console.log('Version API error:', error);
         setBackendVersion('dev-local');
       }
     };
