@@ -1,9 +1,6 @@
 vars: 
   - file: values/{{ args.environment }}.yaml  # Common variables for all deployments
 
-helm:
-  chartsDir: .helm-charts
-
 # Ordered list of deployments to process
 deployments:
   - include: components/namespaces
