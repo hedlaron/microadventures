@@ -1,5 +1,2 @@
-# Deploy GCP secret sync for production only
-when: "{{ args.environment == 'production' }}"
-
 deployments:
   - path: manifests
