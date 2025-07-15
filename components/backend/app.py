@@ -34,16 +34,14 @@ if settings.BACKEND_CORS_ORIGINS:
         allow_headers=["*"],
     )
 
+
+from core.routes.api_router import api_router
 app.include_router(auth_router, prefix='/api')
 app.include_router(user_router, prefix='/api', tags=['Users'])
 app.include_router(adventure_router, prefix='/api', tags=['Adventures'])
+app.include_router(api_router, prefix='/api', tags=["Version"])
 
 @app.get("/health", tags=['Health Checks'])
 def read_root():
     return {"health": "true"}
 
-@app.get("/api/version")
-async def get_version():
-    """Get the current backend version from environment variable or default"""
-    version = os.getenv("APP_VERSION", "latest")
-    return {"version": version}
