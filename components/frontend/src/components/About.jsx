@@ -2,21 +2,37 @@ import React, { useState, useEffect } from 'react';
 
 const About = ({ onClose }) => {
   const [backendVersion, setBackendVersion] = useState('Loading...');
-  const [frontendVersion, setFrontendVersion] = useState(process.env.REACT_APP_VERSION || 'latest');
+  const [frontendVersion, setFrontendVersion] = useState('dev-local');
 
   useEffect(() => {
     const fetchBackendVersion = async () => {
       try {
         const response = await fetch('/api/version');
-        const data = await response.json();
-        setBackendVersion(data.version || 'Unknown');
+        if (response.ok) {
+          const data = await response.json();
+          setBackendVersion(data.version || 'unknown');
+        } else {
+          // API not available (local development)
+          setBackendVersion('dev-local');
+        }
       } catch (error) {
-        console.error('Failed to fetch backend version: ', error);
-        setBackendVersion('Error fetching version');
+        console.log('Version API not available (local development)');
+        setBackendVersion('dev-local');
       }
     };
 
-    fetchBackendVersion();
+    // Check if we're in production environment
+    const isProduction = window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1';
+    
+    if (isProduction) {
+      // In production, try to get backend version
+      setFrontendVersion('production');
+      fetchBackendVersion();
+    } else {
+      // Local development
+      setFrontendVersion('dev-local');
+      setBackendVersion('dev-local');
+    }
   }, []);
 
   return (

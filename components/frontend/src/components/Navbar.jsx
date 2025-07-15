@@ -2,11 +2,13 @@ import React, { useState, useRef, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { primaryButtonRounded, brandGradient, linkHover, focusRing } from '../utils/colors';
+import About from './About';
 
 function Navbar() {
   const navigate = useNavigate();
   const { isAuthenticated, getUserName, logout, openLoginModal } = useAuth();
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [showAbout, setShowAbout] = useState(false);
   const dropdownRef = useRef(null);
 
   useEffect(() => {
@@ -47,9 +49,12 @@ function Navbar() {
           </div>
           
           <div className="flex items-center gap-8">
-            <Link to="/about" className="text-[#0c1c17] text-base font-medium leading-normal hover:text-[#F4A261] transition-colors">
+            <button 
+              onClick={() => setShowAbout(true)}
+              className="text-[#0c1c17] text-base font-medium leading-normal hover:text-[#F4A261] transition-colors cursor-pointer"
+            >
               About
-            </Link>
+            </button>
             {isAuthenticated && (
               <Link to="/plan" className="text-[#0c1c17] text-base font-medium leading-normal hover:text-[#F4A261] transition-colors">
                 Plan
@@ -114,6 +119,9 @@ function Navbar() {
           </div>
         </header>
       </div>
+      
+      {/* About modal */}
+      {showAbout && <About onClose={() => setShowAbout(false)} />}
     </nav>
   );
 }
