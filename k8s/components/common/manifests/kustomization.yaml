@@ -10,4 +10,4 @@ resources:
   - ingressroute-https-selfsigned.yaml
   - ingressroute-http-redirect.yaml
   # - traefik.yaml  # Installed via Taskfile
-  - microadventures-secrets.yaml
+  # - microadventures-secrets.yaml  # Disabled - using External Secrets Operator
