@@ -3,6 +3,9 @@
 # Multi-stage build for React/Vite microadventures frontend
 FROM node:20 AS build
 
+# Build argument for version
+ARG APP_VERSION=dev-local
+
 # Set working directory
 WORKDIR /usr/src/app
 
@@ -16,6 +19,9 @@ RUN --mount=type=cache,target=/usr/src/app/.npm \
 
 # Copy source code
 COPY . .
+
+# Set environment variable for Vite build
+ENV VITE_APP_VERSION=${APP_VERSION}
 
 # Build the React/Vite application
 RUN npm run build

@@ -25,8 +25,9 @@ const About = ({ onClose }) => {
     const isProduction = window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1';
     
     if (isProduction) {
-      // In production, try to get backend version
-      setFrontendVersion('production');
+      // In production, get frontend version from build-time environment variable
+      const buildTimeVersion = import.meta.env.VITE_APP_VERSION || 'unknown';
+      setFrontendVersion(buildTimeVersion);
       fetchBackendVersion();
     } else {
       // Local development
