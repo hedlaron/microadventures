@@ -141,10 +141,8 @@ jobs:
           # Update staging tags for push to master or release tag
           task update-staging-image-tags NEW_TAG=${IMAGE_TAG}            
 
-          # Update production tags only for release tags
-          if [[ $GITHUB_REF == refs/tags/*.*.* ]]; then
-            task update-production-image-tags NEW_TAG=${IMAGE_TAG}
-          fi
+          # Update production tags for push to master or release tag
+          task update-production-image-tags NEW_TAG=${IMAGE_TAG}
 
       - name: Create Pull Request
         uses: peter-evans/create-pull-request@v6
