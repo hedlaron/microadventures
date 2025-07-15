@@ -43,6 +43,8 @@ ehthumbs.db
 secrets.yaml
 secret-*.yaml
 *-secrets.yaml
+# Exception: Allow the secrets-sync component configuration
+!components/secrets-sync/manifests/secrets.yaml
 
 # Backup files
 *.bak
