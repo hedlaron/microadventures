@@ -14,47 +14,85 @@ tasks:
       - kubectl -n kluctl-system port-forward svc/kluctl-webui 8080
 
   deploy-production-cluster:
-    desc: "Deploy kluctl gitops production target with git credentials"
+    desc: "Deploy kluctl gitops production target with git and docker credentials"
     vars:
       GITHUB_USERNAME: '{{.GITHUB_USERNAME | default ""}}'
       GITHUB_PAT: '{{.GITHUB_PAT | default ""}}'
+      DOCKER_USERNAME: '{{.DOCKER_USERNAME | default ""}}'
+      DOCKER_PASSWORD: '{{.DOCKER_PASSWORD | default ""}}'
+      DOCKER_EMAIL: '{{.DOCKER_EMAIL | default ""}}'
     cmds:
       - |
         if [ -z "{{.GITHUB_USERNAME}}" ]; then
           echo "Error: GITHUB_USERNAME is required"
-          echo "Usage: task deploy-production-cluster GITHUB_USERNAME=\$GITHUB_USERNAME GITHUB_PAT=\$GITHUB_PAT"
+          echo "Usage: task deploy-production-cluster GITHUB_USERNAME=\$GITHUB_USERNAME GITHUB_PAT=\$GITHUB_PAT DOCKER_USERNAME=\$DOCKER_USERNAME DOCKER_PASSWORD=\$DOCKER_PASSWORD DOCKER_EMAIL=\$DOCKER_EMAIL"
           exit 1
         fi
         if [ -z "{{.GITHUB_PAT}}" ]; then
           echo "Error: GITHUB_PAT is required"
-          echo "Usage: task deploy-production-cluster GITHUB_USERNAME=\$GITHUB_USERNAME GITHUB_PAT=\$GITHUB_PAT"
+          echo "Usage: task deploy-production-cluster GITHUB_USERNAME=\$GITHUB_USERNAME GITHUB_PAT=\$GITHUB_PAT DOCKER_USERNAME=\$DOCKER_USERNAME DOCKER_PASSWORD=\$DOCKER_PASSWORD DOCKER_EMAIL=\$DOCKER_EMAIL"
           exit 1
         fi
-        echo "Deploying production cluster with GitHub credentials..."
+        if [ -z "{{.DOCKER_USERNAME}}" ]; then
+          echo "Error: DOCKER_USERNAME is required for private image access"
+          echo "Usage: task deploy-production-cluster GITHUB_USERNAME=\$GITHUB_USERNAME GITHUB_PAT=\$GITHUB_PAT DOCKER_USERNAME=\$DOCKER_USERNAME DOCKER_PASSWORD=\$DOCKER_PASSWORD DOCKER_EMAIL=\$DOCKER_EMAIL"
+          exit 1
+        fi
+        if [ -z "{{.DOCKER_PASSWORD}}" ]; then
+          echo "Error: DOCKER_PASSWORD is required for private image access"
+          echo "Usage: task deploy-production-cluster GITHUB_USERNAME=\$GITHUB_USERNAME GITHUB_PAT=\$GITHUB_PAT DOCKER_USERNAME=\$DOCKER_USERNAME DOCKER_PASSWORD=\$DOCKER_PASSWORD DOCKER_EMAIL=\$DOCKER_EMAIL"
+          exit 1
+        fi
+        if [ -z "{{.DOCKER_EMAIL}}" ]; then
+          echo "Error: DOCKER_EMAIL is required for private image access"
+          echo "Usage: task deploy-production-cluster GITHUB_USERNAME=\$GITHUB_USERNAME GITHUB_PAT=\$GITHUB_PAT DOCKER_USERNAME=\$DOCKER_USERNAME DOCKER_PASSWORD=\$DOCKER_PASSWORD DOCKER_EMAIL=\$DOCKER_EMAIL"
+          exit 1
+        fi
+        echo "Deploying production cluster with GitHub and Docker credentials..."
         echo "Using GitHub username: {{.GITHUB_USERNAME}}"
+        echo "Using Docker username: {{.DOCKER_USERNAME}}"
         kluctl helm-pull
-        kluctl deploy -t production --yes -a environment=production -a environmentType=prod -a github_username="{{.GITHUB_USERNAME}}" -a github_pat="{{.GITHUB_PAT}}"
+        kluctl deploy -t production --yes -a environment=production -a environmentType=prod -a github_username="{{.GITHUB_USERNAME}}" -a github_pat="{{.GITHUB_PAT}}" -a docker_username="{{.DOCKER_USERNAME}}" -a docker_password="{{.DOCKER_PASSWORD}}" -a docker_email="{{.DOCKER_EMAIL}}"
 
   render-production-cluster:
     desc: "Render kluctl gitops production target for validation"
     vars:
       GITHUB_USERNAME: '{{.GITHUB_USERNAME | default ""}}'
       GITHUB_PAT: '{{.GITHUB_PAT | default ""}}'
+      DOCKER_USERNAME: '{{.DOCKER_USERNAME | default ""}}'
+      DOCKER_PASSWORD: '{{.DOCKER_PASSWORD | default ""}}'
+      DOCKER_EMAIL: '{{.DOCKER_EMAIL | default ""}}'
     cmds:
       - |
         if [ -z "{{.GITHUB_USERNAME}}" ]; then
           echo "Error: GITHUB_USERNAME is required"
-          echo "Usage: task render-production-cluster GITHUB_USERNAME=\$GITHUB_USERNAME GITHUB_PAT=\$GITHUB_PAT"
+          echo "Usage: task render-production-cluster GITHUB_USERNAME=\$GITHUB_USERNAME GITHUB_PAT=\$GITHUB_PAT DOCKER_USERNAME=\$DOCKER_USERNAME DOCKER_PASSWORD=\$DOCKER_PASSWORD DOCKER_EMAIL=\$DOCKER_EMAIL"
           exit 1
         fi
         if [ -z "{{.GITHUB_PAT}}" ]; then
           echo "Error: GITHUB_PAT is required"
-          echo "Usage: task render-production-cluster GITHUB_USERNAME=\$GITHUB_USERNAME GITHUB_PAT=\$GITHUB_PAT"
+          echo "Usage: task render-production-cluster GITHUB_USERNAME=\$GITHUB_USERNAME GITHUB_PAT=\$GITHUB_PAT DOCKER_USERNAME=\$DOCKER_USERNAME DOCKER_PASSWORD=\$DOCKER_PASSWORD DOCKER_EMAIL=\$DOCKER_EMAIL"
           exit 1
         fi
-        echo "Rendering production cluster with GitHub credentials..."
+        if [ -z "{{.DOCKER_USERNAME}}" ]; then
+          echo "Error: DOCKER_USERNAME is required for private image access"
+          echo "Usage: task render-production-cluster GITHUB_USERNAME=\$GITHUB_USERNAME GITHUB_PAT=\$GITHUB_PAT DOCKER_USERNAME=\$DOCKER_USERNAME DOCKER_PASSWORD=\$DOCKER_PASSWORD DOCKER_EMAIL=\$DOCKER_EMAIL"
+          exit 1
+        fi
+        if [ -z "{{.DOCKER_PASSWORD}}" ]; then
+          echo "Error: DOCKER_PASSWORD is required for private image access"
+          echo "Usage: task render-production-cluster GITHUB_USERNAME=\$GITHUB_USERNAME GITHUB_PAT=\$GITHUB_PAT DOCKER_USERNAME=\$DOCKER_USERNAME DOCKER_PASSWORD=\$DOCKER_PASSWORD DOCKER_EMAIL=\$DOCKER_EMAIL"
+          exit 1
+        fi
+        if [ -z "{{.DOCKER_EMAIL}}" ]; then
+          echo "Error: DOCKER_EMAIL is required for private image access"
+          echo "Usage: task render-production-cluster GITHUB_USERNAME=\$GITHUB_USERNAME GITHUB_PAT=\$GITHUB_PAT DOCKER_USERNAME=\$DOCKER_USERNAME DOCKER_PASSWORD=\$DOCKER_PASSWORD DOCKER_EMAIL=\$DOCKER_EMAIL"
+          exit 1
+        fi
+        echo "Rendering production cluster with GitHub and Docker credentials..."
         echo "Using GitHub username: {{.GITHUB_USERNAME}}"
-        kluctl render -t production -a environment=production -a environmentType=prod -a github_username="{{.GITHUB_USERNAME}}" -a github_pat="{{.GITHUB_PAT}}"
+        echo "Using Docker username: {{.DOCKER_USERNAME}}"
+        kluctl render -t production -a environment=production -a environmentType=prod -a github_username="{{.GITHUB_USERNAME}}" -a github_pat="{{.GITHUB_PAT}}" -a docker_username="{{.DOCKER_USERNAME}}" -a docker_password="{{.DOCKER_PASSWORD}}" -a docker_email="{{.DOCKER_EMAIL}}"
 
   get-cluster-status:
     desc: "Get status of all clusters"
