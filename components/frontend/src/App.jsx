@@ -25,7 +25,7 @@ console.log("App.jsx loading components:", {
 });
 
 const AppContent = () => {
-  const location = useLocation();
+  const _location = useLocation(); // Keep for future use
 
   return (
     <div className="h-screen flex flex-col">

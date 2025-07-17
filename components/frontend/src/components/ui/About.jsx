@@ -15,7 +15,7 @@ const About = ({ onClose }) => {
           // API not available (local development)
           setBackendVersion("dev-local");
         }
-      } catch (error) {
+      } catch (_error) {
         console.log("Version API not available (local development)");
         setBackendVersion("dev-local");
       }

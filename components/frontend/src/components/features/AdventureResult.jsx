@@ -12,12 +12,12 @@ import {
 } from "lucide-react";
 import { shareAdventure } from "../../utils/api";
 import {
-  primaryButtonRounded,
-  brandGradient,
-  brandGradientHover,
-  cardAccent,
-  cardAccentSecondary,
-  focusRing,
+  primaryButtonRounded as _PRIMARY_BUTTON_ROUNDED,
+  brandGradient as _BRAND_GRADIENT,
+  brandGradientHover as _BRAND_GRADIENT_HOVER,
+  cardAccent as _CARD_ACCENT,
+  cardAccentSecondary as _CARD_ACCENT_SECONDARY,
+  focusRing as _FOCUS_RING,
 } from "../../utils/colors";
 
 const AdventureResult = ({
@@ -70,7 +70,7 @@ const AdventureResult = ({
         await navigator.clipboard.writeText(fullUrl);
         setCopied(true);
         setTimeout(() => setCopied(false), 2000);
-      } catch (err) {
+      } catch (_err) {
         // Fallback for older browsers
         const textArea = document.createElement("textarea");
         textArea.value = fullUrl;

@@ -152,6 +152,7 @@ export function useApi() {
       if (!response.ok) throw new Error(await response.text());
       return await response.json();
     } catch (err) {
+      console.error("Request failed:", err);
       throw err;
     }
   }, []);

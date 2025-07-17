@@ -7,11 +7,11 @@ import MapPicker from "./MapPicker";
 import { useCountdown } from "../../hooks/useCountdown";
 import styled from "styled-components";
 import {
-  primaryButtonRounded,
-  errorText,
-  errorBg,
-  errorBorder,
-  focusRing,
+  primaryButtonRounded as _PRIMARY_BUTTON_ROUNDED,
+  errorText as _ERROR_TEXT,
+  errorBg as _ERROR_BG,
+  errorBorder as _ERROR_BORDER,
+  focusRing as _FOCUS_RING,
 } from "../../utils/colors";
 
 const PageWrapper = styled.div`
@@ -321,7 +321,7 @@ const Plan = ({ isEmbedded = false }) => {
     return () => console.log("Plan component unmounted");
   }, []);
 
-  const { currentUser } = useAuth();
+  const { currentUser: _currentUser } = useAuth();
   const [location, setLocation] = useState("");
   const [destination, setDestination] = useState("");
   const [isRoundTrip, setIsRoundTrip] = useState(false);
@@ -332,7 +332,7 @@ const Plan = ({ isEmbedded = false }) => {
   const [startDate, setStartDate] = useState(new Date());
   const [endDate, setEndDate] = useState(new Date());
   const [isCustomDate, setIsCustomDate] = useState(false);
-  const [weather, setWeather] = useState(null);
+  const [_weather, _setWeather] = useState(null);
 
   // New state for adventure handling
   const [loading, setLoading] = useState(false);
@@ -385,7 +385,8 @@ const Plan = ({ isEmbedded = false }) => {
     if (!location.trim()) {
       getCurrentLocation();
     }
-  }, []);
+    loadQuotaInfo();
+  }, [location]); // Add location as dependency
 
   const loadQuotaInfo = async () => {
     try {

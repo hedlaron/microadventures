@@ -2,10 +2,10 @@ import React, { useState, useRef, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../../contexts/AuthContext";
 import {
-  primaryButtonRounded,
-  brandGradient,
-  linkHover,
-  focusRing,
+  primaryButtonRounded as _PRIMARY_BUTTON_ROUNDED,
+  brandGradient as _BRAND_GRADIENT,
+  linkHover as _LINK_HOVER,
+  focusRing as _FOCUS_RING,
 } from "../../utils/colors";
 
 const Navbar = () => {

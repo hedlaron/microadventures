@@ -3,10 +3,10 @@ import { useAuth } from "../contexts/AuthContext";
 import HomePlan from "../components/features/HomePlan";
 import styled from "styled-components";
 import {
-  primaryButtonLarge,
-  brandGradientText,
-  focusRing,
-  cardAccent,
+  primaryButtonLarge as _PRIMARY_BUTTON_LARGE,
+  brandGradientText as _BRAND_GRADIENT_TEXT,
+  focusRing as _FOCUS_RING,
+  cardAccent as _CARD_ACCENT,
   legacyColors,
 } from "../utils/colors";
 

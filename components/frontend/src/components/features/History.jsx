@@ -13,16 +13,16 @@ import {
   ChevronRight,
 } from "lucide-react";
 import {
-  cardAccent,
-  cardAccentSecondary,
-  errorText,
-  errorBg,
-  brandGradient,
-  brandGradientHover,
+  cardAccent as _CARD_ACCENT,
+  cardAccentSecondary as _CARD_ACCENT_SECONDARY,
+  errorText as _ERROR_TEXT,
+  errorBg as _ERROR_BG,
+  brandGradient as _BRAND_GRADIENT,
+  brandGradientHover as _BRAND_GRADIENT_HOVER,
 } from "../../utils/colors";
 
 const History = ({ onBack, onSelectAdventure }) => {
-  const { currentUser } = useAuth();
+  const { currentUser: _currentUser } = useAuth();
   const [adventures, setAdventures] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
