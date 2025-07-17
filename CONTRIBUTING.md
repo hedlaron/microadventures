@@ -83,7 +83,7 @@ Before contributing, ensure you have the following installed:
 // Use functional components with hooks
 const MyComponent = ({ prop1, prop2 }) => {
   const [state, setState] = useState(initialValue);
-  
+
   useEffect(() => {
     // Side effects here
   }, [dependency]);
@@ -178,7 +178,7 @@ spec:
 cd components/frontend
 npm test
 
-# Backend tests  
+# Backend tests
 cd components/backend
 uv run pytest
 
@@ -209,10 +209,10 @@ def test_create_adventure():
         "title": "Test Adventure",
         "location": "Test Location"
     }
-    
+
     # Act
     response = client.post("/api/adventures", json=adventure_data)
-    
+
     # Assert
     assert response.status_code == 201
     assert response.json()["title"] == "Test Adventure"
@@ -309,7 +309,7 @@ We use labels to categorize issues and pull requests:
 We're particularly interested in contributions in these areas:
 
 - **🤖 AI/ML Features**: Improving adventure recommendations
-- **🗺️ Map Integration**: Enhanced mapping and location features  
+- **🗺️ Map Integration**: Enhanced mapping and location features
 - **📱 Mobile Experience**: Better mobile UI/UX
 - **⚡ Performance**: Frontend and backend optimizations
 - **🔒 Security**: Security enhancements and audits

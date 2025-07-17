@@ -8,7 +8,7 @@
 ## ✨ Features
 
 - 🤖 **AI-Powered Planning**: Generate personalized adventure recommendations using OpenAI
-- 🗺️ **Interactive Maps**: Visual trip planning with Google Maps integration  
+- 🗺️ **Interactive Maps**: Visual trip planning with Google Maps integration
 - 🌤️ **Weather Integration**: Real-time weather considerations for optimal planning
 - 📱 **Responsive Design**: Beautiful, mobile-first interface built with React and Tailwind CSS
 - 👤 **User Authentication**: Secure JWT-based authentication system
@@ -83,7 +83,7 @@ microadventures/
 ├── 📱 components/
 │   ├── backend/           # FastAPI backend service
 │   │   ├── adventure/     # Adventure planning logic
-│   │   ├── auth/          # Authentication system  
+│   │   ├── auth/          # Authentication system
 │   │   ├── core/          # Core configuration
 │   │   └── user/          # User management
 │   └── frontend/          # React frontend application
@@ -113,7 +113,7 @@ microadventures/
 - **Google Maps API** for mapping
 - **React Router** for navigation
 
-### Backend  
+### Backend
 - **FastAPI** (Python 3.13)
 - **PostgreSQL** database
 - **Alembic** for migrations
@@ -146,13 +146,13 @@ The application supports multiple environments with proper secret management:
 
 Required secrets:
 - `OPENAI_API_KEY` - For AI adventure generation
-- `JWT_SECRET_KEY` - For user authentication  
+- `JWT_SECRET_KEY` - For user authentication
 - `POSTGRES_*` - Database connection details
 
 ## 📖 Documentation
 
 - 📘 [Kind Setup Guide](docs/kind-setup.md) - Local Kubernetes development
-- 📗 [Tilt Setup Guide](docs/tilt-setup.md) - Live reload development  
+- 📗 [Tilt Setup Guide](docs/tilt-setup.md) - Live reload development
 - 📙 [GCP Deployment](docs/gcp-deployment.md) - Cloud deployment
 - 📕 [Native Setup](docs/native-local-setup.md) - Direct machine setup
 

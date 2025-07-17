@@ -293,6 +293,58 @@
         }
       }
     },
+    "hadolint@latest": {
+      "last_modified": "2025-07-13T22:45:35Z",
+      "resolved": "github:NixOS/nixpkgs/a421ac6595024edcfbb1ef950a3712b89161c359#hadolint",
+      "source": "devbox-search",
+      "version": "2.12.0",
+      "systems": {
+        "aarch64-darwin": {
+          "outputs": [
+            {
+              "name": "out",
+              "path": "/nix/store/92hj3ml8rx7r3w9xkmwi8ss65hq0i3z0-hadolint-2.12.0",
+              "default": true
+            },
+            {
+              "name": "doc",
+              "path": "/nix/store/s3dw42s211jlhd3x9r3hylc81l4vdpp0-hadolint-2.12.0-doc"
+            }
+          ],
+          "store_path": "/nix/store/92hj3ml8rx7r3w9xkmwi8ss65hq0i3z0-hadolint-2.12.0"
+        },
+        "aarch64-linux": {
+          "outputs": [
+            {
+              "name": "out",
+              "path": "/nix/store/wca6f4lywjfk4dvqh2p30p1w7zflbisv-hadolint-2.12.0",
+              "default": true
+            }
+          ],
+          "store_path": "/nix/store/wca6f4lywjfk4dvqh2p30p1w7zflbisv-hadolint-2.12.0"
+        },
+        "x86_64-darwin": {
+          "outputs": [
+            {
+              "name": "out",
+              "path": "/nix/store/3yjjx2643anmvil01nc5yikjsavg1fjb-hadolint-2.12.0",
+              "default": true
+            }
+          ],
+          "store_path": "/nix/store/3yjjx2643anmvil01nc5yikjsavg1fjb-hadolint-2.12.0"
+        },
+        "x86_64-linux": {
+          "outputs": [
+            {
+              "name": "out",
+              "path": "/nix/store/8lvbpc1zf9gp2vx7gpdn3s9naz8jncjh-hadolint-2.12.0",
+              "default": true
+            }
+          ],
+          "store_path": "/nix/store/8lvbpc1zf9gp2vx7gpdn3s9naz8jncjh-hadolint-2.12.0"
+        }
+      }
+    },
     "jq@latest": {
       "last_modified": "2025-06-14T12:19:57Z",
       "resolved": "github:NixOS/nixpkgs/41da1e3ea8e23e094e5e3eeb1e6b830468a7399e#jq",
@@ -877,6 +929,54 @@
         }
       }
     },
+    "markdownlint-cli@latest": {
+      "last_modified": "2025-07-13T22:45:35Z",
+      "resolved": "github:NixOS/nixpkgs/a421ac6595024edcfbb1ef950a3712b89161c359#markdownlint-cli",
+      "source": "devbox-search",
+      "version": "0.45.0",
+      "systems": {
+        "aarch64-darwin": {
+          "outputs": [
+            {
+              "name": "out",
+              "path": "/nix/store/k4khdln2h439gjl2fv6if4zxh3w6wafb-markdownlint-cli-0.45.0",
+              "default": true
+            }
+          ],
+          "store_path": "/nix/store/k4khdln2h439gjl2fv6if4zxh3w6wafb-markdownlint-cli-0.45.0"
+        },
+        "aarch64-linux": {
+          "outputs": [
+            {
+              "name": "out",
+              "path": "/nix/store/76h35i4dlh0qdkalfl8k9y3mkkl2w3lk-markdownlint-cli-0.45.0",
+              "default": true
+            }
+          ],
+          "store_path": "/nix/store/76h35i4dlh0qdkalfl8k9y3mkkl2w3lk-markdownlint-cli-0.45.0"
+        },
+        "x86_64-darwin": {
+          "outputs": [
+            {
+              "name": "out",
+              "path": "/nix/store/7cni6ifpb9mjslzlkrivhbdjqcvcxzly-markdownlint-cli-0.45.0",
+              "default": true
+            }
+          ],
+          "store_path": "/nix/store/7cni6ifpb9mjslzlkrivhbdjqcvcxzly-markdownlint-cli-0.45.0"
+        },
+        "x86_64-linux": {
+          "outputs": [
+            {
+              "name": "out",
+              "path": "/nix/store/a2knw13mkjxncav3cyf2kxnwpmy9qfvl-markdownlint-cli-0.45.0",
+              "default": true
+            }
+          ],
+          "store_path": "/nix/store/a2knw13mkjxncav3cyf2kxnwpmy9qfvl-markdownlint-cli-0.45.0"
+        }
+      }
+    },
     "nodejs_23@latest": {
       "last_modified": "2025-05-03T19:26:05Z",
       "plugin_version": "0.0.2",
@@ -1003,6 +1103,70 @@
             }
           ],
           "store_path": "/nix/store/cspwqx3w3jm4lsizi87pbhcwm2gx8s41-oras-1.2.3"
+        }
+      }
+    },
+    "pre-commit@latest": {
+      "last_modified": "2025-07-13T22:45:35Z",
+      "resolved": "github:NixOS/nixpkgs/a421ac6595024edcfbb1ef950a3712b89161c359#pre-commit",
+      "source": "devbox-search",
+      "version": "4.2.0",
+      "systems": {
+        "aarch64-darwin": {
+          "outputs": [
+            {
+              "name": "out",
+              "path": "/nix/store/b5frag42cw07hc1gkxrv1xbjkcnfh0q9-pre-commit-4.2.0",
+              "default": true
+            },
+            {
+              "name": "dist",
+              "path": "/nix/store/7lxnpjh8dag7ccp8lkhapiymn4w3kxk9-pre-commit-4.2.0-dist"
+            }
+          ],
+          "store_path": "/nix/store/b5frag42cw07hc1gkxrv1xbjkcnfh0q9-pre-commit-4.2.0"
+        },
+        "aarch64-linux": {
+          "outputs": [
+            {
+              "name": "out",
+              "path": "/nix/store/xqkr7h5i7p089fl61aqh3nwnkca88xlv-pre-commit-4.2.0",
+              "default": true
+            },
+            {
+              "name": "dist",
+              "path": "/nix/store/ignyllh6jkixbz1rx2vg35jjy6s9xrd7-pre-commit-4.2.0-dist"
+            }
+          ],
+          "store_path": "/nix/store/xqkr7h5i7p089fl61aqh3nwnkca88xlv-pre-commit-4.2.0"
+        },
+        "x86_64-darwin": {
+          "outputs": [
+            {
+              "name": "out",
+              "path": "/nix/store/d6031hds9f1294bcck77kd06fc77ngcg-pre-commit-4.2.0",
+              "default": true
+            },
+            {
+              "name": "dist",
+              "path": "/nix/store/cgjfs7rmgy4y80xgdxaw1i633vh67w5y-pre-commit-4.2.0-dist"
+            }
+          ],
+          "store_path": "/nix/store/d6031hds9f1294bcck77kd06fc77ngcg-pre-commit-4.2.0"
+        },
+        "x86_64-linux": {
+          "outputs": [
+            {
+              "name": "out",
+              "path": "/nix/store/byg7w84jydnjvckdpg5phvnzb2kflp5c-pre-commit-4.2.0",
+              "default": true
+            },
+            {
+              "name": "dist",
+              "path": "/nix/store/igjn0vjcmggfda8cxyp6q7fjw0l8idr2-pre-commit-4.2.0-dist"
+            }
+          ],
+          "store_path": "/nix/store/byg7w84jydnjvckdpg5phvnzb2kflp5c-pre-commit-4.2.0"
         }
       }
     },
@@ -1204,6 +1368,70 @@
             }
           ],
           "store_path": "/nix/store/27akw8xb1q5hf86cn37y0vnj6pdnca0w-uv-0.7.12"
+        }
+      }
+    },
+    "yamllint@latest": {
+      "last_modified": "2025-07-13T22:45:35Z",
+      "resolved": "github:NixOS/nixpkgs/a421ac6595024edcfbb1ef950a3712b89161c359#yamllint",
+      "source": "devbox-search",
+      "version": "1.37.1",
+      "systems": {
+        "aarch64-darwin": {
+          "outputs": [
+            {
+              "name": "out",
+              "path": "/nix/store/6jvixyf460z9hl8nikn0hl571x01k542-python3.13-yamllint-1.37.1",
+              "default": true
+            },
+            {
+              "name": "dist",
+              "path": "/nix/store/c5sdkinaq22m7r08v8fa84l82z3ljq50-python3.13-yamllint-1.37.1-dist"
+            }
+          ],
+          "store_path": "/nix/store/6jvixyf460z9hl8nikn0hl571x01k542-python3.13-yamllint-1.37.1"
+        },
+        "aarch64-linux": {
+          "outputs": [
+            {
+              "name": "out",
+              "path": "/nix/store/821hnbqqy66zb3zx2wg8azrlrh4y6y1k-python3.13-yamllint-1.37.1",
+              "default": true
+            },
+            {
+              "name": "dist",
+              "path": "/nix/store/j0d2rsgmvlh61i5avxza9v7imqfkrxz7-python3.13-yamllint-1.37.1-dist"
+            }
+          ],
+          "store_path": "/nix/store/821hnbqqy66zb3zx2wg8azrlrh4y6y1k-python3.13-yamllint-1.37.1"
+        },
+        "x86_64-darwin": {
+          "outputs": [
+            {
+              "name": "out",
+              "path": "/nix/store/0c58r1czp50dfmflcwwimnngvjzrpig7-python3.13-yamllint-1.37.1",
+              "default": true
+            },
+            {
+              "name": "dist",
+              "path": "/nix/store/g059k5jcnzdy18l0f5gr8pyyh4sbhbv6-python3.13-yamllint-1.37.1-dist"
+            }
+          ],
+          "store_path": "/nix/store/0c58r1czp50dfmflcwwimnngvjzrpig7-python3.13-yamllint-1.37.1"
+        },
+        "x86_64-linux": {
+          "outputs": [
+            {
+              "name": "out",
+              "path": "/nix/store/i37pbba0yq7c15lw5c6dkp71fiipvzy0-python3.13-yamllint-1.37.1",
+              "default": true
+            },
+            {
+              "name": "dist",
+              "path": "/nix/store/q5vznpqgmb2i3h3kp1w7z1jn0xr9r2mw-python3.13-yamllint-1.37.1-dist"
+            }
+          ],
+          "store_path": "/nix/store/i37pbba0yq7c15lw5c6dkp71fiipvzy0-python3.13-yamllint-1.37.1"
         }
       }
     },

@@ -24,7 +24,11 @@
     "yq-go@latest",
     "uv@latest",
     "python@3.13",
-    "trufflehog@latest"
+    "trufflehog@latest",
+    "pre-commit@latest",
+    "hadolint@latest",
+    "yamllint@latest",
+    "markdownlint-cli@latest"
   ],
   "shell": {
     "init_hook": [
