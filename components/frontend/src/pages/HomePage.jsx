@@ -1,8 +1,8 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { useAuth } from './contexts/AuthContext';
-import HomePlan from './components/HomePlan';
+import { useAuth } from '../contexts/AuthContext';
+import HomePlan from '../components/features/HomePlan';
 import styled from 'styled-components';
-import { primaryButtonLarge, brandGradientText, focusRing, cardAccent, legacyColors } from './utils/colors';
+import { primaryButtonLarge, brandGradientText, focusRing, cardAccent, legacyColors } from '../utils/colors';
 
 // Styled components
 const PageWrapper = styled.div`

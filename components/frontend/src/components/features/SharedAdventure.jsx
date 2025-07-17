@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { getSharedAdventure } from '../utils/api';
+import { getSharedAdventure } from '../../utils/api';
 import AdventureResult from './AdventureResult';
 
 const SharedAdventure = () => {

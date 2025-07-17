@@ -1,14 +1,14 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route, useLocation, Navigate } from 'react-router-dom';
 import { AuthProvider } from './contexts/AuthContext';
-import HomePage from './HomePage';
-import Navbar from './components/Navbar';
-import Footer from './components/Footer';
-import ContactBubble from './components/ContactBubble';
-import Plan from './components/Plan';
-import HistoryPage from './components/HistoryPage';
-import SharedAdventure from './components/SharedAdventure';
-import ProtectedRoute from './components/ProtectedRoute';
+import HomePage from './pages/HomePage';
+import Navbar from './components/layout/Navbar';
+import Footer from './components/layout/Footer';
+import ContactBubble from './components/ui/ContactBubble';
+import Plan from './components/features/Plan';
+import HistoryPage from './components/features/HistoryPage';
+import SharedAdventure from './components/features/SharedAdventure';
+import ProtectedRoute from './components/layout/ProtectedRoute';
 
 // For debugging
 console.log("App.jsx loading components:", { 

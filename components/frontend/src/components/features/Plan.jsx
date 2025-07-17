@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { useAuth } from '../contexts/AuthContext';
-import { createAdventure, fetchAdventureQuota } from '../utils/api';
+import { useAuth } from '../../contexts/AuthContext';
+import { createAdventure, fetchAdventureQuota } from '../../utils/api';
 import AdventurousBackground from './AdventurousBackground';
 import AdventureResult from './AdventureResult';
 import MapPicker from './MapPicker';
-import { useCountdown } from '../hooks/useCountdown';
+import { useCountdown } from '../../hooks/useCountdown';
 import styled from 'styled-components';
-import { primaryButtonRounded, errorText, errorBg, errorBorder, focusRing } from '../utils/colors';
+import { primaryButtonRounded, errorText, errorBg, errorBorder, focusRing } from '../../utils/colors';
 
 const PageWrapper = styled.div`
   display: flex;

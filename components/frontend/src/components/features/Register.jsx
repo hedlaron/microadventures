@@ -1,6 +1,6 @@
 // src/Register.jsx
 import React, { useState, useContext } from 'react';
-import { AuthContext } from '../contexts/AuthContext.jsx';
+import { AuthContext } from '../../contexts/AuthContext.jsx';
 
 const Register = () => {
     const [formData, setFormData] = useState({

@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { useAuth } from './contexts/AuthContext';
-import { primaryButtonRounded, brandGradient, linkHover, focusRing } from './utils/colors';
+import { useAuth } from '../../contexts/AuthContext';
+import { primaryButtonRounded, brandGradient, linkHover, focusRing } from '../../utils/colors';
 
 const Navbar = () => {
   const { isAuthenticated, getUserName, logout, openLoginModal } = useAuth();

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import About from './components/About';
+import About from '../components/ui/About';
 
 const LandingPage = () => {
   const [showAbout, setShowAbout] = useState(false);

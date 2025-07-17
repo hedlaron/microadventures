@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { useAuth } from '../contexts/AuthContext';
-import { fetchUserAdventures, shareAdventure } from '../utils/api';
+import { useAuth } from '../../contexts/AuthContext';
+import { fetchUserAdventures, shareAdventure } from '../../utils/api';
 import { ArrowLeft, Calendar, MapPin, Clock, Share2, Copy, Check, ChevronLeft, ChevronRight } from 'lucide-react';
-import { cardAccent, cardAccentSecondary, errorText, errorBg, brandGradient, brandGradientHover } from '../utils/colors';
+import { cardAccent, cardAccentSecondary, errorText, errorBg, brandGradient, brandGradientHover } from '../../utils/colors';
 
 const History = ({ onBack, onSelectAdventure }) => {
   const { currentUser } = useAuth();

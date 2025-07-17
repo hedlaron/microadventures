@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { MapPin, Mountain, Umbrella, Sun, ArrowLeft, RotateCcw, Share2, Copy, Check } from 'lucide-react';
-import { shareAdventure } from '../utils/api';
-import { primaryButtonRounded, brandGradient, brandGradientHover, cardAccent, cardAccentSecondary, focusRing } from '../utils/colors';
+import { shareAdventure } from '../../utils/api';
+import { primaryButtonRounded, brandGradient, brandGradientHover, cardAccent, cardAccentSecondary, focusRing } from '../../utils/colors';
 
 const AdventureResult = ({ adventure, onBack, onNewAdventure, quotaInfo, isSharedView = false, backText = "Back" }) => {
   const [isSharing, setIsSharing] = useState(false);

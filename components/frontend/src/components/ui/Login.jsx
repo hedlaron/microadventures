@@ -1,6 +1,6 @@
 // src/Login.jsx
 import React, { useState, useContext } from 'react';
-import { AuthContext } from '../contexts/AuthContext.jsx';
+import { AuthContext } from '../../contexts/AuthContext.jsx';
 
 const Login = () => {
     const [formData, setFormData] = useState({
