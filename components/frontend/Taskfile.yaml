@@ -10,6 +10,11 @@ tasks:
     cmds:
       - docker build --build-arg APP_VERSION={{.IMAGE_TAG}} -t {{.IMAGE_REPO}}:{{.IMAGE_TAG}} .
 
+  build-container-image-with-tests:
+    desc: Build container image with tests
+    cmds:
+      - docker build --build-arg APP_VERSION={{.IMAGE_TAG}} --build-arg RUN_TESTS=true -t {{.IMAGE_REPO}}:{{.IMAGE_TAG}} .
+
   build-container-image-multi-arch:
     desc: Build multi-arch container image
     cmds:
@@ -17,6 +22,18 @@ tasks:
         docker buildx build \
         --platform linux/amd64,linux/arm64 \
         --build-arg APP_VERSION={{.IMAGE_TAG}} \
+        -t {{.IMAGE_REPO}}:{{.IMAGE_TAG}} \
+        --push \
+        .
+
+  build-container-image-multi-arch-with-tests:
+    desc: Build multi-arch container image with tests
+    cmds:
+      - |
+        docker buildx build \
+        --platform linux/amd64,linux/arm64 \
+        --build-arg APP_VERSION={{.IMAGE_TAG}} \
+        --build-arg RUN_TESTS=true \
         -t {{.IMAGE_REPO}}:{{.IMAGE_TAG}} \
         --push \
         .
@@ -30,3 +47,40 @@ tasks:
     desc: Start react client
     cmds:
       - npm run dev
+
+  test:
+    desc: Run tests
+    cmds:
+      - npm run test:run
+
+  test:watch:
+    desc: Run tests in watch mode
+    cmds:
+      - npm run test:watch
+
+  test:coverage:
+    desc: Run tests with coverage
+    cmds:
+      - npm run test:coverage
+
+  test:ui:
+    desc: Run tests with UI
+    cmds:
+      - npm run test:ui
+
+  lint:
+    desc: Run linting
+    cmds:
+      - npm run lint
+
+  lint:fix:
+    desc: Run linting with auto-fix
+    cmds:
+      - npm run lint -- --fix
+
+  ci:test:
+    desc: Run all CI tests (lint + test)
+    deps: [install]
+    cmds:
+      - npm run lint
+      - npm run test:run

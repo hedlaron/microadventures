@@ -20,6 +20,17 @@ RUN --mount=type=cache,target=/usr/src/app/.npm \
 # Copy source code
 COPY . .
 
+# Run tests and linting in CI builds
+ARG RUN_TESTS=false
+RUN if [ "$RUN_TESTS" = "true" ]; then \
+      echo "Running tests and linting..." && \
+      npm run lint && \
+      npm run test:run && \
+      echo "Tests and linting completed successfully!"; \
+    else \
+      echo "Skipping tests (RUN_TESTS=false)"; \
+    fi
+
 # Set environment variable for Vite build
 ENV VITE_APP_VERSION=${APP_VERSION}
 
