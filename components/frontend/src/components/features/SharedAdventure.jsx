@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
-import { getSharedAdventure } from '../../utils/api';
-import AdventureResult from './AdventureResult';
+import React, { useState, useEffect } from "react";
+import { useParams, useNavigate } from "react-router-dom";
+import { getSharedAdventure } from "../../utils/api";
+import AdventureResult from "./AdventureResult";
 
 const SharedAdventure = () => {
   const { shareToken } = useParams();
@@ -17,8 +17,8 @@ const SharedAdventure = () => {
         const adventureData = await getSharedAdventure(shareToken);
         setAdventure(adventureData);
       } catch (err) {
-        setError(err.userMessage || 'Failed to load shared adventure');
-        console.error('Error fetching shared adventure:', err);
+        setError(err.userMessage || "Failed to load shared adventure");
+        console.error("Error fetching shared adventure:", err);
       } finally {
         setLoading(false);
       }
@@ -30,11 +30,11 @@ const SharedAdventure = () => {
   }, [shareToken]);
 
   const handleBackToHome = () => {
-    navigate('/');
+    navigate("/");
   };
 
   const handleCreateOwn = () => {
-    navigate('/plan');
+    navigate("/plan");
   };
 
   if (loading) {
@@ -53,7 +53,9 @@ const SharedAdventure = () => {
       <div className="min-h-screen bg-[#f8fcfa] flex items-center justify-center">
         <div className="text-center max-w-md mx-auto p-6">
           <div className="text-6xl mb-4">🗺️</div>
-          <h1 className="text-2xl font-bold text-[#0c1c17] mb-4">Adventure Not Found</h1>
+          <h1 className="text-2xl font-bold text-[#0c1c17] mb-4">
+            Adventure Not Found
+          </h1>
           <p className="text-[#46a080] mb-6">{error}</p>
           <div className="space-y-3">
             <button

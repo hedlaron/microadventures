@@ -1,5 +1,5 @@
 docker_build(
-  'hedlaron/microadventures-frontend', 
+  'hedlaron/microadventures-frontend',
   './',
 )
 k8s_yaml('../../k8s/frontend/Deployment.yaml')

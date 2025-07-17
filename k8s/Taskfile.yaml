@@ -32,7 +32,7 @@ tasks:
       🔧 Utility tasks:
       - validate:config      # Validate the Kluctl configuration
       - status               # Check status of deployments
-      
+
       📊 Component tasks:
       - logs:backend         # View backend logs
       - logs:frontend        # View frontend logs
@@ -47,7 +47,7 @@ tasks:
       - task deploy:local           # Deploy to local Kind
       - task deploy:production      # Deploy to GCP
       - task logs:backend           # View backend logs
-      
+
       Run 'task --list' to see all available tasks
       EOF
 
@@ -102,7 +102,7 @@ tasks:
     cmds:
       - echo "Creating service account..."
       - gcloud iam service-accounts create microadventures-secret-manager --project=microadventures || echo "Service account exists"
-      - echo "Granting secret manager role..."  
+      - echo "Granting secret manager role..."
       - gcloud projects add-iam-policy-binding microadventures --member="serviceAccount:microadventures-secret-manager@microadventures.iam.gserviceaccount.com" --role="roles/secretmanager.secretAccessor"
       - echo "Setting up workload identity..."
       - gcloud iam service-accounts add-iam-policy-binding microadventures-secret-manager@microadventures.iam.gserviceaccount.com --role roles/iam.workloadIdentityUser --member "serviceAccount:microadventures.svc.id.goog[microadventures/secret-sync-sa]" --project=microadventures
@@ -246,36 +246,36 @@ tasks:
       - echo "Syncing secrets from GCP Secret Manager for local development..."
       - |
         echo "Fetching secrets from GCP Secret Manager..."
-        
+
         POSTGRES_USER=$(gcloud secrets versions access latest --secret="postgresql-user" --project="microadventures")
         if [ $? -ne 0 ]; then
           echo "ERROR: Failed to fetch postgresql-user from GCP Secret Manager"
           exit 1
         fi
-        
+
         POSTGRES_PASSWORD=$(gcloud secrets versions access latest --secret="postgresql-password" --project="microadventures")
         if [ $? -ne 0 ]; then
           echo "ERROR: Failed to fetch postgresql-password from GCP Secret Manager"
           exit 1
         fi
-        
+
         JWT_SECRET=$(gcloud secrets versions access latest --secret="jwt-secret-key" --project="microadventures")
         if [ $? -ne 0 ]; then
           echo "ERROR: Failed to fetch jwt-secret-key from GCP Secret Manager"
           exit 1
         fi
-        
+
         OPENAI_KEY=$(gcloud secrets versions access latest --secret="openai-api-key" --project="microadventures")
         if [ $? -ne 0 ]; then
           echo "ERROR: Failed to fetch openai-api-key from GCP Secret Manager"
           exit 1
         fi
-        
+
         echo "Successfully fetched all secrets from GCP Secret Manager"
-        
+
         kubectl create namespace microadventures || echo "Namespace microadventures already exists"
         kubectl create namespace postgres || echo "Namespace postgres already exists"
-        
+
         kubectl create secret generic microadventures-gcp-secrets \
           --from-literal=POSTGRES_USER="$POSTGRES_USER" \
           --from-literal=POSTGRES_PASSWORD="$POSTGRES_PASSWORD" \
@@ -283,14 +283,14 @@ tasks:
           --from-literal=OPENAI_API_KEY="$OPENAI_KEY" \
           --namespace=microadventures \
           --dry-run=client -o yaml | kubectl apply -f -
-        
+
         kubectl create secret generic microadventures-gcp-secrets \
           --from-literal=postgresql-password="$POSTGRES_PASSWORD" \
           --from-literal=POSTGRES_USER="$POSTGRES_USER" \
           --from-literal=POSTGRES_PASSWORD="$POSTGRES_PASSWORD" \
           --namespace=postgres \
           --dry-run=client -o yaml | kubectl apply -f -
-        
+
         echo "Secrets synced from GCP Secret Manager"
 
   secrets:logs:

@@ -7,7 +7,7 @@ repos:
       - id: check-added-large-files
         exclude: |
             (?x)^(
-                \.helm-charts/.*
+                k8s/\.helm-charts/.*
             )$
       - id: check-toml
       - id: check-yaml
@@ -15,20 +15,20 @@ repos:
           - --unsafe
         exclude: |
             (?x)^(
-                \.helm-charts/.*
+                k8s/\.helm-charts/.*
             )$
       - id: end-of-file-fixer
         exclude: |
             (?x)^(
                 components/frontend/src/client/.*|
                 components/backend/app/email-templates/build/.*|
-                \.helm-charts/.*
+                k8s/\.helm-charts/.*
             )$
       - id: trailing-whitespace
         exclude: |
             (?x)^(
                 components/frontend/src/client/.*|
-                \.helm-charts/.*
+                k8s/\.helm-charts/.*
             )$
       - id: check-case-conflict
       - id: check-merge-conflict
@@ -48,7 +48,7 @@ repos:
 # Global exclusions
 exclude: |
   (?x)^(
-    \.helm-charts/.*|
+    k8s/\.helm-charts/.*|
     \.git/.*|
     \.venv/.*|
     venv/.*|

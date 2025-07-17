@@ -6,25 +6,45 @@ vars:
 
 tasks:
   build-container-image:
-    desc: Build container image
+    desc: Build container image (production stage)
     cmds:
-      - docker build --build-arg APP_VERSION={{.IMAGE_TAG}} -t {{.IMAGE_REPO}}:{{.IMAGE_TAG}} .
+      - docker build --target production --build-arg APP_VERSION={{.IMAGE_TAG}} -t {{.IMAGE_REPO}}:{{.IMAGE_TAG}} .
+
+  build-container-image-with-tests:
+    desc: Build container image with tests (test stage)
+    cmds:
+      - docker build --target test --build-arg APP_VERSION={{.IMAGE_TAG}} --build-arg RUN_TESTS=true -t {{.IMAGE_REPO}}:{{.IMAGE_TAG}}-test .
 
   build-container-image-multi-arch:
-    desc: Build multi-arch container image
+    desc: Build multi-arch container image (production stage)
     cmds:
       - |
         docker buildx build \
         --platform linux/amd64,linux/arm64 \
+        --target production \
         --build-arg APP_VERSION={{.IMAGE_TAG}} \
+        --build-arg RUN_TESTS={{.RUN_TESTS | default "false"}} \
         -t {{.IMAGE_REPO}}:{{.IMAGE_TAG}} \
+        --push \
+        .
+
+  build-container-image-multi-arch-with-tests:
+    desc: Build multi-arch container image with tests
+    cmds:
+      - |
+        docker buildx build \
+        --platform linux/amd64,linux/arm64 \
+        --target test \
+        --build-arg APP_VERSION={{.IMAGE_TAG}} \
+        --build-arg RUN_TESTS=true \
+        -t {{.IMAGE_REPO}}:{{.IMAGE_TAG}}-test \
         --push \
         .
 
   install:
     desc: install dependencies
     cmds:
-      - uv sync
+      - uv sync --extra dev
 
   run:
     desc: Start backend server
@@ -35,3 +55,79 @@ tasks:
     desc: Start local postgres container
     cmds:
       - docker-compose up -d
+
+  test:
+    desc: Run all tests
+    cmds:
+      - uv run pytest
+
+  test-unit:
+    desc: Run unit tests only
+    cmds:
+      - uv run pytest -m unit
+
+  test-integration:
+    desc: Run integration tests only
+    cmds:
+      - uv run pytest -m integration
+
+  test-coverage:
+    desc: Run tests with coverage report
+    cmds:
+      - uv run pytest --cov=. --cov-report=html --cov-report=term-missing
+
+  test-watch:
+    desc: Run tests in watch mode
+    cmds:
+      - uv run pytest --watch
+
+  lint:
+    desc: Run linting
+    cmds:
+      - uv run ruff check .
+      - uv run mypy .
+
+  format:
+    desc: Format code
+    cmds:
+      - uv run ruff format .
+      - uv run ruff check --fix .
+
+  migrate:
+    desc: Run database migrations
+    cmds:
+      - uv run alembic upgrade head
+
+  migrate-create:
+    desc: Create new migration
+    cmds:
+      - uv run alembic revision --autogenerate -m "{{.MESSAGE}}"
+
+  ci-test:
+    desc: Run CI tests with proper coverage
+    cmds:
+      - uv run pytest --cov=. --cov-report=xml --cov-report=term-missing --cov-fail-under=80
+
+  ci-build:
+    desc: Build and test for CI
+    cmds:
+      - task: install
+      - task: lint
+      - task: ci-test
+
+  test-docker-build:
+    desc: Test the multi-stage Docker build
+    cmds:
+      - python3 test_docker_build.py
+
+  docker-test-stage:
+    desc: Build and run test stage locally
+    cmds:
+      - docker build --target test --build-arg RUN_TESTS=true -t {{.IMAGE_REPO}}:test-local .
+      - echo "Test stage built successfully! Tests ran inside Docker."
+
+  docker-prod-stage:
+    desc: Build production stage locally
+    cmds:
+      - docker build --target production --build-arg APP_VERSION={{.IMAGE_TAG}} -t {{.IMAGE_REPO}}:{{.IMAGE_TAG}} .
+      - echo "Production stage built successfully!"

@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import History from './History';
-import AdventureResult from './AdventureResult';
+import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import History from "./History";
+import AdventureResult from "./AdventureResult";
 
 const HistoryPage = () => {
   const [selectedAdventure, setSelectedAdventure] = useState(null);
@@ -11,7 +11,7 @@ const HistoryPage = () => {
     if (selectedAdventure) {
       setSelectedAdventure(null);
     } else {
-      navigate('/');
+      navigate("/");
     }
   };
 
@@ -20,7 +20,7 @@ const HistoryPage = () => {
   };
 
   const handleNewAdventure = () => {
-    navigate('/plan');
+    navigate("/plan");
   };
 
   if (selectedAdventure) {
@@ -36,10 +36,7 @@ const HistoryPage = () => {
   }
 
   return (
-    <History
-      onBack={handleBack}
-      onSelectAdventure={handleSelectAdventure}
-    />
+    <History onBack={handleBack} onSelectAdventure={handleSelectAdventure} />
   );
 };
 

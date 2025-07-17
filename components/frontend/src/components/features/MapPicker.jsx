@@ -1,7 +1,12 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { MapPin, X } from 'lucide-react';
+import React, { useState, useEffect, useRef } from "react";
+import { MapPin, X } from "lucide-react";
 
-const MapPicker = ({ isOpen, onClose, onLocationSelect, title = "Select Location" }) => {
+const MapPicker = ({
+  isOpen,
+  onClose,
+  onLocationSelect,
+  title = "Select Location",
+}) => {
   const [selectedLocation, setSelectedLocation] = useState(null);
   const [map, setMap] = useState(null);
   const mapRef = useRef(null);
@@ -9,12 +14,12 @@ const MapPicker = ({ isOpen, onClose, onLocationSelect, title = "Select Location
   useEffect(() => {
     if (isOpen && !map) {
       // Dynamically load Leaflet when the modal opens
-      import('leaflet').then(L => {
+      import("leaflet").then((L) => {
         // Load Leaflet CSS
         if (!document.querySelector('link[href*="leaflet.css"]')) {
-          const link = document.createElement('link');
-          link.rel = 'stylesheet';
-          link.href = 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.css';
+          const link = document.createElement("link");
+          link.rel = "stylesheet";
+          link.href = "https://unpkg.com/leaflet@1.9.4/dist/leaflet.css";
           document.head.appendChild(link);
         }
 
@@ -23,20 +28,20 @@ const MapPicker = ({ isOpen, onClose, onLocationSelect, title = "Select Location
           // Initialize map
           const mapInstance = L.map(mapRef.current, {
             center: [37.7749, -122.4194], // Default to San Francisco
-            zoom: 13
+            zoom: 13,
           });
 
           // Add tile layer
-          L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-            attribution: '© OpenStreetMap contributors'
+          L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+            attribution: "© OpenStreetMap contributors",
           }).addTo(mapInstance);
 
           let marker = null;
 
           // Handle map clicks
-          mapInstance.on('click', (e) => {
+          mapInstance.on("click", (e) => {
             const { lat, lng } = e.latlng;
-            
+
             // Remove existing marker
             if (marker) {
               mapInstance.removeLayer(marker);
@@ -44,23 +49,26 @@ const MapPicker = ({ isOpen, onClose, onLocationSelect, title = "Select Location
 
             // Add new marker
             marker = L.marker([lat, lng]).addTo(mapInstance);
-            
+
             // Reverse geocode to get address
-            fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}`)
-              .then(response => response.json())
-              .then(data => {
-                const address = data.display_name || `${lat.toFixed(4)}, ${lng.toFixed(4)}`;
+            fetch(
+              `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}`,
+            )
+              .then((response) => response.json())
+              .then((data) => {
+                const address =
+                  data.display_name || `${lat.toFixed(4)}, ${lng.toFixed(4)}`;
                 setSelectedLocation({
                   lat,
                   lng,
-                  address
+                  address,
                 });
               })
               .catch(() => {
                 setSelectedLocation({
                   lat,
                   lng,
-                  address: `${lat.toFixed(4)}, ${lng.toFixed(4)}`
+                  address: `${lat.toFixed(4)}, ${lng.toFixed(4)}`,
                 });
               });
           });
@@ -73,8 +81,8 @@ const MapPicker = ({ isOpen, onClose, onLocationSelect, title = "Select Location
                 mapInstance.setView([latitude, longitude], 13);
               },
               (error) => {
-                console.log('Geolocation error:', error);
-              }
+                console.log("Geolocation error:", error);
+              },
             );
           }
 
@@ -131,12 +139,14 @@ const MapPicker = ({ isOpen, onClose, onLocationSelect, title = "Select Location
         {/* Map Container */}
         <div className="flex-1 relative min-h-0">
           <div ref={mapRef} className="w-full h-full rounded-b-xl" />
-          
+
           {/* Instructions */}
           <div className="absolute top-4 left-4 bg-white/95 backdrop-blur-sm p-4 rounded-xl border border-[#e6f4ef] max-w-xs">
             <div className="flex items-center gap-2 text-sm text-[#0c1c17]">
               <MapPin size={16} className="text-[#46a080]" />
-              <span className="font-medium">Click on the map to select a location</span>
+              <span className="font-medium">
+                Click on the map to select a location
+              </span>
             </div>
           </div>
 
@@ -148,9 +158,12 @@ const MapPicker = ({ isOpen, onClose, onLocationSelect, title = "Select Location
                   <span className="text-lg">✅</span>
                   Selected Location:
                 </div>
-                <div className="text-sm text-[#46a080] break-words mb-1">{selectedLocation.address}</div>
+                <div className="text-sm text-[#46a080] break-words mb-1">
+                  {selectedLocation.address}
+                </div>
                 <div className="text-xs text-[#46a080] font-mono">
-                  {selectedLocation.lat.toFixed(4)}, {selectedLocation.lng.toFixed(4)}
+                  {selectedLocation.lat.toFixed(4)},{" "}
+                  {selectedLocation.lng.toFixed(4)}
                 </div>
               </div>
             </div>
@@ -170,8 +183,8 @@ const MapPicker = ({ isOpen, onClose, onLocationSelect, title = "Select Location
             disabled={!selectedLocation}
             className={`px-6 py-3 rounded-xl transition-colors duration-200 font-medium ${
               selectedLocation
-                ? 'bg-[#46a080] text-white hover:bg-[#019863]'
-                : 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                ? "bg-[#46a080] text-white hover:bg-[#019863]"
+                : "bg-gray-300 text-gray-500 cursor-not-allowed"
             }`}
           >
             Confirm Location

@@ -15,4 +15,4 @@ deployments:
   - barrier: true
   - include: backend
   - include: frontend
-  - include: trivy-operator   
+  - include: trivy-operator

@@ -1,15 +1,41 @@
-import React, { useState } from 'react';
-import { MapPin, Mountain, Umbrella, Sun, ArrowLeft, RotateCcw, Share2, Copy, Check } from 'lucide-react';
-import { shareAdventure } from '../../utils/api';
-import { primaryButtonRounded, brandGradient, brandGradientHover, cardAccent, cardAccentSecondary, focusRing } from '../../utils/colors';
+import React, { useState } from "react";
+import {
+  MapPin,
+  Mountain,
+  Umbrella,
+  Sun,
+  ArrowLeft,
+  RotateCcw,
+  Share2,
+  Copy,
+  Check,
+} from "lucide-react";
+import { shareAdventure } from "../../utils/api";
+import {
+  primaryButtonRounded,
+  brandGradient,
+  brandGradientHover,
+  cardAccent,
+  cardAccentSecondary,
+  focusRing,
+} from "../../utils/colors";
 
-const AdventureResult = ({ adventure, onBack, onNewAdventure, quotaInfo, isSharedView = false, backText = "Back" }) => {
+const AdventureResult = ({
+  adventure,
+  onBack,
+  onNewAdventure,
+  quotaInfo,
+  isSharedView = false,
+  backText = "Back",
+}) => {
   const [isSharing, setIsSharing] = useState(false);
-  const [shareUrl, setShareUrl] = useState(adventure.is_public ? `/shared/${adventure.share_token}` : null);
+  const [shareUrl, setShareUrl] = useState(
+    adventure.is_public ? `/shared/${adventure.share_token}` : null,
+  );
   const [copied, setCopied] = useState(false);
-  
+
   const formatTime = (timeStr) => {
-    if (!timeStr) return '';
+    if (!timeStr) return "";
     // Keep the time in 24-hour format as received from backend
     return timeStr;
   };
@@ -18,20 +44,20 @@ const AdventureResult = ({ adventure, onBack, onNewAdventure, quotaInfo, isShare
     setIsSharing(true);
     try {
       const result = await shareAdventure(adventure.id, !adventure.is_public);
-      
+
       if (result.success) {
         if (result.share_url) {
           setShareUrl(result.share_url);
           adventure.is_public = true;
-          adventure.share_token = result.share_url.split('/').pop();
+          adventure.share_token = result.share_url.split("/").pop();
         } else {
           setShareUrl(null);
           adventure.is_public = false;
         }
       }
     } catch (error) {
-      console.error('Sharing failed:', error);
-      alert(error.userMessage || 'Failed to update sharing settings');
+      console.error("Sharing failed:", error);
+      alert(error.userMessage || "Failed to update sharing settings");
     } finally {
       setIsSharing(false);
     }
@@ -46,11 +72,11 @@ const AdventureResult = ({ adventure, onBack, onNewAdventure, quotaInfo, isShare
         setTimeout(() => setCopied(false), 2000);
       } catch (err) {
         // Fallback for older browsers
-        const textArea = document.createElement('textarea');
+        const textArea = document.createElement("textarea");
         textArea.value = fullUrl;
         document.body.appendChild(textArea);
         textArea.select();
-        document.execCommand('copy');
+        document.execCommand("copy");
         document.body.removeChild(textArea);
         setCopied(true);
         setTimeout(() => setCopied(false), 2000);
@@ -60,18 +86,18 @@ const AdventureResult = ({ adventure, onBack, onNewAdventure, quotaInfo, isShare
 
   const getIconForActivity = (activity) => {
     const iconMap = {
-      'start': MapPin,
-      'hike': Mountain,
-      'descend': Umbrella,
-      'relax': Sun,
-      'vista': Mountain,
-      'view': Mountain,
-      'beach': Umbrella,
-      'swim': Umbrella,
-      'picnic': Sun,
-      'return': MapPin,
+      start: MapPin,
+      hike: Mountain,
+      descend: Umbrella,
+      relax: Sun,
+      vista: Mountain,
+      view: Mountain,
+      beach: Umbrella,
+      swim: Umbrella,
+      picnic: Sun,
+      return: MapPin,
     };
-    
+
     // Find matching icon based on activity description
     const activityLower = activity.toLowerCase();
     for (const [key, IconComponent] of Object.entries(iconMap)) {
@@ -89,7 +115,7 @@ const AdventureResult = ({ adventure, onBack, onNewAdventure, quotaInfo, isShare
         <header className="border-b border-brand-200/50 bg-white z-10 flex-shrink-0">
           {/* Top row - Back button and title */}
           <div className="flex items-center justify-between px-6 sm:px-10 py-4">
-            <button 
+            <button
               onClick={onBack}
               className="flex items-center gap-2 text-[#0c1c17] bg-brand-100/50 hover:bg-brand-200/70 transition-colors duration-200 px-4 py-2 rounded-xl font-medium"
             >
@@ -101,7 +127,7 @@ const AdventureResult = ({ adventure, onBack, onNewAdventure, quotaInfo, isShare
             </h2>
             <div className="w-24"> {/* Spacer for balance */}</div>
           </div>
-          
+
           {/* Bottom row - Action buttons */}
           <div className="flex items-center justify-between px-6 sm:px-10 py-3 bg-orange-100/30 border-t border-orange-200/50">
             <div className="flex items-center gap-3">
@@ -111,22 +137,26 @@ const AdventureResult = ({ adventure, onBack, onNewAdventure, quotaInfo, isShare
                 </div>
               )}
             </div>
-            
+
             <div className="flex items-center gap-3">
               {/* Share Button */}
               <button
                 onClick={handleShare}
                 disabled={isSharing}
                 className={`flex items-center gap-2 text-sm font-medium px-4 py-2 rounded-xl transition-colors duration-200 ${
-                  adventure.is_public 
-                    ? 'bg-success-100 text-success-700 hover:bg-success-200' 
-                    : 'bg-brand-100/50 text-brand-700 hover:bg-brand-200/70'
-                } ${isSharing ? 'opacity-50 cursor-not-allowed' : ''}`}
+                  adventure.is_public
+                    ? "bg-success-100 text-success-700 hover:bg-success-200"
+                    : "bg-brand-100/50 text-brand-700 hover:bg-brand-200/70"
+                } ${isSharing ? "opacity-50 cursor-not-allowed" : ""}`}
               >
                 <Share2 size={16} />
-                {isSharing ? 'Updating...' : (adventure.is_public ? 'Public' : 'Share')}
+                {isSharing
+                  ? "Updating..."
+                  : adventure.is_public
+                  ? "Public"
+                  : "Share"}
               </button>
-              
+
               {/* Copy URL Button (only show when public) */}
               {adventure.is_public && shareUrl && (
                 <button
@@ -135,10 +165,10 @@ const AdventureResult = ({ adventure, onBack, onNewAdventure, quotaInfo, isShare
                   title="Copy share link"
                 >
                   {copied ? <Check size={16} /> : <Copy size={16} />}
-                  {copied ? 'Copied!' : 'Copy'}
+                  {copied ? "Copied!" : "Copy"}
                 </button>
               )}
-              
+
               <button
                 onClick={onNewAdventure}
                 className="flex items-center gap-2 text-sm font-medium bg-gradient-to-r from-[#F4A261] to-[#E76F51] hover:from-[#E76F51] hover:to-[#D84B40] text-white transition-all duration-300 shadow-lg hover:shadow-xl hover:brightness-110 border-0 rounded-xl px-4 py-2"
@@ -158,7 +188,7 @@ const AdventureResult = ({ adventure, onBack, onNewAdventure, quotaInfo, isShare
             {/* Back button for shared view */}
             {isSharedView && (
               <div className="flex items-center justify-between p-6 border-b border-orange-200/50 bg-orange-100/30 flex-shrink-0">
-                <button 
+                <button
                   onClick={onBack}
                   className="flex items-center gap-2 text-[#0c1c17] bg-orange-100/50 hover:bg-orange-200/70 transition-colors duration-200 px-4 py-2 rounded-xl font-medium"
                 >
@@ -181,8 +211,8 @@ const AdventureResult = ({ adventure, onBack, onNewAdventure, quotaInfo, isShare
                   <div className="@[480px]:px-0 @[480px]:py-0">
                     <div className="bg-cover bg-center flex flex-col justify-end overflow-hidden bg-gradient-to-br from-orange-50 to-orange-100/50 rounded-xl min-h-80 relative border border-orange-200/50">
                       {adventure.image_url ? (
-                        <img 
-                          src={adventure.image_url} 
+                        <img
+                          src={adventure.image_url}
                           alt={adventure.title}
                           className="absolute inset-0 w-full h-full object-cover rounded-xl"
                         />
@@ -217,7 +247,7 @@ const AdventureResult = ({ adventure, onBack, onNewAdventure, quotaInfo, isShare
                     </h2>
                     <div className="w-full bg-center bg-no-repeat aspect-video bg-cover rounded-xl border border-orange-200/50 overflow-hidden">
                       {/* Open in Google Maps link */}
-                      <a 
+                      <a
                         href={adventure.route.map_embed_url}
                         target="_blank"
                         rel="noopener noreferrer"
@@ -225,9 +255,12 @@ const AdventureResult = ({ adventure, onBack, onNewAdventure, quotaInfo, isShare
                       >
                         <div className="text-center">
                           <div className="text-6xl mb-4">🗺️</div>
-                          <h3 className="text-xl font-bold mb-2">View Route in Google Maps</h3>
+                          <h3 className="text-xl font-bold mb-2">
+                            View Route in Google Maps
+                          </h3>
                           <p className="text-sm text-orange-600 font-medium">
-                            {adventure.route.estimated_distance && `${adventure.route.estimated_distance} • `}
+                            {adventure.route.estimated_distance &&
+                              `${adventure.route.estimated_distance} • `}
                             {adventure.route.estimated_travel_time}
                           </p>
                           <div className="mt-4 px-4 py-2 bg-white border border-orange-200 rounded-lg inline-block font-medium">
@@ -258,7 +291,10 @@ const AdventureResult = ({ adventure, onBack, onNewAdventure, quotaInfo, isShare
                         <div className="text-right text-sm text-green-600">
                           <p>UV: {adventure.weather_forecast.uv_index}</p>
                           <p>Wind: {adventure.weather_forecast.wind}</p>
-                          <p>Precipitation: {adventure.weather_forecast.precipitation}</p>
+                          <p>
+                            Precipitation:{" "}
+                            {adventure.weather_forecast.precipitation}
+                          </p>
                         </div>
                       </div>
                     </div>
@@ -271,39 +307,42 @@ const AdventureResult = ({ adventure, onBack, onNewAdventure, quotaInfo, isShare
                     Itinerary
                   </h2>
                   <div className="grid grid-cols-[40px_1fr] gap-x-2">
-                    {adventure.itinerary && adventure.itinerary.map((item, index) => {
-                      const IconComponent = getIconForActivity(item.activity);
-                      const isLast = index === adventure.itinerary.length - 1;
-                      
-                      return (
-                        <React.Fragment key={index}>
-                          <div className="flex flex-col items-center gap-1 pt-3">
-                            <div className="text-[#0c1c17]">
-                              <IconComponent size={24} />
+                    {adventure.itinerary &&
+                      adventure.itinerary.map((item, index) => {
+                        const IconComponent = getIconForActivity(item.activity);
+                        const isLast = index === adventure.itinerary.length - 1;
+
+                        return (
+                          <React.Fragment key={index}>
+                            <div className="flex flex-col items-center gap-1 pt-3">
+                              <div className="text-[#0c1c17]">
+                                <IconComponent size={24} />
+                              </div>
+                              {!isLast && (
+                                <div className="w-[1.5px] bg-orange-200 h-2 grow"></div>
+                              )}
                             </div>
-                            {!isLast && <div className="w-[1.5px] bg-orange-200 h-2 grow"></div>}
-                          </div>
-                          <div className="flex flex-1 flex-col py-3">
-                            <p className="text-[#0c1c17] text-base font-medium leading-normal">
-                              {item.activity}
-                            </p>
-                            <p className="text-green-600 text-base font-normal leading-normal">
-                              {formatTime(item.time)}
-                            </p>
-                            {item.location && (
-                              <p className="text-green-600 text-sm font-normal leading-normal">
-                                📍 {item.location}
+                            <div className="flex flex-1 flex-col py-3">
+                              <p className="text-[#0c1c17] text-base font-medium leading-normal">
+                                {item.activity}
                               </p>
-                            )}
-                            {item.notes && (
-                              <p className="text-[#0c1c17] text-sm font-normal leading-normal mt-1">
-                                {item.notes}
+                              <p className="text-green-600 text-base font-normal leading-normal">
+                                {formatTime(item.time)}
                               </p>
-                            )}
-                          </div>
-                        </React.Fragment>
-                      );
-                    })}
+                              {item.location && (
+                                <p className="text-green-600 text-sm font-normal leading-normal">
+                                  📍 {item.location}
+                                </p>
+                              )}
+                              {item.notes && (
+                                <p className="text-[#0c1c17] text-sm font-normal leading-normal mt-1">
+                                  {item.notes}
+                                </p>
+                              )}
+                            </div>
+                          </React.Fragment>
+                        );
+                      })}
                   </div>
                 </div>
 
@@ -315,57 +354,79 @@ const AdventureResult = ({ adventure, onBack, onNewAdventure, quotaInfo, isShare
                   <div>
                     {adventure.packing_list && (
                       <>
-                        {adventure.packing_list.essential && adventure.packing_list.essential.map((item, index) => (
-                          <label key={`essential-${index}`} className="flex gap-x-3 py-3 flex-row">
-                            <input
-                              type="checkbox"
-                              className="h-5 w-5 rounded border-orange-200 border-2 bg-transparent text-orange-600 checked:bg-orange-600 checked:border-orange-600 focus:ring-0 focus:ring-offset-0 focus:border-orange-200 focus:outline-none"
-                            />
-                            <p className="text-[#0c1c17] text-base font-normal leading-normal">
-                              {item}
-                            </p>
-                          </label>
-                        ))}
-                        {adventure.packing_list.weather_specific && adventure.packing_list.weather_specific.map((item, index) => (
-                          <label key={`weather-${index}`} className="flex gap-x-3 py-3 flex-row">
-                            <input
-                              type="checkbox"
-                              className="h-5 w-5 rounded border-orange-200 border-2 bg-transparent text-orange-600 checked:bg-orange-600 checked:border-orange-600 focus:ring-0 focus:ring-offset-0 focus:border-orange-200 focus:outline-none"
-                            />
-                            <p className="text-[#0c1c17] text-base font-normal leading-normal">
-                              {item}
-                            </p>
-                          </label>
-                        ))}
-                        {adventure.packing_list.optional && adventure.packing_list.optional.map((item, index) => (
-                          <label key={`optional-${index}`} className="flex gap-x-3 py-3 flex-row">
-                            <input
-                              type="checkbox"
-                              className="h-5 w-5 rounded border-orange-200 border-2 bg-transparent text-orange-600 checked:bg-orange-600 checked:border-orange-600 focus:ring-0 focus:ring-offset-0 focus:border-orange-200 focus:outline-none"
-                            />
-                            <p className="text-[#0c1c17] text-base font-normal leading-normal">
-                              {item}
-                            </p>
-                          </label>
-                        ))}
-                        {adventure.packing_list.food_and_drink && adventure.packing_list.food_and_drink.map((item, index) => (
-                          <label key={`food-${index}`} className="flex gap-x-3 py-3 flex-row">
-                            <input
-                              type="checkbox"
-                              className="h-5 w-5 rounded border-orange-200 border-2 bg-transparent text-orange-600 checked:bg-orange-600 checked:border-orange-600 focus:ring-0 focus:ring-offset-0 focus:border-orange-200 focus:outline-none"
-                            />
-                            <p className="text-[#0c1c17] text-base font-normal leading-normal">
-                              {item}
-                            </p>
-                          </label>
-                        ))}
+                        {adventure.packing_list.essential &&
+                          adventure.packing_list.essential.map(
+                            (item, index) => (
+                              <label
+                                key={`essential-${index}`}
+                                className="flex gap-x-3 py-3 flex-row"
+                              >
+                                <input
+                                  type="checkbox"
+                                  className="h-5 w-5 rounded border-orange-200 border-2 bg-transparent text-orange-600 checked:bg-orange-600 checked:border-orange-600 focus:ring-0 focus:ring-offset-0 focus:border-orange-200 focus:outline-none"
+                                />
+                                <p className="text-[#0c1c17] text-base font-normal leading-normal">
+                                  {item}
+                                </p>
+                              </label>
+                            ),
+                          )}
+                        {adventure.packing_list.weather_specific &&
+                          adventure.packing_list.weather_specific.map(
+                            (item, index) => (
+                              <label
+                                key={`weather-${index}`}
+                                className="flex gap-x-3 py-3 flex-row"
+                              >
+                                <input
+                                  type="checkbox"
+                                  className="h-5 w-5 rounded border-orange-200 border-2 bg-transparent text-orange-600 checked:bg-orange-600 checked:border-orange-600 focus:ring-0 focus:ring-offset-0 focus:border-orange-200 focus:outline-none"
+                                />
+                                <p className="text-[#0c1c17] text-base font-normal leading-normal">
+                                  {item}
+                                </p>
+                              </label>
+                            ),
+                          )}
+                        {adventure.packing_list.optional &&
+                          adventure.packing_list.optional.map((item, index) => (
+                            <label
+                              key={`optional-${index}`}
+                              className="flex gap-x-3 py-3 flex-row"
+                            >
+                              <input
+                                type="checkbox"
+                                className="h-5 w-5 rounded border-orange-200 border-2 bg-transparent text-orange-600 checked:bg-orange-600 checked:border-orange-600 focus:ring-0 focus:ring-offset-0 focus:border-orange-200 focus:outline-none"
+                              />
+                              <p className="text-[#0c1c17] text-base font-normal leading-normal">
+                                {item}
+                              </p>
+                            </label>
+                          ))}
+                        {adventure.packing_list.food_and_drink &&
+                          adventure.packing_list.food_and_drink.map(
+                            (item, index) => (
+                              <label
+                                key={`food-${index}`}
+                                className="flex gap-x-3 py-3 flex-row"
+                              >
+                                <input
+                                  type="checkbox"
+                                  className="h-5 w-5 rounded border-orange-200 border-2 bg-transparent text-orange-600 checked:bg-orange-600 checked:border-orange-600 focus:ring-0 focus:ring-offset-0 focus:border-orange-200 focus:outline-none"
+                                />
+                                <p className="text-[#0c1c17] text-base font-normal leading-normal">
+                                  {item}
+                                </p>
+                              </label>
+                            ),
+                          )}
                       </>
                     )}
                   </div>
                 </div>
 
                 {/* Additional Recommendations */}
-                {(adventure.recommendations) && (
+                {adventure.recommendations && (
                   <div className="mb-8">
                     <h2 className="text-[#0c1c17] text-[22px] font-bold leading-tight tracking-[-0.015em] pb-3">
                       Additional Recommendations
@@ -377,28 +438,42 @@ const AdventureResult = ({ adventure, onBack, onNewAdventure, quotaInfo, isShare
                             📸 Photo Opportunities
                           </h3>
                           <ul className="text-[#0c1c17] text-sm space-y-2">
-                            {adventure.recommendations.photo_opportunities.map((spot, index) => (
-                              <li key={index} className="flex items-start gap-2">
-                                <span className="text-orange-500 mt-1">•</span>
-                                <span>{spot}</span>
-                              </li>
-                            ))}
+                            {adventure.recommendations.photo_opportunities.map(
+                              (spot, index) => (
+                                <li
+                                  key={index}
+                                  className="flex items-start gap-2"
+                                >
+                                  <span className="text-orange-500 mt-1">
+                                    •
+                                  </span>
+                                  <span>{spot}</span>
+                                </li>
+                              ),
+                            )}
                           </ul>
                         </div>
                       )}
-                      
+
                       {adventure.recommendations.local_tips && (
                         <div>
                           <h3 className="text-[#0c1c17] text-lg font-semibold mb-3 flex items-center gap-2">
                             💡 Local Tips
                           </h3>
                           <ul className="text-[#0c1c17] text-sm space-y-2">
-                            {adventure.recommendations.local_tips.map((tip, index) => (
-                              <li key={index} className="flex items-start gap-2">
-                                <span className="text-orange-500 mt-1">•</span>
-                                <span>{tip}</span>
-                              </li>
-                            ))}
+                            {adventure.recommendations.local_tips.map(
+                              (tip, index) => (
+                                <li
+                                  key={index}
+                                  className="flex items-start gap-2"
+                                >
+                                  <span className="text-orange-500 mt-1">
+                                    •
+                                  </span>
+                                  <span>{tip}</span>
+                                </li>
+                              ),
+                            )}
                           </ul>
                         </div>
                       )}
@@ -409,12 +484,19 @@ const AdventureResult = ({ adventure, onBack, onNewAdventure, quotaInfo, isShare
                             💎 Hidden Gems
                           </h3>
                           <ul className="text-[#0c1c17] text-sm space-y-2">
-                            {adventure.recommendations.hidden_gems.map((gem, index) => (
-                              <li key={index} className="flex items-start gap-2">
-                                <span className="text-orange-500 mt-1">•</span>
-                                <span>{gem}</span>
-                              </li>
-                            ))}
+                            {adventure.recommendations.hidden_gems.map(
+                              (gem, index) => (
+                                <li
+                                  key={index}
+                                  className="flex items-start gap-2"
+                                >
+                                  <span className="text-orange-500 mt-1">
+                                    •
+                                  </span>
+                                  <span>{gem}</span>
+                                </li>
+                              ),
+                            )}
                           </ul>
                         </div>
                       )}
@@ -431,12 +513,12 @@ const AdventureResult = ({ adventure, onBack, onNewAdventure, quotaInfo, isShare
                     <div className="bg-white rounded-xl p-4 border border-orange-200/50">
                       <div className="mb-4">
                         <p className="text-[#0c1c17] text-base font-normal leading-normal">
-                          {adventure.is_public 
-                            ? 'Your adventure is public! Anyone with the link can view it.' 
-                            : 'Your adventure is private. Share it with others by making it public.'}
+                          {adventure.is_public
+                            ? "Your adventure is public! Anyone with the link can view it."
+                            : "Your adventure is private. Share it with others by making it public."}
                         </p>
                       </div>
-                      
+
                       <div className="flex flex-col sm:flex-row gap-3">
                         {/* URL Input and Copy Button Row */}
                         {shareUrl && (
@@ -451,33 +533,62 @@ const AdventureResult = ({ adventure, onBack, onNewAdventure, quotaInfo, isShare
                               onClick={copyToClipboard}
                               className="px-4 py-2 bg-gradient-to-r from-[#F4A261] to-[#E76F51] text-white rounded-lg hover:from-[#E76F51] hover:to-[#D84B40] transition-all flex items-center gap-2 shadow-lg hover:shadow-xl"
                             >
-                              {copied ? <Check size={16} /> : <Copy size={16} />}
-                              {copied ? 'Copied!' : 'Copy Link'}
+                              {copied ? (
+                                <Check size={16} />
+                              ) : (
+                                <Copy size={16} />
+                              )}
+                              {copied ? "Copied!" : "Copy Link"}
                             </button>
                           </div>
                         )}
-                        
+
                         {/* Share/Make Private Button */}
                         <button
                           onClick={handleShare}
                           disabled={isSharing}
                           className={`px-4 py-2 rounded-lg flex items-center gap-2 transition-all ${
-                            shareUrl ? 'sm:w-auto' : 'flex-1'
-                          } ${adventure.is_public ? 'bg-gradient-to-r from-orange-400 to-orange-500 text-white hover:from-orange-500 hover:to-orange-600 shadow-lg hover:shadow-xl' : 'bg-gradient-to-r from-[#F4A261] to-[#E76F51] text-white hover:from-[#E76F51] hover:to-[#D84B40] shadow-lg hover:shadow-xl'}
-                            ${isSharing ? 'opacity-50 cursor-not-allowed' : ''}`}
+                            shareUrl ? "sm:w-auto" : "flex-1"
+                          } ${
+                            adventure.is_public
+                              ? "bg-gradient-to-r from-orange-400 to-orange-500 text-white hover:from-orange-500 hover:to-orange-600 shadow-lg hover:shadow-xl"
+                              : "bg-gradient-to-r from-[#F4A261] to-[#E76F51] text-white hover:from-[#E76F51] hover:to-[#D84B40] shadow-lg hover:shadow-xl"
+                          }
+                            ${
+                              isSharing ? "opacity-50 cursor-not-allowed" : ""
+                            }`}
                         >
                           {isSharing ? (
                             <>
-                              <svg className="animate-spin h-5 w-5 mr-1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-                                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4zm16 0a8 8 0 01-8 8v-8h8z"></path>
+                              <svg
+                                className="animate-spin h-5 w-5 mr-1"
+                                xmlns="http://www.w3.org/2000/svg"
+                                viewBox="0 0 24 24"
+                              >
+                                <circle
+                                  className="opacity-25"
+                                  cx="12"
+                                  cy="12"
+                                  r="10"
+                                  stroke="currentColor"
+                                  strokeWidth="4"
+                                ></circle>
+                                <path
+                                  className="opacity-75"
+                                  fill="currentColor"
+                                  d="M4 12a8 8 0 018-8v8H4zm16 0a8 8 0 01-8 8v-8h8z"
+                                ></path>
                               </svg>
-                              {adventure.is_public ? 'Making Private...' : 'Making Public...'}
+                              {adventure.is_public
+                                ? "Making Private..."
+                                : "Making Public..."}
                             </>
                           ) : (
                             <>
                               <Share2 size={16} />
-                              {adventure.is_public ? 'Make Private' : 'Share Adventure'}
+                              {adventure.is_public
+                                ? "Make Private"
+                                : "Share Adventure"}
                             </>
                           )}
                         </button>

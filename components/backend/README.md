@@ -35,7 +35,7 @@ backend/
 │   ├── routes/           # FastAPI route handlers
 │   ├── schemas/          # Pydantic models
 │   └── services/         # Business logic
-├── 🔐 auth/              # Authentication domain  
+├── 🔐 auth/              # Authentication domain
 │   ├── models/           # User models
 │   ├── routes/           # Auth endpoints
 │   ├── services/         # Auth services
@@ -183,7 +183,7 @@ class User(Base):
     created_at: datetime
     updated_at: datetime
 
-# Adventure Model  
+# Adventure Model
 class Adventure(Base):
     id: UUID
     user_id: UUID
@@ -244,13 +244,13 @@ def test_create_adventure(client, auth_headers):
         "location": "Rocky Mountains",
         "duration_hours": 4
     }
-    
+
     response = client.post(
         "/api/adventures",
         json=adventure_data,
         headers=auth_headers
     )
-    
+
     assert response.status_code == 201
     assert response.json()["title"] == "Mountain Hiking"
 ```

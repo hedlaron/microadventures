@@ -1,13 +1,13 @@
 targets:
   - name: local
     context: kind-kind
-    args: 
+    args:
       environment: local
       environmentType: non-prod
 
   - name: production
     context: gke_microadventures_europe-west3-a_microadventures
-    args: 
+    args:
       environment: production
       environmentType: prod
 

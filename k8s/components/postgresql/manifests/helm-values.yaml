@@ -4,7 +4,7 @@
 ## PostgreSQL Primary configuration
 primary:
   name: primary
-  
+
   ## Resource limits and requests
   resources:
     limits:
@@ -15,7 +15,7 @@ primary:
       cpu: 100m
       ephemeral-storage: 50Mi
       memory: 128Mi
-  
+
   ## Persistence configuration
   persistence:
     enabled: true
@@ -23,7 +23,7 @@ primary:
     storageClass: "{{ postgres_storage_class }}"
     accessModes:
       - ReadWriteOnce
-  
+
   ## Service configuration
   service:
     type: ClusterIP
@@ -45,7 +45,7 @@ auth:
     userPasswordKey: "postgresql-password"
     replicationPasswordKey: "postgresql-password"
 
-## Metrics configuration 
+## Metrics configuration
 metrics:
   enabled: {{ postgres_metrics_enabled }}
 
@@ -56,6 +56,6 @@ initdb:
       -- Initialize microadventures database
       CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
       CREATE EXTENSION IF NOT EXISTS "postgis";
-      
+
       -- Grant permissions
       GRANT ALL PRIVILEGES ON DATABASE microadventures TO postgres;

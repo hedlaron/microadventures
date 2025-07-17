@@ -7,13 +7,13 @@ data:
   default.conf: |-
     server {
       listen 8080;
-      
+
       location /ping {
             access_log off;
             add_header 'Content-Type' 'text/plain';
             return 200 "pong";
       }
-      
+
       location /api/backend/ {
             proxy_set_header X-Forwarded-Host $host;
             proxy_set_header X-Forwarded-Server $host;
@@ -23,12 +23,12 @@ data:
             rewrite ^/api/backend/(.*) /api/$1 break;
             proxy_pass http://backend:8000;
       }
-      
+
       location / {
         root /usr/share/nginx/html;
         index index.html index.htm;
         try_files $uri $uri/ /index.html =404;
       }
-      
+
       include /etc/nginx/extra-conf.d/*.conf;
     }

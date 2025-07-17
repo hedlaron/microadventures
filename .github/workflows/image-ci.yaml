@@ -89,6 +89,21 @@ jobs:
       matrix:
         path: ${{ fromJson(needs.determine-components.outputs.components) }}
 
+    services:
+      postgres:
+        image: postgres:15
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: test_microadventures
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 5432:5432
+
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -98,6 +113,40 @@ jobs:
         with:
           repo-token: ${{ secrets.GITHUB_TOKEN }}
           version: 3.x
+
+      - name: Run tests in container
+        working-directory: ${{ matrix.path }}
+        env:
+          IMAGE_TAG: ${{ needs.generate-image-tag.outputs.image_tag }}
+        run: |
+          echo "Running tests in Docker container for ${{ matrix.path }}"
+
+          if [[ "${{ matrix.path }}" == "components/backend" ]]; then
+            echo "Building and testing backend in container..."
+            # Build test stage and run tests
+            docker buildx build \
+              --platform linux/amd64 \
+              --target test \
+              --build-arg APP_VERSION=${IMAGE_TAG} \
+              --build-arg RUN_TESTS=true \
+              --network host \
+              -t hedlaron/microadventures-backend:${IMAGE_TAG}-test \
+              --load \
+              .
+            echo "Backend tests completed in Docker build"
+          elif [[ "${{ matrix.path }}" == "components/frontend" ]]; then
+            echo "Building and testing frontend in container..."
+            # Build test stage and run tests
+            docker buildx build \
+              --platform linux/amd64 \
+              --target test \
+              --build-arg APP_VERSION=${IMAGE_TAG} \
+              --build-arg RUN_TESTS=true \
+              -t hedlaron/microadventures-frontend:${IMAGE_TAG}-test \
+              --load \
+              .
+            echo "Frontend tests completed in Docker build"
+          fi
 
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v3
@@ -111,12 +160,12 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-      - name: Build Image
+      - name: Build and push production image
         env:
           IMAGE_TAG: ${{ needs.generate-image-tag.outputs.image_tag }}
         working-directory: ${{ matrix.path }}
         run: |
-          echo "Building image for ${{ matrix.path }} with tag ${IMAGE_TAG}"
+          echo "Building production image for ${{ matrix.path }} with tag ${IMAGE_TAG}"
           task build-container-image-multi-arch IMAGE_TAG=${IMAGE_TAG}
 
   update-tags:
@@ -139,7 +188,7 @@ jobs:
           IMAGE_TAG: ${{ needs.generate-image-tag.outputs.image_tag }}
         run: |
           # Update staging tags for push to master or release tag
-          task update-staging-image-tags NEW_TAG=${IMAGE_TAG}            
+          task update-staging-image-tags NEW_TAG=${IMAGE_TAG}
 
           # Update production tags for push to master or release tag
           task update-production-image-tags NEW_TAG=${IMAGE_TAG}

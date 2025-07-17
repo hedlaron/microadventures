@@ -33,7 +33,7 @@ tasks:
     cmds:
       - cmd: |
           gum style "$(cat <<EOF
-          🚨🚨🚨 
+          🚨🚨🚨
 
           Depending when you are following along, the available
           versions will likely have changed. Please update accordingly!

@@ -1,4 +1,4 @@
-import React from 'react';
+import React from "react";
 
 const Footer = () => {
   return (
@@ -7,12 +7,13 @@ const Footer = () => {
         {/* Disclaimer text */}
         <div className="text-xs text-gray-500 max-w-2xl flex-1 min-w-0 order-2 md:order-1">
           <p>
-            <strong>Disclaimer:</strong> This site is for educational and learning purposes only. 
-            The creator takes no responsibility for any adventures, activities, or experiences 
-            suggested by this platform. Use at your own risk and always prioritize safety.
+            <strong>Disclaimer:</strong> This site is for educational and
+            learning purposes only. The creator takes no responsibility for any
+            adventures, activities, or experiences suggested by this platform.
+            Use at your own risk and always prioritize safety.
           </p>
         </div>
-        
+
         {/* Social links */}
         <div className="flex items-center gap-4 flex-shrink-0 order-1 md:order-2 self-end md:self-auto">
           <a
@@ -35,7 +36,7 @@ const Footer = () => {
               />
             </svg>
           </a>
-          
+
           <a
             href="https://github.com/YOUR_GITHUB_USERNAME"
             target="_blank"

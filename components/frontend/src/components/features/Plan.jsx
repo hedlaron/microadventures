@@ -1,12 +1,18 @@
-import React, { useState, useEffect } from 'react';
-import { useAuth } from '../../contexts/AuthContext';
-import { createAdventure, fetchAdventureQuota } from '../../utils/api';
-import AdventurousBackground from './AdventurousBackground';
-import AdventureResult from './AdventureResult';
-import MapPicker from './MapPicker';
-import { useCountdown } from '../../hooks/useCountdown';
-import styled from 'styled-components';
-import { primaryButtonRounded, errorText, errorBg, errorBorder, focusRing } from '../../utils/colors';
+import React, { useState, useEffect } from "react";
+import { useAuth } from "../../contexts/AuthContext";
+import { createAdventure, fetchAdventureQuota } from "../../utils/api";
+import AdventurousBackground from "./AdventurousBackground";
+import AdventureResult from "./AdventureResult";
+import MapPicker from "./MapPicker";
+import { useCountdown } from "../../hooks/useCountdown";
+import styled from "styled-components";
+import {
+  primaryButtonRounded,
+  errorText,
+  errorBg,
+  errorBorder,
+  focusRing,
+} from "../../utils/colors";
 
 const PageWrapper = styled.div`
   position: relative;
@@ -16,15 +22,15 @@ const PageWrapper = styled.div`
   min-height: 100%;
   height: 100%;
   padding: 2rem 1rem 1rem 1rem;
-  
+
   /* Add top padding when not embedded in home page */
   &:not(.home-embedded) {
     padding-top: 6rem;
   }
-  
+
   @media (max-height: 600px) {
     align-items: flex-start;
-    
+
     &:not(.home-embedded) {
       padding-top: 6rem;
     }
@@ -38,29 +44,29 @@ const PlanFormContainer = styled.div`
   border-radius: 12px;
   background: white;
   border: 1px solid rgba(244, 162, 97, 0.2);
-  
+
   /* Ensure it fits screen height properly */
   max-height: calc(100vh - 2rem);
   overflow-y: auto;
-  
+
   /* Custom scrollbar for the form */
   &::-webkit-scrollbar {
     width: 6px;
   }
-  
+
   &::-webkit-scrollbar-track {
     background: transparent;
   }
-  
+
   &::-webkit-scrollbar-thumb {
-    background: #F4A261;
+    background: #f4a261;
     border-radius: 3px;
   }
-  
+
   &::-webkit-scrollbar-thumb:hover {
-    background: #E76F51;
+    background: #e76f51;
   }
-  
+
   @media (max-width: 640px) {
     max-width: 95vw;
     border-radius: 12px;
@@ -74,7 +80,7 @@ const PlanContainer = styled.div`
   padding: 2rem;
   display: flex;
   flex-direction: column;
-  
+
   @media (max-width: 640px) {
     padding: 1.5rem;
   }
@@ -108,8 +114,8 @@ const LoadingCard = styled.div`
   background: white;
   border-radius: 20px;
   border: 2px solid rgba(244, 162, 97, 0.2);
-  box-shadow: 
-    0 25px 50px rgba(0, 0, 0, 0.15), 
+  box-shadow:
+    0 25px 50px rgba(0, 0, 0, 0.15),
     0 10px 20px rgba(244, 162, 97, 0.1),
     inset 0 1px 0 rgba(255, 255, 255, 0.8);
   padding: 3rem 2.5rem;
@@ -126,24 +132,24 @@ const LoadingAnimation = styled.div`
   justify-content: center;
   gap: 1rem;
   margin-bottom: 2.5rem;
-  
+
   .adventure-icon {
     width: 5rem;
     height: 5rem;
-    background: linear-gradient(135deg, #F4A261 0%, #E76F51 100%);
+    background: linear-gradient(135deg, #f4a261 0%, #e76f51 100%);
     border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
     animation: bounce 2s infinite ease-in-out;
-    box-shadow: 
+    box-shadow:
       0 8px 25px rgba(244, 162, 97, 0.4),
       0 4px 12px rgba(231, 111, 81, 0.2);
     position: relative;
-    
+
     /* Add a subtle pulse ring */
     &::before {
-      content: '';
+      content: "";
       position: absolute;
       top: -8px;
       left: -8px;
@@ -154,16 +160,20 @@ const LoadingAnimation = styled.div`
       animation: pulse 3s infinite ease-in-out;
     }
   }
-  
+
   .adventure-icon svg {
     width: 2.5rem;
     height: 2.5rem;
     color: white;
-    filter: drop-shadow(0 2px 4px rgba(0,0,0,0.1));
+    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
   }
-  
+
   @keyframes bounce {
-    0%, 20%, 50%, 80%, 100% {
+    0%,
+    20%,
+    50%,
+    80%,
+    100% {
       transform: translateY(0) scale(1);
     }
     40% {
@@ -173,9 +183,10 @@ const LoadingAnimation = styled.div`
       transform: translateY(-6px) scale(1.02);
     }
   }
-  
+
   @keyframes pulse {
-    0%, 100% {
+    0%,
+    100% {
       transform: scale(1);
       opacity: 0.3;
     }
@@ -184,27 +195,35 @@ const LoadingAnimation = styled.div`
       opacity: 0.6;
     }
   }
-  
+
   .loading-dots {
     display: flex;
     gap: 0.375rem;
   }
-  
+
   .dot {
     width: 0.625rem;
     height: 0.625rem;
-    background: linear-gradient(135deg, #F4A261, #E76F51);
+    background: linear-gradient(135deg, #f4a261, #e76f51);
     border-radius: 50%;
     animation: loadingDots 1.6s infinite ease-in-out both;
     box-shadow: 0 2px 8px rgba(244, 162, 97, 0.3);
   }
-  
-  .dot:nth-child(1) { animation-delay: -0.32s; }
-  .dot:nth-child(2) { animation-delay: -0.16s; }
-  .dot:nth-child(3) { animation-delay: 0s; }
-  
+
+  .dot:nth-child(1) {
+    animation-delay: -0.32s;
+  }
+  .dot:nth-child(2) {
+    animation-delay: -0.16s;
+  }
+  .dot:nth-child(3) {
+    animation-delay: 0s;
+  }
+
   @keyframes loadingDots {
-    0%, 80%, 100% {
+    0%,
+    80%,
+    100% {
       transform: scale(0) translateY(0);
       opacity: 0.5;
     }
@@ -221,7 +240,7 @@ const LoadingText = styled.div`
     font-weight: 800;
     color: #0c1c17;
     margin-bottom: 0.75rem;
-    background: linear-gradient(135deg, #F4A261 0%, #E76F51 50%, #F4A261 100%);
+    background: linear-gradient(135deg, #f4a261 0%, #e76f51 50%, #f4a261 100%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
@@ -229,16 +248,17 @@ const LoadingText = styled.div`
     animation: shimmer 3s infinite ease-in-out;
     letter-spacing: -0.02em;
   }
-  
+
   @keyframes shimmer {
-    0%, 100% {
+    0%,
+    100% {
       background-position: 200% 0;
     }
     50% {
       background-position: -200% 0;
     }
   }
-  
+
   .sub-text {
     font-size: 1.1rem;
     font-weight: 500;
@@ -247,9 +267,13 @@ const LoadingText = styled.div`
     line-height: 1.6;
     opacity: 0.9;
   }
-  
+
   .fun-facts {
-    background: linear-gradient(135deg, rgba(244, 162, 97, 0.1), rgba(231, 111, 81, 0.1));
+    background: linear-gradient(
+      135deg,
+      rgba(244, 162, 97, 0.1),
+      rgba(231, 111, 81, 0.1)
+    );
     border: 1px solid rgba(244, 162, 97, 0.2);
     border-radius: 12px;
     padding: 1rem 1.25rem;
@@ -262,22 +286,23 @@ const LoadingText = styled.div`
     align-items: center;
     justify-content: center;
     position: relative;
-    
+
     /* Add a subtle icon or decoration */
     &::before {
-      content: '✨';
+      content: "✨";
       position: absolute;
       left: 0.75rem;
       font-size: 1.1rem;
       animation: sparkle 2s infinite ease-in-out;
     }
-    
+
     /* Padding to make room for the icon */
     padding-left: 2.5rem;
   }
-  
+
   @keyframes sparkle {
-    0%, 100% {
+    0%,
+    100% {
       transform: scale(1) rotate(0deg);
       opacity: 0.7;
     }
@@ -289,26 +314,26 @@ const LoadingText = styled.div`
 `;
 
 const Plan = ({ isEmbedded = false }) => {
-  console.log('Plan component rendering', { isEmbedded });
+  console.log("Plan component rendering", { isEmbedded });
 
   useEffect(() => {
-    console.log('Plan component mounted');
-    return () => console.log('Plan component unmounted');
+    console.log("Plan component mounted");
+    return () => console.log("Plan component unmounted");
   }, []);
 
   const { currentUser } = useAuth();
-  const [location, setLocation] = useState('');
-  const [destination, setDestination] = useState('');
+  const [location, setLocation] = useState("");
+  const [destination, setDestination] = useState("");
   const [isRoundTrip, setIsRoundTrip] = useState(false);
-  const [duration, setDuration] = useState('few-hours');
-  const [activityType, setActivityType] = useState('surprise-me');
-  const [customActivity, setCustomActivity] = useState('');
+  const [duration, setDuration] = useState("few-hours");
+  const [activityType, setActivityType] = useState("surprise-me");
+  const [customActivity, setCustomActivity] = useState("");
   const [isCustomActivity, setIsCustomActivity] = useState(false);
   const [startDate, setStartDate] = useState(new Date());
   const [endDate, setEndDate] = useState(new Date());
   const [isCustomDate, setIsCustomDate] = useState(false);
   const [weather, setWeather] = useState(null);
-  
+
   // New state for adventure handling
   const [loading, setLoading] = useState(false);
   const [locationLoading, setLocationLoading] = useState(false);
@@ -326,7 +351,7 @@ const Plan = ({ isEmbedded = false }) => {
     "⏰ Most successful adventurers plan their trips in under 5 minutes!",
     "🎒 The best adventures require less gear than you think!",
     "🌅 Early morning adventures often lead to the most surprising discoveries!",
-    "📱 50% of great adventures are found by people who just started exploring!"
+    "📱 50% of great adventures are found by people who just started exploring!",
   ];
 
   // Rotate facts during loading
@@ -364,7 +389,7 @@ const Plan = ({ isEmbedded = false }) => {
 
   const loadQuotaInfo = async () => {
     try {
-      const token = localStorage.getItem('token');
+      const token = localStorage.getItem("token");
       if (token) {
         const quota = await fetchAdventureQuota(token);
         setQuotaInfo(quota);
@@ -374,72 +399,80 @@ const Plan = ({ isEmbedded = false }) => {
         }
       }
     } catch (err) {
-      console.error('Failed to load quota info:', err);
+      console.error("Failed to load quota info:", err);
     }
   };
 
   const getCurrentLocation = () => {
     if (navigator.geolocation) {
       setLocationLoading(true);
-      navigator.geolocation.getCurrentPosition(async (position) => {
-        const { latitude, longitude } = position.coords;
-        
-        try {
-          // Use OpenStreetMap Nominatim for reverse geocoding (free alternative to Google Maps)
-          const response = await fetch(
-            `https://nominatim.openstreetmap.org/reverse?lat=${latitude}&lon=${longitude}&format=json&addressdetails=1`
-          );
-          
-          if (response.ok) {
-            const data = await response.json();
-            
-            // Extract readable address components
-            const address = data.address || {};
-            const addressParts = [];
-            
-            // Build a human-readable address
-            if (address.house_number && address.road) {
-              addressParts.push(`${address.house_number} ${address.road}`);
-            } else if (address.road) {
-              addressParts.push(address.road);
+      navigator.geolocation.getCurrentPosition(
+        async (position) => {
+          const { latitude, longitude } = position.coords;
+
+          try {
+            // Use OpenStreetMap Nominatim for reverse geocoding (free alternative to Google Maps)
+            const response = await fetch(
+              `https://nominatim.openstreetmap.org/reverse?lat=${latitude}&lon=${longitude}&format=json&addressdetails=1`,
+            );
+
+            if (response.ok) {
+              const data = await response.json();
+
+              // Extract readable address components
+              const address = data.address || {};
+              const addressParts = [];
+
+              // Build a human-readable address
+              if (address.house_number && address.road) {
+                addressParts.push(`${address.house_number} ${address.road}`);
+              } else if (address.road) {
+                addressParts.push(address.road);
+              }
+
+              if (address.neighbourhood || address.suburb) {
+                addressParts.push(address.neighbourhood || address.suburb);
+              }
+
+              if (address.city || address.town || address.village) {
+                addressParts.push(
+                  address.city || address.town || address.village,
+                );
+              }
+
+              if (address.state) {
+                addressParts.push(address.state);
+              }
+
+              // Create a clean, readable address
+              const readableAddress =
+                addressParts.length > 0
+                  ? addressParts.join(", ")
+                  : data.display_name || `${latitude},${longitude}`;
+
+              setLocation(readableAddress);
+            } else {
+              // Fallback to coordinates if geocoding fails
+              setLocation(`${latitude},${longitude}`);
             }
-            
-            if (address.neighbourhood || address.suburb) {
-              addressParts.push(address.neighbourhood || address.suburb);
-            }
-            
-            if (address.city || address.town || address.village) {
-              addressParts.push(address.city || address.town || address.village);
-            }
-            
-            if (address.state) {
-              addressParts.push(address.state);
-            }
-            
-            // Create a clean, readable address
-            const readableAddress = addressParts.length > 0 
-              ? addressParts.join(', ')
-              : data.display_name || `${latitude},${longitude}`;
-            
-            setLocation(readableAddress);
-          } else {
+          } catch (error) {
+            console.error("Geocoding error:", error);
             // Fallback to coordinates if geocoding fails
             setLocation(`${latitude},${longitude}`);
+          } finally {
+            setLocationLoading(false);
           }
-        } catch (error) {
-          console.error('Geocoding error:', error);
-          // Fallback to coordinates if geocoding fails
-          setLocation(`${latitude},${longitude}`);
-        } finally {
+        },
+        (error) => {
+          console.error("Geolocation error:", error);
           setLocationLoading(false);
-        }
-      }, (error) => {
-        console.error('Geolocation error:', error);
-        setLocationLoading(false);
-        alert('Unable to get your location. Please enter your location manually.');
-      });
+          alert(
+            "Unable to get your location. Please enter your location manually.",
+          );
+        },
+      );
     } else {
-      alert('Geolocation is not supported by this browser.');
+      alert("Geolocation is not supported by this browser.");
     }
   };
 
@@ -465,16 +498,16 @@ const Plan = ({ isEmbedded = false }) => {
 
     // Validate required fields
     if (!location.trim()) {
-      setError('Please enter a start location to create your adventure.');
+      setError("Please enter a start location to create your adventure.");
       return;
     }
 
     setLoading(true);
 
     try {
-      const token = localStorage.getItem('token');
+      const token = localStorage.getItem("token");
       if (!token) {
-        throw new Error('You must be logged in to create an adventure');
+        throw new Error("You must be logged in to create an adventure");
       }
 
       // Prepare adventure data
@@ -485,7 +518,7 @@ const Plan = ({ isEmbedded = false }) => {
         activity_type: isCustomActivity ? customActivity : activityType,
         is_round_trip: isRoundTrip,
         // Add time context for the backend AI service
-        is_immediate: !isCustomDate
+        is_immediate: !isCustomDate,
       };
 
       // Add start time if custom date is selected
@@ -495,12 +528,16 @@ const Plan = ({ isEmbedded = false }) => {
 
       const adventure = await createAdventure(adventureData, token);
       setGeneratedAdventure(adventure);
-      
+
       // Refresh quota info
       await loadQuotaInfo();
     } catch (err) {
-      console.error('Failed to create adventure:', err);
-      setError(err.userMessage || err.message || 'Failed to create adventure. Please try again.');
+      console.error("Failed to create adventure:", err);
+      setError(
+        err.userMessage ||
+          err.message ||
+          "Failed to create adventure. Please try again.",
+      );
     } finally {
       setLoading(false);
     }
@@ -510,12 +547,12 @@ const Plan = ({ isEmbedded = false }) => {
     setGeneratedAdventure(null);
     setError(null);
     // Reset form to defaults
-    setLocation('');
-    setDestination('');
+    setLocation("");
+    setDestination("");
     setIsRoundTrip(false);
-    setDuration('few-hours');
-    setActivityType('surprise-me');
-    setCustomActivity('');
+    setDuration("few-hours");
+    setActivityType("surprise-me");
+    setCustomActivity("");
     setIsCustomActivity(false);
     setStartDate(new Date());
     setEndDate(new Date());
@@ -545,16 +582,31 @@ const Plan = ({ isEmbedded = false }) => {
   }
 
   return (
-    <PageWrapper className={isEmbedded ? 'home-embedded' : ''}>
+    <PageWrapper className={isEmbedded ? "home-embedded" : ""}>
       {/* Loading Overlay */}
       {loading && (
         <LoadingOverlay>
           <LoadingCard>
             <LoadingAnimation>
               <div className="adventure-icon">
-                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                <svg
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"
+                  />
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"
+                  />
                 </svg>
               </div>
               <div className="loading-dots">
@@ -563,28 +615,26 @@ const Plan = ({ isEmbedded = false }) => {
                 <div className="dot"></div>
               </div>
             </LoadingAnimation>
-            
+
             <LoadingText>
-              <div className="main-text">
-                We're working on your adventure!
-              </div>
+              <div className="main-text">We're working on your adventure!</div>
               <div className="sub-text">
                 Our AI is exploring the best microadventures just for you...
               </div>
-              <div className="fun-facts">
-                {funFacts[currentFactIndex]}
-              </div>
+              <div className="fun-facts">{funFacts[currentFactIndex]}</div>
             </LoadingText>
           </LoadingCard>
         </LoadingOverlay>
       )}
 
-      <PlanFormContainer style={{ 
-        filter: loading ? 'blur(8px)' : 'none', 
-        opacity: loading ? 0.3 : 1,
-        pointerEvents: loading ? 'none' : 'auto',
-        transition: 'filter 0.3s ease, opacity 0.3s ease'
-      }}>
+      <PlanFormContainer
+        style={{
+          filter: loading ? "blur(8px)" : "none",
+          opacity: loading ? 0.3 : 1,
+          pointerEvents: loading ? "none" : "auto",
+          transition: "filter 0.3s ease, opacity 0.3s ease",
+        }}
+      >
         <PlanContainer>
           <div className="relative">
             <h1 className="mb-6 text-[#0c1c17] text-2xl sm:text-3xl font-bold leading-tight text-center tracking-[-0.015em]">
@@ -602,291 +652,466 @@ const Plan = ({ isEmbedded = false }) => {
                 {quotaInfo.time_until_reset && timeLeft > 0 && (
                   <div className="flex items-center justify-center gap-2 text-xs">
                     <span className="text-orange-700">
-                      {quotaInfo.adventures_remaining === 0 ? 'Quota resets in:' : 'Next reset in:'} <span className="font-mono font-medium">{formatTime(timeLeft)}</span>
+                      {quotaInfo.adventures_remaining === 0
+                        ? "Quota resets in:"
+                        : "Next reset in:"}{" "}
+                      <span className="font-mono font-medium">
+                        {formatTime(timeLeft)}
+                      </span>
                     </span>
                   </div>
                 )}
               </div>
             )}
 
-                  {/* Error Display */}
-                  {error && (
-                    <div className="mb-6 p-4 bg-orange-50 border border-orange-200 rounded-xl">
-                      <p className="text-orange-700 text-sm text-center">{error}</p>
+            {/* Error Display */}
+            {error && (
+              <div className="mb-6 p-4 bg-orange-50 border border-orange-200 rounded-xl">
+                <p className="text-orange-700 text-sm text-center">{error}</p>
+              </div>
+            )}
+
+            <form onSubmit={handleSubmit} className="space-y-6">
+              <div className="space-y-3">
+                <label className="block text-sm font-semibold text-gray-800">
+                  📍 Start Location
+                </label>
+                <div className="flex gap-2">
+                  <input
+                    type="text"
+                    value={location}
+                    onChange={(e) => setLocation(e.target.value)}
+                    className="flex-1 text-sm bg-white border-2 border-gray-200 text-gray-800 px-3 py-3 rounded-xl focus:border-orange-300 focus:ring-2 focus:ring-orange-200/50 focus:outline-none transition-all duration-200 placeholder-gray-400"
+                    placeholder="Where are you starting from?"
+                    required
+                  />
+                  <button
+                    type="button"
+                    onClick={getCurrentLocation}
+                    disabled={locationLoading}
+                    className={`border-2 border-gray-200 text-gray-700 rounded-xl hover:bg-gray-50 hover:border-gray-300 transition-colors flex items-center justify-center gap-1 text-xs font-medium px-3 ${
+                      locationLoading ? "opacity-50 cursor-not-allowed" : ""
+                    }`}
+                  >
+                    {locationLoading ? (
+                      <svg
+                        className="w-3 h-3 animate-spin"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                      >
+                        <circle
+                          className="opacity-25"
+                          cx="12"
+                          cy="12"
+                          r="10"
+                          stroke="currentColor"
+                          strokeWidth="4"
+                        ></circle>
+                        <path
+                          className="opacity-75"
+                          fill="currentColor"
+                          d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                        ></path>
+                      </svg>
+                    ) : (
+                      <>
+                        <svg
+                          className="w-3 h-3"
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                          xmlns="http://www.w3.org/2000/svg"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"
+                          />
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"
+                          />
+                        </svg>
+                        Current
+                      </>
+                    )}
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setShowStartMapPicker(true)}
+                    style={{
+                      height: "3rem",
+                      padding: "0 0.75rem",
+                      minWidth: "70px",
+                    }}
+                    className="border-2 border-orange-300 text-orange-900 rounded-xl hover:bg-orange-50 transition-colors flex items-center justify-center gap-1 text-xs font-medium"
+                  >
+                    <svg
+                      className="w-3 h-3"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7"
+                      />
+                    </svg>
+                    Map
+                  </button>
+                </div>
+              </div>
+
+              <div className="space-y-3">
+                <div className="flex justify-between items-center">
+                  <label className="block text-sm font-semibold text-gray-800">
+                    🎯 Destination
+                  </label>
+                  <button
+                    type="button"
+                    onClick={handleRoundTripToggle}
+                    className={`text-xs px-3 py-1.5 rounded-full transition-all ${
+                      isRoundTrip
+                        ? "bg-gradient-to-r from-orange-200 to-orange-300 text-orange-900 font-medium"
+                        : "bg-gray-100 text-gray-500 hover:bg-gray-200"
+                    }`}
+                  >
+                    <span className="flex items-center gap-1">
+                      <svg
+                        className="w-3 h-3"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                        xmlns="http://www.w3.org/2000/svg"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
+                        />
+                      </svg>
+                      Round Trip
+                    </span>
+                  </button>
+                </div>
+                <div className="flex gap-2">
+                  <input
+                    type="text"
+                    value={destination}
+                    onChange={(e) => setDestination(e.target.value)}
+                    className="flex-1 text-sm bg-white border-2 border-gray-200 text-gray-800 px-3 py-3 rounded-xl focus:border-orange-300 focus:ring-2 focus:ring-orange-200/50 focus:outline-none transition-all duration-200 placeholder-gray-400"
+                    placeholder="Where would you like to go?"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowEndMapPicker(true)}
+                    className="border-2 border-gray-200 text-gray-700 rounded-xl hover:bg-gray-50 hover:border-gray-300 transition-colors flex items-center justify-center gap-1 text-xs font-medium px-3"
+                  >
+                    <svg
+                      className="w-3 h-3"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7"
+                      />
+                    </svg>
+                    Map
+                  </button>
+                </div>
+              </div>
+
+              <div className="space-y-3">
+                <label className="block text-sm font-semibold text-gray-800">
+                  ⏰ Duration
+                </label>
+                <div className="grid grid-cols-2 gap-2">
+                  {["Few Hours", "Half Day", "Full Day", "Few Days"].map(
+                    (option) => (
+                      <button
+                        key={option}
+                        type="button"
+                        onClick={() =>
+                          setDuration(option.toLowerCase().replace(" ", "-"))
+                        }
+                        className={`flex items-center justify-center text-center px-3 py-2 rounded-xl ${
+                          duration === option.toLowerCase().replace(" ", "-")
+                            ? "bg-gradient-to-r from-[#F4A261] to-[#E76F51] text-white border-2 border-orange-300"
+                            : "bg-white border-2 border-gray-200 hover:border-orange-300 hover:bg-orange-50 text-gray-700"
+                        } transition-all duration-200 text-sm font-medium`}
+                      >
+                        {option}
+                      </button>
+                    ),
+                  )}
+                </div>
+              </div>
+
+              <div className="space-y-3">
+                <label className="block text-sm font-semibold text-gray-800">
+                  🎯 Activity Type
+                </label>
+                <div className="grid grid-cols-3 gap-2">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setActivityType("surprise-me");
+                      setIsCustomActivity(false);
+                    }}
+                    className={`border-2 px-3 py-2 rounded-xl ${
+                      activityType === "surprise-me"
+                        ? "bg-gradient-to-r from-[#F4A261] to-[#E76F51] text-white border-orange-300"
+                        : "bg-white border-gray-200 hover:border-orange-300 hover:bg-orange-50 text-gray-700"
+                    } transition-all duration-200 text-xs font-medium flex items-center justify-center text-center`}
+                  >
+                    ✨ Surprise me! ✨
+                  </button>
+                  {[
+                    "Hiking",
+                    "Cycling",
+                    "Running",
+                    "Picnic",
+                    "Photography",
+                    "Foodie Trip",
+                    "Bird Watching",
+                    "City Tour",
+                  ].map((option) => (
+                    <button
+                      key={option}
+                      type="button"
+                      onClick={() => {
+                        setActivityType(option.toLowerCase().replace(" ", "-"));
+                        setIsCustomActivity(false);
+                      }}
+                      className={`border-2 px-2 py-2 rounded-xl ${
+                        activityType === option.toLowerCase().replace(" ", "-")
+                          ? "bg-gradient-to-r from-[#F4A261] to-[#E76F51] text-white border-orange-300"
+                          : "bg-white border-gray-200 hover:border-orange-300 hover:bg-orange-50 text-gray-700"
+                      } transition-all duration-200 text-xs font-medium flex items-center justify-center text-center`}
+                    >
+                      {option}
+                    </button>
+                  ))}
+                  {!isCustomActivity ? (
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setIsCustomActivity(true);
+                        setActivityType("custom");
+                      }}
+                      style={{
+                        borderRadius: "12px",
+                        padding: "0.5rem",
+                        minHeight: "2.5rem",
+                      }}
+                      className={`border-2 ${
+                        activityType === "custom"
+                          ? "bg-gradient-to-r from-[#F4A261] to-[#E76F51] text-white shadow-sm border-orange-300"
+                          : "bg-white border-gray-200 hover:bg-orange-50 text-gray-700"
+                      } transition-colors duration-200 text-xs font-medium flex items-center justify-center`}
+                    >
+                      Custom...
+                    </button>
+                  ) : (
+                    <div className="col-span-3 flex gap-2">
+                      <input
+                        type="text"
+                        value={customActivity}
+                        onChange={(e) => setCustomActivity(e.target.value)}
+                        placeholder="Enter custom activity"
+                        style={{
+                          height: "2.5rem",
+                          padding: "0.75rem",
+                          borderRadius: "12px",
+                        }}
+                        className="flex-1 text-sm bg-white border-2 border-gray-200 text-gray-800 shadow-sm focus:border-orange-300 focus:ring-2 focus:ring-orange-200/50 placeholder-gray-400"
+                        autoFocus
+                      />
+                      <button
+                        type="button"
+                        onClick={() => setIsCustomActivity(false)}
+                        style={{
+                          height: "2.5rem",
+                          padding: "0 0.75rem",
+                          borderRadius: "12px",
+                        }}
+                        className="border-2 border-gray-200 bg-white hover:bg-gray-50 text-gray-600 text-xs font-medium flex items-center justify-center"
+                      >
+                        Cancel
+                      </button>
                     </div>
                   )}
-              
-                <form onSubmit={handleSubmit} className="space-y-6">
-                  <div className="space-y-3">
-                    <label className="block text-sm font-semibold text-gray-800">📍 Start Location</label>
-                    <div className="flex gap-2">
-                      <input
-                        type="text"
-                        value={location}
-                        onChange={(e) => setLocation(e.target.value)}
-                        className="flex-1 text-sm bg-white border-2 border-gray-200 text-gray-800 px-3 py-3 rounded-xl focus:border-orange-300 focus:ring-2 focus:ring-orange-200/50 focus:outline-none transition-all duration-200 placeholder-gray-400"
-                        placeholder="Where are you starting from?"
-                        required
-                      />
-                      <button
-                        type="button"
-                        onClick={getCurrentLocation}
-                        disabled={locationLoading}
-                        className={`border-2 border-gray-200 text-gray-700 rounded-xl hover:bg-gray-50 hover:border-gray-300 transition-colors flex items-center justify-center gap-1 text-xs font-medium px-3 ${
-                          locationLoading ? 'opacity-50 cursor-not-allowed' : ''
-                        }`}
-                      >
-                        {locationLoading ? (
-                          <svg className="w-3 h-3 animate-spin" fill="none" viewBox="0 0 24 24">
-                            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                          </svg>
-                        ) : (
-                          <>
-                            <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-                            </svg>
-                            Current
-                          </>
-                        )}
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() => setShowStartMapPicker(true)}
-                        style={{ height: '3rem', padding: '0 0.75rem', minWidth: '70px' }}
-                        className="border-2 border-orange-300 text-orange-900 rounded-xl hover:bg-orange-50 transition-colors flex items-center justify-center gap-1 text-xs font-medium"
-                      >
-                        <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7" />
-                        </svg>
-                        Map
-                      </button>
-                    </div>
-                  </div>
+                </div>
+              </div>
 
-                  <div className="space-y-3">
-                    <div className="flex justify-between items-center">
-                      <label className="block text-sm font-semibold text-gray-800">🎯 Destination</label>
-                      <button
-                        type="button"
-                        onClick={handleRoundTripToggle}
-                        className={`text-xs px-3 py-1.5 rounded-full transition-all ${isRoundTrip ? 'bg-gradient-to-r from-orange-200 to-orange-300 text-orange-900 font-medium' : 'bg-gray-100 text-gray-500 hover:bg-gray-200'}`}
-                      >
-                        <span className="flex items-center gap-1">
-                          <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
-                          </svg>
-                          Round Trip
-                        </span>
-                      </button>
-                    </div>
-                    <div className="flex gap-2">
-                      <input
-                        type="text"
-                        value={destination}
-                        onChange={(e) => setDestination(e.target.value)}
-                        className="flex-1 text-sm bg-white border-2 border-gray-200 text-gray-800 px-3 py-3 rounded-xl focus:border-orange-300 focus:ring-2 focus:ring-orange-200/50 focus:outline-none transition-all duration-200 placeholder-gray-400"
-                        placeholder="Where would you like to go?"
-                      />
-                      <button
-                        type="button"
-                        onClick={() => setShowEndMapPicker(true)}
-                        className="border-2 border-gray-200 text-gray-700 rounded-xl hover:bg-gray-50 hover:border-gray-300 transition-colors flex items-center justify-center gap-1 text-xs font-medium px-3"
-                      >
-                        <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7" />
-                        </svg>
-                        Map
-                      </button>
-                    </div>
-                  </div>
-
-                  <div className="space-y-3">
-                    <label className="block text-sm font-semibold text-gray-800">⏰ Duration</label>
-                    <div className="grid grid-cols-2 gap-2">
-                      {['Few Hours', 'Half Day', 'Full Day', 'Few Days'].map((option) => (
-                        <button
-                          key={option}
-                          type="button"
-                          onClick={() => setDuration(option.toLowerCase().replace(' ', '-'))}
-                          className={`flex items-center justify-center text-center px-3 py-2 rounded-xl ${
-                            duration === option.toLowerCase().replace(' ', '-')
-                              ? 'bg-gradient-to-r from-[#F4A261] to-[#E76F51] text-white border-2 border-orange-300'
-                              : 'bg-white border-2 border-gray-200 hover:border-orange-300 hover:bg-orange-50 text-gray-700'
-                          } transition-all duration-200 text-sm font-medium`}
-                        >
-                          {option}
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-
-                  <div className="space-y-3">
-                    <label className="block text-sm font-semibold text-gray-800">🎯 Activity Type</label>
-                    <div className="grid grid-cols-3 gap-2">
-                      <button
-                        type="button"
-                        onClick={() => {
-                          setActivityType('surprise-me');
-                          setIsCustomActivity(false);
-                        }}
-                        className={`border-2 px-3 py-2 rounded-xl ${
-                          activityType === 'surprise-me'
-                            ? 'bg-gradient-to-r from-[#F4A261] to-[#E76F51] text-white border-orange-300'
-                            : 'bg-white border-gray-200 hover:border-orange-300 hover:bg-orange-50 text-gray-700'
-                        } transition-all duration-200 text-xs font-medium flex items-center justify-center text-center`}
-                      >
-                        ✨ Surprise me! ✨
-                      </button>
-                      {['Hiking', 'Cycling', 'Running', 'Picnic', 'Photography', 'Foodie Trip', 'Bird Watching', 'City Tour'].map((option) => (
-                        <button
-                          key={option}
-                          type="button"
-                          onClick={() => {
-                            setActivityType(option.toLowerCase().replace(' ', '-'));
-                            setIsCustomActivity(false);
-                          }}
-                          className={`border-2 px-2 py-2 rounded-xl ${
-                            activityType === option.toLowerCase().replace(' ', '-')
-                              ? 'bg-gradient-to-r from-[#F4A261] to-[#E76F51] text-white border-orange-300'
-                              : 'bg-white border-gray-200 hover:border-orange-300 hover:bg-orange-50 text-gray-700'
-                          } transition-all duration-200 text-xs font-medium flex items-center justify-center text-center`}
-                        >
-                          {option}
-                        </button>
-                      ))}
-                      {!isCustomActivity ? (
-                        <button
-                          type="button"
-                          onClick={() => {
-                            setIsCustomActivity(true);
-                            setActivityType('custom');
-                          }}
-                          style={{ borderRadius: '12px', padding: '0.5rem', minHeight: '2.5rem' }}
-                          className={`border-2 ${
-                            activityType === 'custom'
-                              ? 'bg-gradient-to-r from-[#F4A261] to-[#E76F51] text-white shadow-sm border-orange-300'
-                              : 'bg-white border-gray-200 hover:bg-orange-50 text-gray-700'
-                          } transition-colors duration-200 text-xs font-medium flex items-center justify-center`}
-                        >
-                          Custom...
-                        </button>
-                      ) : (
-                        <div className="col-span-3 flex gap-2">
-                          <input
-                            type="text"
-                            value={customActivity}
-                            onChange={(e) => setCustomActivity(e.target.value)}
-                            placeholder="Enter custom activity"
-                            style={{ height: '2.5rem', padding: '0.75rem', borderRadius: '12px' }}
-                            className="flex-1 text-sm bg-white border-2 border-gray-200 text-gray-800 shadow-sm focus:border-orange-300 focus:ring-2 focus:ring-orange-200/50 placeholder-gray-400"
-                            autoFocus
-                          />
-                          <button
-                            type="button"
-                            onClick={() => setIsCustomActivity(false)}
-                            style={{ height: '2.5rem', padding: '0 0.75rem', borderRadius: '12px' }}
-                            className="border-2 border-gray-200 bg-white hover:bg-gray-50 text-gray-600 text-xs font-medium flex items-center justify-center"
-                          >
-                            Cancel
-                          </button>
-                        </div>
-                      )}
-                    </div>
-                  </div>
-
-                  <div className="space-y-3">
-                    <label className="block text-sm font-semibold text-gray-800">🕐 When to start?</label>
-                    <div className="grid grid-cols-2 gap-2">
-                        <button
-                          type="button"
-                          onClick={() => {
-                            setStartDate(new Date());
-                            setIsCustomDate(false);
-                          }}
-                          className={`border-2 px-3 py-2 rounded-xl ${
-                            !isCustomDate 
-                              ? 'bg-gradient-to-r from-[#F4A261] to-[#E76F51] text-white border-orange-300' 
-                              : 'bg-white border-gray-200 hover:border-orange-300 hover:bg-orange-50 text-gray-700'
-                          } transition-all duration-200 text-sm font-medium flex items-center justify-center`}
-                        >
-                        🏃‍♂️ Let's go now!
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() => setIsCustomDate(true)}
-                        className={`border-2 px-3 py-2 rounded-xl ${
-                          isCustomDate 
-                            ? 'bg-gradient-to-r from-[#F4A261] to-[#E76F51] text-white border-orange-300' 
-                            : 'bg-white border-gray-200 hover:border-orange-300 hover:bg-orange-50 text-gray-700'
-                        } transition-all duration-200 text-sm font-medium flex items-center justify-center gap-2`}
-                      >
-                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                        </svg>
-                        📅 Pick date/time
-                      </button>
-                    </div>
-                    {isCustomDate && (
-                      <div className="p-3 border-2 border-orange-300 rounded-xl bg-orange-50/50 space-y-2">
-                        <div className="flex items-center gap-2">
-                          <span className="text-sm font-medium text-orange-900 w-12">Start:</span>
-                          <input
-                            type="datetime-local"
-                            value={startDate.toISOString().slice(0, 16)}
-                            onChange={(e) => setStartDate(new Date(e.target.value))}
-                            style={{ height: '2.5rem', padding: '0.5rem', borderRadius: '8px' }}
-                            className="flex-1 text-sm bg-white border border-orange-200 shadow-sm focus:border-orange-300 focus:ring-1 focus:ring-orange-300"
-                          />
-                        </div>
-                        <div className="flex items-center gap-2">
-                          <span className="text-sm font-medium text-orange-900 w-12">End:</span>
-                          <input
-                            type="datetime-local"
-                            value={endDate.toISOString().slice(0, 16)}
-                            onChange={(e) => setEndDate(new Date(e.target.value))}
-                            style={{ height: '2.5rem', padding: '0.5rem', borderRadius: '8px' }}
-                            className="flex-1 text-sm bg-white border border-orange-200 shadow-sm focus:border-orange-300 focus:ring-1 focus:ring-orange-300"
-                          />
-                        </div>
-                      </div>
-                    )}
-                  </div>
-
+              <div className="space-y-3">
+                <label className="block text-sm font-semibold text-gray-800">
+                  🕐 When to start?
+                </label>
+                <div className="grid grid-cols-2 gap-2">
                   <button
-                    type="submit"
-                    disabled={loading || !location.trim() || (quotaInfo && quotaInfo.adventures_remaining === 0)}
-                    className="w-full bg-gradient-to-r from-[#F4A261] to-[#E76F51] text-white font-bold text-lg hover:from-[#E76F51] hover:to-[#D84B40] transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-3 border-0 px-8 py-4 rounded-xl mt-6 shadow-lg hover:shadow-xl hover:brightness-110"
+                    type="button"
+                    onClick={() => {
+                      setStartDate(new Date());
+                      setIsCustomDate(false);
+                    }}
+                    className={`border-2 px-3 py-2 rounded-xl ${
+                      !isCustomDate
+                        ? "bg-gradient-to-r from-[#F4A261] to-[#E76F51] text-white border-orange-300"
+                        : "bg-white border-gray-200 hover:border-orange-300 hover:bg-orange-50 text-gray-700"
+                    } transition-all duration-200 text-sm font-medium flex items-center justify-center`}
                   >
-                      {loading ? (
-                        <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
-                      ) : !location.trim() ? (
-                        <>
-                          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-                          </svg>
-                          <span>Enter Start Location First</span>
-                        </>
-                      ) : quotaInfo && quotaInfo.adventures_remaining === 0 ? (
-                        <>
-                          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z" />
-                          </svg>
-                          <span>Daily Limit Reached</span>
-                        </>
-                      ) : (
-                        <>
-                          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
-                          </svg>
-                          <span>Create My Adventure Plan!</span>
-                        </>
-                      )}
+                    🏃‍♂️ Let's go now!
                   </button>
-                </form>
-            </div>
+                  <button
+                    type="button"
+                    onClick={() => setIsCustomDate(true)}
+                    className={`border-2 px-3 py-2 rounded-xl ${
+                      isCustomDate
+                        ? "bg-gradient-to-r from-[#F4A261] to-[#E76F51] text-white border-orange-300"
+                        : "bg-white border-gray-200 hover:border-orange-300 hover:bg-orange-50 text-gray-700"
+                    } transition-all duration-200 text-sm font-medium flex items-center justify-center gap-2`}
+                  >
+                    <svg
+                      className="w-4 h-4"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
+                      />
+                    </svg>
+                    📅 Pick date/time
+                  </button>
+                </div>
+                {isCustomDate && (
+                  <div className="p-3 border-2 border-orange-300 rounded-xl bg-orange-50/50 space-y-2">
+                    <div className="flex items-center gap-2">
+                      <span className="text-sm font-medium text-orange-900 w-12">
+                        Start:
+                      </span>
+                      <input
+                        type="datetime-local"
+                        value={startDate.toISOString().slice(0, 16)}
+                        onChange={(e) => setStartDate(new Date(e.target.value))}
+                        style={{
+                          height: "2.5rem",
+                          padding: "0.5rem",
+                          borderRadius: "8px",
+                        }}
+                        className="flex-1 text-sm bg-white border border-orange-200 shadow-sm focus:border-orange-300 focus:ring-1 focus:ring-orange-300"
+                      />
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <span className="text-sm font-medium text-orange-900 w-12">
+                        End:
+                      </span>
+                      <input
+                        type="datetime-local"
+                        value={endDate.toISOString().slice(0, 16)}
+                        onChange={(e) => setEndDate(new Date(e.target.value))}
+                        style={{
+                          height: "2.5rem",
+                          padding: "0.5rem",
+                          borderRadius: "8px",
+                        }}
+                        className="flex-1 text-sm bg-white border border-orange-200 shadow-sm focus:border-orange-300 focus:ring-1 focus:ring-orange-300"
+                      />
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              <button
+                type="submit"
+                disabled={
+                  loading ||
+                  !location.trim() ||
+                  (quotaInfo && quotaInfo.adventures_remaining === 0)
+                }
+                className="w-full bg-gradient-to-r from-[#F4A261] to-[#E76F51] text-white font-bold text-lg hover:from-[#E76F51] hover:to-[#D84B40] transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-3 border-0 px-8 py-4 rounded-xl mt-6 shadow-lg hover:shadow-xl hover:brightness-110"
+              >
+                {loading ? (
+                  <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
+                ) : !location.trim() ? (
+                  <>
+                    <svg
+                      className="w-5 h-5"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"
+                      />
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"
+                      />
+                    </svg>
+                    <span>Enter Start Location First</span>
+                  </>
+                ) : quotaInfo && quotaInfo.adventures_remaining === 0 ? (
+                  <>
+                    <svg
+                      className="w-5 h-5"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z"
+                      />
+                    </svg>
+                    <span>Daily Limit Reached</span>
+                  </>
+                ) : (
+                  <>
+                    <svg
+                      className="w-5 h-5"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"
+                      />
+                    </svg>
+                    <span>Create My Adventure Plan!</span>
+                  </>
+                )}
+              </button>
+            </form>
+          </div>
         </PlanContainer>
       </PlanFormContainer>
 

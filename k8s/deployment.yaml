@@ -1,4 +1,4 @@
-vars: 
+vars:
   - file: values/{{ args.environment }}.yaml  # Common variables for all deployments
 
 # Ordered list of deployments to process

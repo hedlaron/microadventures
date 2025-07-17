@@ -8,12 +8,12 @@ data:
   POSTGRESQL_SERVER: "postgres-postgresql.postgres"
   POSTGRESQL_PORT: "5432"
   POSTGRESQL_DATABASE: microadventures
-  
+
   # Application configuration
   PORT: "8000"
   DOMAIN: "{{ domain }}"
   ENVIRONMENT: "{{ environment }}"
   BACKEND_CORS_ORIGINS: "{{ 'http://localhost:5173,https://' + domain if environment == 'development' else 'https://' + domain }}"
-  
+
   # Health check settings
   HEALTH_CHECK_PATH: "/health"

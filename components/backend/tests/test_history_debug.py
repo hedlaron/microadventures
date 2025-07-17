@@ -1,12 +1,14 @@
 #!/usr/bin/env python3
 
-import sys
 import os
+import sys
+
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 
-from core.database import SessionLocal
 from adventure.services.adventure_service import get_user_adventures
+from core.database import SessionLocal
 from user.models.user import User
+
 
 def test_history():
     """Test the history endpoint functionality"""
@@ -17,13 +19,13 @@ def test_history():
         if not user:
             print("No users found in database")
             return
-        
+
         print(f"Testing history for user {user.id}")
-        
+
         # Get user adventures
         adventures = get_user_adventures(db, user.id)
         print(f"Found {len(adventures)} adventures")
-        
+
         for adventure in adventures:
             print(f"Adventure {adventure.id}:")
             print(f"  Title: {adventure.title}")
@@ -36,13 +38,15 @@ def test_history():
             print(f"  Share Token: {getattr(adventure, 'share_token', 'NOT FOUND')}")
             print(f"  Shared At: {getattr(adventure, 'shared_at', 'NOT FOUND')}")
             print()
-            
+
     except Exception as e:
         print(f"Error: {e}")
         import traceback
+
         traceback.print_exc()
     finally:
         db.close()
+
 
 if __name__ == "__main__":
     test_history()

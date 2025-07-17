@@ -114,7 +114,7 @@ task -t tasks.yaml security:scan
 The configuration for each environment is managed in the `values/` directory:
 
 ### Kind (Local Development)
-- `values/kind.yaml`: 
+- `values/kind.yaml`:
   - Uses self-signed certificates
   - Single replicas
   - Uses "kind" as the secret source

@@ -1,17 +1,9 @@
-from pydantic_settings import BaseSettings, SettingsConfigDict
-from typing import Annotated, Any, Literal
 import socket
-import os
+from typing import Annotated, Any, Literal
 
-from pydantic import (
-    AnyUrl,
-    BeforeValidator,
-    computed_field,
-    PostgresDsn,
-    Field
-)
-
+from pydantic import AnyUrl, BeforeValidator, Field, PostgresDsn, computed_field
 from pydantic_core import MultiHostUrl
+from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
 def parse_cors(v: Any) -> list[str] | str:
@@ -40,12 +32,12 @@ def resolve_db_host(host: str) -> str:
 
 class Settings(BaseSettings):
     model_config = SettingsConfigDict(
-        env_file='.env',
-        env_file_encoding='utf-8',
+        env_file=".env",
+        env_file_encoding="utf-8",
         extra="ignore",
-        env_ignore_empty = True,
+        env_ignore_empty=True,
     )
-    DOMAIN: str = 'localhost'
+    DOMAIN: str = "localhost"
     ENVIRONMENT: Literal["local", "staging", "production"] = "local"
     JWT_SECRET_KEY: str
 
@@ -57,9 +49,9 @@ class Settings(BaseSettings):
             return f"http://{self.DOMAIN}"
         return f"https://{self.DOMAIN}"
 
-    BACKEND_CORS_ORIGINS: Annotated[
-        list[AnyUrl] | str, BeforeValidator(parse_cors)
-    ] = Field(default_factory=list)
+    BACKEND_CORS_ORIGINS: Annotated[list[AnyUrl] | str, BeforeValidator(parse_cors)] = Field(
+        default_factory=list
+    )
 
     POSTGRESQL_USERNAME: str
     POSTGRESQL_PASSWORD: str
@@ -75,7 +67,7 @@ class Settings(BaseSettings):
     def SQLALCHEMY_DATABASE_URI(self) -> PostgresDsn:
         # Resolve the database host (fall back to localhost if 'db' is not reachable)
         resolved_host = resolve_db_host(self.POSTGRESQL_SERVER)
-        
+
         return MultiHostUrl.build(
             scheme="postgresql+psycopg2",
             username=self.POSTGRESQL_USERNAME,

@@ -18,7 +18,7 @@ operator:
   scanner:
     aqua:
       enabled: false
-  
+
   # Which resources to scan
   scanJobTTL: "24h"
   scanJobsConcurrentLimit: 10
@@ -26,7 +26,7 @@ operator:
   configAuditScannerEnabled: true
   exposedSecretScannerEnabled: true
   rbacAssessmentScannerEnabled: true
-  
+
   # Webhook settings
   webhook:
     enabled: false

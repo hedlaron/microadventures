@@ -14,7 +14,7 @@ spec:
       ignoreUnfixed: true
       severity: "CRITICAL,HIGH"
       timeout: "10m0s"
-    
+
     # Resource settings
     resources:
       requests:
@@ -23,14 +23,14 @@ spec:
       limits:
         cpu: "500m"
         memory: "500Mi"
-    
+
     # Operator configuration
     operator:
       replicas: 1
       scanner:
         aqua:
           enabled: false
-      
+
       # Which resources to scan
       scanJobTTL: "24h"
       scanJobsConcurrentLimit: 10
@@ -38,11 +38,11 @@ spec:
       configAuditScannerEnabled: true
       exposedSecretScannerEnabled: true
       rbacAssessmentScannerEnabled: true
-      
+
       # Webhook settings
       webhook:
         enabled: false
-    
+
     # Configure metrics
     metrics:
       enabled: true

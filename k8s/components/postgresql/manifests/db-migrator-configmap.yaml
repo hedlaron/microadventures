@@ -8,7 +8,7 @@ data:
   POSTGRESQL_SERVER: "postgres-postgresql.postgres"
   POSTGRESQL_PORT: "5432"
   POSTGRESQL_DATABASE: "microadventures"
-  
+
   # Application configuration - minimal values needed for db-migrator
   DOMAIN: "{{ domain }}"
   ENVIRONMENT: "{{ environment }}"

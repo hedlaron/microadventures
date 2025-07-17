@@ -1,6 +1,6 @@
-import React from 'react';
-import Plan from './Plan';
-import styled from 'styled-components';
+import React from "react";
+import Plan from "./Plan";
+import styled from "styled-components";
 
 // This is a wrapper component that adapts the Plan component for use in the HomePage
 const HomePlanWrapper = styled.div`
@@ -10,7 +10,7 @@ const HomePlanWrapper = styled.div`
   padding: 0;
   margin-top: 5rem; /* Increase margin to clear the navbar completely */
   margin-bottom: 1rem; /* Keep small margin at bottom */
-  
+
   /* Override any nested PageWrapper styling from Plan component */
   > div {
     min-height: unset;

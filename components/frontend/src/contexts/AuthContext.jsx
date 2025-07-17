@@ -1,5 +1,10 @@
-import React, { createContext, useState, useContext, useEffect } from 'react';
-import { loginUser, registerUser, fetchUserProfile, setGlobalLogout } from '../utils/api';
+import React, { createContext, useState, useContext, useEffect } from "react";
+import {
+  loginUser,
+  registerUser,
+  fetchUserProfile,
+  setGlobalLogout,
+} from "../utils/api";
 
 const AuthContext = createContext();
 
@@ -15,32 +20,32 @@ export function AuthProvider({ children }) {
   useEffect(() => {
     const checkLoggedIn = async () => {
       try {
-        const token = localStorage.getItem('token');
+        const token = localStorage.getItem("token");
         if (token) {
           const userProfile = await fetchUserProfile(token);
           setCurrentUser(userProfile);
         }
       } catch (error) {
-        console.error('Failed to restore session:', error);
+        console.error("Failed to restore session:", error);
         // If token is invalid or expired, clear it
-        localStorage.removeItem('token');
+        localStorage.removeItem("token");
       } finally {
         setLoading(false);
       }
     };
-    
+
     checkLoggedIn();
   }, []);
 
   async function login(email, password) {
     try {
       const formData = new URLSearchParams();
-      formData.append('username', email);
-      formData.append('password', password);
-      
+      formData.append("username", email);
+      formData.append("password", password);
+
       const { access_token } = await loginUser({ username: email, password });
-      localStorage.setItem('token', access_token);
-      
+      localStorage.setItem("token", access_token);
+
       const userProfile = await fetchUserProfile(access_token);
       setCurrentUser(userProfile);
       return userProfile;
@@ -50,22 +55,22 @@ export function AuthProvider({ children }) {
       throw error;
     }
   }
-  
+
   async function register(userData) {
     try {
       await registerUser(userData);
       return true;
     } catch (error) {
-      setError(error.response?.data?.detail || 'Registration failed');
+      setError(error.response?.data?.detail || "Registration failed");
       throw error;
     }
   }
 
   const logout = () => {
     setCurrentUser(null);
-    localStorage.removeItem('token');
+    localStorage.removeItem("token");
     // Clear any pending errors when user logs out
-    setError('');
+    setError("");
   };
 
   // Register logout function with API interceptor
@@ -78,23 +83,23 @@ export function AuthProvider({ children }) {
     setShowLoginForm(true);
     setShowSignUpForm(false);
   };
-  
+
   const openSignUpModal = () => {
     setIsLoginModalOpen(true);
     setShowLoginForm(false);
     setShowSignUpForm(true);
   };
-  
+
   const closeLoginModal = () => {
     setIsLoginModalOpen(false);
-    setError('');
+    setError("");
   };
-  
+
   const switchToSignUp = () => {
     setShowLoginForm(false);
     setShowSignUpForm(true);
   };
-  
+
   const switchToLogin = () => {
     setShowLoginForm(true);
     setShowSignUpForm(false);
@@ -105,10 +110,10 @@ export function AuthProvider({ children }) {
   };
 
   return (
-    <AuthContext.Provider 
-      value={{ 
-        currentUser, 
-        login, 
+    <AuthContext.Provider
+      value={{
+        currentUser,
+        login,
         register,
         logout,
         isAuthenticated: !!currentUser,
@@ -123,7 +128,7 @@ export function AuthProvider({ children }) {
         closeLoginModal,
         switchToLogin,
         switchToSignUp,
-        setError
+        setError,
       }}
     >
       {children}
@@ -134,7 +139,7 @@ export function AuthProvider({ children }) {
 export const useAuth = () => {
   const context = useContext(AuthContext);
   if (!context) {
-    throw new Error('useAuth must be used within an AuthProvider');
+    throw new Error("useAuth must be used within an AuthProvider");
   }
   return context;
 };

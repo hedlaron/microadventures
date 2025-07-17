@@ -23,7 +23,7 @@ spec:
                       requests:
                         memory: "?*"
                         cpu: "?*"
-    
+
     - id: microadventures-secure-port
       name: Ensure services don't expose ports unnecessarily
       match:

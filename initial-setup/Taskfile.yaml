@@ -65,7 +65,7 @@ tasks:
           --num-nodes 2 \
           --gateway-api=standard \
           --workload-pool={{.GCP_PROJECT_ID}}.svc.id.goog
-      
+
 
   gcp:07-create-all:
     cmds:

@@ -1,27 +1,36 @@
-import os
 import json
-from typing import Dict, Any, Optional
+import os
 from datetime import datetime
+from typing import Any
+
 from openai import OpenAI
-from core.config_loader import settings
+
 from adventure.services.image_service import get_adventure_image
+from core.config_loader import settings
 
 # Initialize OpenAI client
-client = OpenAI(api_key=settings.OPENAI_API_KEY if hasattr(settings, 'OPENAI_API_KEY') else os.getenv("OPENAI_API_KEY"))
+client = OpenAI(
+    api_key=(
+        settings.OPENAI_API_KEY
+        if hasattr(settings, "OPENAI_API_KEY")
+        else os.getenv("OPENAI_API_KEY")
+    )
+)
+
 
 def generate_adventure_recommendations(
     location: str,
-    destination: Optional[str],
+    destination: str | None,
     duration: str,
     activity_type: str,
     is_round_trip: bool = False,
-    custom_activity: Optional[str] = None,
-    start_time: Optional[datetime] = None,
-    is_immediate: bool = False
-) -> Dict[str, Any]:
+    custom_activity: str | None = None,
+    start_time: datetime | None = None,
+    is_immediate: bool = False,
+) -> dict[str, Any]:
     """
     Generate microadventure recommendations using OpenAI API
-    
+
     Args:
         location: Starting location
         destination: Destination (if specified)
@@ -31,15 +40,15 @@ def generate_adventure_recommendations(
         custom_activity: Custom activity if specified
         start_time: When the adventure should start (optional)
         is_immediate: True if "Let's go now" was selected for immediate adventures
-        
+
     Returns:
         Dictionary containing the adventure recommendations
     """
-    
+
     # Build the context for the AI
     trip_type = "round trip" if is_round_trip else "one way"
     activity_context = custom_activity if custom_activity else activity_type
-    
+
     # Create time context for the AI
     time_context = ""
     if is_immediate:
@@ -63,10 +72,10 @@ def generate_adventure_recommendations(
         time_context += "- Start the adventure at the specified time\n"
         time_context += "- Plan activities appropriate for that time of day\n"
         time_context += "- Consider what will be open/available at that time\n\n"
-    
-    system_prompt = """You are an enthusiastic local discovery guide and adventure curator who specializes in finding the extraordinary within the ordinary. 
+
+    system_prompt = """You are an enthusiastic local discovery guide and adventure curator who specializes in finding the extraordinary within the ordinary.
     Your mission is to help people escape their routine and discover amazing, overlooked gems hiding in plain sight around them.
-    
+
     A microadventure should be:
     - A delightful escape from routine that's accessible and spontaneous
     - A chance to see familiar places with fresh, curious eyes
@@ -75,7 +84,7 @@ def generate_adventure_recommendations(
     - Easy to do without extensive planning or special equipment
     - Perfect for when you want an adventure RIGHT NOW
     - COMPLETELY FREE OR VERY LOW COST (under $5 total)
-    
+
     FOCUS ON FREE DISCOVERY AND DELIGHT:
     - Fascinating local stories, legends, and interesting histories
     - Hidden or overlooked beautiful spots and unique architecture
@@ -87,7 +96,7 @@ def generate_adventure_recommendations(
     - Seasonal features like blooming trees, views, or events
     - Free public spaces, parks, trails, and viewpoints
     - Street art, community gardens, and local character
-    
+
     ADVENTURE PHILOSOPHY:
     - Make the familiar feel magical and new
     - Encourage curiosity and spontaneous exploration
@@ -97,12 +106,12 @@ def generate_adventure_recommendations(
     - Build confidence for future independent exploration
     - Inspire people to slow down and notice their surroundings
     - Focus on experiences, not purchases
-    
-    IMPORTANT: DO NOT suggest restaurants, cafes, bars, shops, or any places that require spending money. 
+
+    IMPORTANT: DO NOT suggest restaurants, cafes, bars, shops, or any places that require spending money.
     The adventurer will handle their own food and drink needs. Focus purely on FREE experiences, sights, and discoveries.
-    
+
     Your tone should be: Enthusiastic local friend who knows all the cool spots. Encouraging, warm, and excited to share discoveries. Like a combination of a passionate tour guide and an adventurous best friend.
-    
+
     Return the itinerary in the following JSON structure:
     {
         "title": "Fun adventure title that sparks curiosity and excitement",
@@ -118,7 +127,7 @@ def generate_adventure_recommendations(
         ],
         "route": {
             "start_address": "Full street address of starting point",
-            "end_address": "Full street address of ending point", 
+            "end_address": "Full street address of ending point",
             "waypoints": ["Address 1", "Address 2"],
             "map_embed_url": "https://www.google.com/maps/dir/START_ADDRESS/END_ADDRESS",
             "estimated_distance": "5.2 km",
@@ -148,22 +157,21 @@ def generate_adventure_recommendations(
         "best_season": "Spring/Summer/Fall/Winter or year-round",
         "accessibility": "Wheelchair accessible/Moderate walking required/Challenging terrain"
     }
-    
     Make the itinerary detailed, time-specific, and actionable. Use full street addresses instead of coordinates for start_address, end_address, and waypoints. Create a proper Google Maps embed URL for the route. Base weather forecasts on typical seasonal conditions for the location and adjust packing lists accordingly.
     """
-    
+
     user_prompt = f"""🌟 ADVENTURE DISCOVERY REQUEST: Design a delightful microadventure that reveals the hidden gems and exciting discoveries around:
     - Starting location: {location}
-    - Destination: {destination if destination else 'flexible/explore from starting location'}
+    - Destination: {destination if destination else "flexible/explore from starting location"}
     - Duration: {duration}
     - Activity type: {activity_context}
     - Trip type: {trip_type}
     {time_context}
     ✨ MAKE THIS A MAGICAL ESCAPE ✨
     Turn this person into a curious explorer who sees their familiar surroundings with wonder and excitement!
-    
+
     ADVENTURE REQUIREMENTS:
-    
+
     🔍 FREE DISCOVERY FOCUS:
     - What makes each location special, unique, or surprisingly interesting
     - Hidden gems that locals love but visitors often miss
@@ -175,7 +183,7 @@ def generate_adventure_recommendations(
     - Seasonal features like gardens, trees, or natural beauty
     - Public parks, trails, viewpoints, and green spaces
     - Historical markers, monuments, and community features
-    
+
     🎯 BUDGET-CONSCIOUS EXPLORATION:
     - Encourage curiosity and wonder about everyday surroundings
     - Show how adventure is accessible without spending money
@@ -184,7 +192,7 @@ def generate_adventure_recommendations(
     - Focus ONLY on completely free experiences and sights
     - Make familiar places feel fresh and exciting through new perspectives
     - Avoid any suggestions that require purchasing anything
-    
+
     📱 SPONTANEOUS ADVENTURE VIBES:
     - Easy to do right now without special preparation or money
     - Perfect for when you want to break routine and add excitement
@@ -192,36 +200,46 @@ def generate_adventure_recommendations(
     - Suitable for solo exploration or sharing with friends
     - Creates Instagram-worthy moments and great memories
     - No entrance fees, purchases, or monetary commitments required
-    
+
     🌈 EXAMPLES OF FREE DELIGHTFUL DISCOVERIES:
     - "This mural tells the story of the neighborhood's artistic renaissance"
     - "This hidden public garden has the best sunset views in the area"
     - "The old theater has original Art Deco features you can admire from the street"
     - "This overlook provides stunning views of the city skyline"
     - "The walking path along this creek reveals unexpected wildlife and peaceful spots"
-    
+
     Make them fall in love with exploration and feel excited about what's possible in their own backyard!"""
-    
+
     try:
         response = client.chat.completions.create(
             model="gpt-3.5-turbo-0125",
             messages=[
                 {"role": "system", "content": system_prompt},
-                {"role": "user", "content": user_prompt}
+                {"role": "user", "content": user_prompt},
             ],
             response_format={"type": "json_object"},
-            temperature=0.7  # Moderate temperature for creative but practical recommendations
+            temperature=0.7,  # Moderate temperature for creative but practical recommendations
         )
 
         content = response.choices[0].message.content
         adventure_data = json.loads(content)
 
         # Validate required fields
-        required_fields = ["title", "description", "itinerary", "route", "weather_forecast", "packing_list", "recommendations", "estimated_cost", "difficulty_level"]
+        required_fields = [
+            "title",
+            "description",
+            "itinerary",
+            "route",
+            "weather_forecast",
+            "packing_list",
+            "recommendations",
+            "estimated_cost",
+            "difficulty_level",
+        ]
         for field in required_fields:
             if field not in adventure_data:
                 raise ValueError(f"Missing required field: {field}")
-                
+
         # Validate structure
         if not isinstance(adventure_data["itinerary"], list):
             raise ValueError("Itinerary must be a list")
@@ -240,13 +258,14 @@ def generate_adventure_recommendations(
                 activity_type=activity_context,
                 location=location,
                 description=adventure_data.get("description", ""),
-                title=adventure_data.get("title", "")
+                title=adventure_data.get("title", ""),
             )
             adventure_data["image_url"] = image_url
         except Exception as e:
             print(f"Failed to get adventure image: {str(e)}")
             # Use a fallback image if service fails
             from adventure.services.image_service import unsplash_service
+
             adventure_data["image_url"] = unsplash_service.get_fallback_image()
 
         return adventure_data
@@ -263,22 +282,22 @@ def generate_adventure_recommendations(
                     "activity": "Start your adventure with a visit to a local park or green space",
                     "location": location,
                     "duration": "1 hour",
-                    "notes": "Great for morning photos and fresh air - completely free to enjoy"
+                    "notes": "Great for morning photos and fresh air - completely free to enjoy",
                 },
                 {
-                    "time": "10:30 AM", 
+                    "time": "10:30 AM",
                     "activity": "Explore nearby walking trails or interesting neighborhoods",
                     "location": f"Near {location}",
                     "duration": "1.5 hours",
-                    "notes": "Take your time to discover hidden spots and public art"
+                    "notes": "Take your time to discover hidden spots and public art",
                 },
                 {
                     "time": "12:00 PM",
                     "activity": "Find a scenic spot for a picnic break",
                     "location": f"Public space near {location}",
-                    "duration": "1 hour", 
-                    "notes": "Bring your own food and enjoy the views"
-                }
+                    "duration": "1 hour",
+                    "notes": "Bring your own food and enjoy the views",
+                },
             ],
             "route": {
                 "start_address": location,
@@ -286,7 +305,7 @@ def generate_adventure_recommendations(
                 "waypoints": [location],
                 "map_embed_url": "https://www.google.com/maps/embed?pb=1!1m18!1m12!1m3!1d3024.1!2d0!3d0!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1",
                 "estimated_distance": "2-5 km",
-                "estimated_travel_time": "2-3 hours walking"
+                "estimated_travel_time": "2-3 hours walking",
             },
             "weather_forecast": {
                 "temperature": "20-25°C",
@@ -294,51 +313,39 @@ def generate_adventure_recommendations(
                 "precipitation": "Low chance",
                 "wind": "Light breeze",
                 "uv_index": "Moderate",
-                "best_time_outdoors": "Morning to afternoon"
+                "best_time_outdoors": "Morning to afternoon",
             },
             "packing_list": {
-                "essential": [
-                    "Comfortable walking shoes",
-                    "Water bottle",
-                    "Phone with camera"
-                ],
-                "weather_specific": [
-                    "Light jacket or sweater",
-                    "Sunglasses",
-                    "Sun hat"
-                ],
-                "optional": [
-                    "Backpack",
-                    "Portable phone charger",
-                    "Notebook for memories"
-                ],
+                "essential": ["Comfortable walking shoes", "Water bottle", "Phone with camera"],
+                "weather_specific": ["Light jacket or sweater", "Sunglasses", "Sun hat"],
+                "optional": ["Backpack", "Portable phone charger", "Notebook for memories"],
                 "food_and_drink": [
                     "Bring your own water bottle",
                     "Pack snacks from home",
-                    "Extra water for longer walks"
-                ]
+                    "Extra water for longer walks",
+                ],
             },
             "recommendations": {
                 "photo_opportunities": [
                     "Scenic viewpoints",
                     "Interesting architecture",
-                    "Public art and murals"
+                    "Public art and murals",
                 ],
                 "local_tips": [
                     "Check weather conditions before heading out",
                     "Start early to avoid crowds",
                     "Bring a camera to capture memories",
-                    "Be open to spontaneous discoveries"
+                    "Be open to spontaneous discoveries",
                 ],
                 "hidden_gems": [
                     "Local parks with great views",
                     "Historic neighborhoods",
-                    "Public gardens and green spaces"
-                ]
+                    "Public gardens and green spaces",
+                ],
             },
             "estimated_cost": "FREE (bring your own food/water)",
             "difficulty_level": "easy",
             "best_season": "year-round",
             "accessibility": "Moderate walking required",
-            "image_url": None
+            "image_url": None,
         }
