@@ -5,25 +5,62 @@ repos:
     rev: v4.4.0
     hooks:
       - id: check-added-large-files
+        exclude: |
+            (?x)^(
+                \.helm-charts/.*
+            )$
       - id: check-toml
       - id: check-yaml
         args:
           - --unsafe
+        exclude: |
+            (?x)^(
+                \.helm-charts/.*
+            )$
       - id: end-of-file-fixer
         exclude: |
             (?x)^(
-                frontend/src/client/.*|
-                backend/app/email-templates/build/.*
+                components/frontend/src/client/.*|
+                components/backend/app/email-templates/build/.*|
+                \.helm-charts/.*
             )$
       - id: trailing-whitespace
-        exclude: ^frontend/src/client/.*
-  - repo: https://github.com/charliermarsh/ruff-pre-commit
-    rev: v0.2.2
+        exclude: |
+            (?x)^(
+                components/frontend/src/client/.*|
+                \.helm-charts/.*
+            )$
+      - id: check-case-conflict
+      - id: check-merge-conflict
+      - id: check-json
+      - id: debug-statements
+      - id: check-docstring-first
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.12.3
     hooks:
       - id: ruff
         args:
           - --fix
+        files: ^components/backend/.*\.py$
       - id: ruff-format
+        files: ^components/backend/.*\.py$
+
+# Global exclusions
+exclude: |
+  (?x)^(
+    \.helm-charts/.*|
+    \.git/.*|
+    \.venv/.*|
+    venv/.*|
+    __pycache__/.*|
+    \.pytest_cache/.*|
+    node_modules/.*|
+    dist/.*|
+    build/.*|
+    \.mypy_cache/.*|
+    \.ruff_cache/.*|
+    components/backend/alembic/versions/.*\.py$
+  )$
 
 ci:
   autofix_commit_msg: 🎨 [pre-commit.ci] Auto format from pre-commit.com hooks
