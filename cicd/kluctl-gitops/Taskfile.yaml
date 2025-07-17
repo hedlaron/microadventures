@@ -2,7 +2,7 @@ version: "3"
 
 tasks:
   # TODO add stage
-  
+
   # NOTE: Safari browser has strict cookie security policies that can cause 401 errors
   # when accessing the Kluctl WebUI at http://localhost:8080. Use Chrome or Firefox instead,
   # or disable "Prevent cross-site tracking" in Safari's Privacy settings.
