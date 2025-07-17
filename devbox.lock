@@ -49,6 +49,70 @@
         }
       }
     },
+    "commitizen@4.8.3": {
+      "last_modified": "2025-07-13T22:45:35Z",
+      "resolved": "github:NixOS/nixpkgs/a421ac6595024edcfbb1ef950a3712b89161c359#commitizen",
+      "source": "devbox-search",
+      "version": "4.8.3",
+      "systems": {
+        "aarch64-darwin": {
+          "outputs": [
+            {
+              "name": "out",
+              "path": "/nix/store/aqg8i1liwppx8qaklqibhzgk41rsy7na-python3.13-commitizen-4.8.3",
+              "default": true
+            },
+            {
+              "name": "dist",
+              "path": "/nix/store/6s1id0g26aks7qa7xsb9x54yvzzz781n-python3.13-commitizen-4.8.3-dist"
+            }
+          ],
+          "store_path": "/nix/store/aqg8i1liwppx8qaklqibhzgk41rsy7na-python3.13-commitizen-4.8.3"
+        },
+        "aarch64-linux": {
+          "outputs": [
+            {
+              "name": "out",
+              "path": "/nix/store/d6kmil989zdknwa8bbkd1yypk92ikqgr-python3.13-commitizen-4.8.3",
+              "default": true
+            },
+            {
+              "name": "dist",
+              "path": "/nix/store/35nmzbgimxnyxq608fyfyrn2rhj1g399-python3.13-commitizen-4.8.3-dist"
+            }
+          ],
+          "store_path": "/nix/store/d6kmil989zdknwa8bbkd1yypk92ikqgr-python3.13-commitizen-4.8.3"
+        },
+        "x86_64-darwin": {
+          "outputs": [
+            {
+              "name": "out",
+              "path": "/nix/store/sqrb6smy19dydvsyn7mihbydp7gnx2yy-python3.13-commitizen-4.8.3",
+              "default": true
+            },
+            {
+              "name": "dist",
+              "path": "/nix/store/zlhl28k1ra1ijg0bn1lvbahjv7c50lg2-python3.13-commitizen-4.8.3-dist"
+            }
+          ],
+          "store_path": "/nix/store/sqrb6smy19dydvsyn7mihbydp7gnx2yy-python3.13-commitizen-4.8.3"
+        },
+        "x86_64-linux": {
+          "outputs": [
+            {
+              "name": "out",
+              "path": "/nix/store/3s96n1vmvsd5g2xivxwrgbpc9mxi5gs3-python3.13-commitizen-4.8.3",
+              "default": true
+            },
+            {
+              "name": "dist",
+              "path": "/nix/store/sadzbzs4dmym021513cfbybli8i59gqm-python3.13-commitizen-4.8.3-dist"
+            }
+          ],
+          "store_path": "/nix/store/3s96n1vmvsd5g2xivxwrgbpc9mxi5gs3-python3.13-commitizen-4.8.3"
+        }
+      }
+    },
     "envsubst@latest": {
       "last_modified": "2025-05-16T20:19:48Z",
       "resolved": "github:NixOS/nixpkgs/12a55407652e04dcf2309436eb06fef0d3713ef3#envsubst",
@@ -1106,7 +1170,7 @@
         }
       }
     },
-    "pre-commit@latest": {
+    "pre-commit@4.2.0": {
       "last_modified": "2025-07-13T22:45:35Z",
       "resolved": "github:NixOS/nixpkgs/a421ac6595024edcfbb1ef950a3712b89161c359#pre-commit",
       "source": "devbox-search",
