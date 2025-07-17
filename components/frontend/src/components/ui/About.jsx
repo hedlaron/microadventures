@@ -7,7 +7,7 @@ const About = ({ onClose }) => {
   useEffect(() => {
     const fetchBackendVersion = async () => {
       try {
-        const response = await fetch("/api/backend/version");
+        const response = await fetch("/api/version");
         if (response.ok) {
           const data = await response.json();
           setBackendVersion(data.version || "unknown");

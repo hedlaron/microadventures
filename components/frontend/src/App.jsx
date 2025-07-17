@@ -8,6 +8,7 @@ import {
 } from "react-router-dom";
 import { AuthProvider } from "./contexts/AuthContext";
 import HomePage from "./pages/HomePage";
+import AboutPage from "./pages/AboutPage";
 import Navbar from "./components/layout/Navbar";
 import Footer from "./components/layout/Footer";
 import ContactBubble from "./components/ui/ContactBubble";
@@ -37,6 +38,14 @@ const AppContent = () => {
             element={
               <React.Suspense fallback={<div>Loading HomePage...</div>}>
                 <HomePage />
+              </React.Suspense>
+            }
+          />
+          <Route
+            path="/about"
+            element={
+              <React.Suspense fallback={<div>Loading About...</div>}>
+                <AboutPage />
               </React.Suspense>
             }
           />
