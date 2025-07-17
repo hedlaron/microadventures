@@ -1,6 +1,6 @@
 # Backend component - Production environment values
 backend_replicas: 3
-backend_tag: 1.0.1-2-gf64a661 # PRODUCTION_IMAGE_TAG
+backend_tag: 1.0.1-9-g1944e44 # PRODUCTION_IMAGE_TAG
 backend_image_pull_policy: Always
 
 # Environment and secrets
