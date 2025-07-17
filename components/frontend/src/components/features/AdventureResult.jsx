@@ -70,7 +70,7 @@ const AdventureResult = ({
         await navigator.clipboard.writeText(fullUrl);
         setCopied(true);
         setTimeout(() => setCopied(false), 2000);
-      } catch (_err) {
+      } catch {
         // Fallback for older browsers
         const textArea = document.createElement("textarea");
         textArea.value = fullUrl;

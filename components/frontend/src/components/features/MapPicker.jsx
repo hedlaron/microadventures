@@ -102,7 +102,7 @@ const MapPicker = ({
         setSelectedLocation(null);
       }
     };
-  }, [isOpen]); // Remove map from dependencies
+  }, [isOpen]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const handleConfirm = () => {
     if (selectedLocation) {

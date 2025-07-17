@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { useAuth } from "../../contexts/AuthContext";
 import { createAdventure, fetchAdventureQuota } from "../../utils/api";
 import AdventurousBackground from "./AdventurousBackground";
@@ -378,17 +378,7 @@ const Plan = ({ isEmbedded = false }) => {
   const [showStartMapPicker, setShowStartMapPicker] = useState(false);
   const [showEndMapPicker, setShowEndMapPicker] = useState(false);
 
-  // Load quota info and auto-location on component mount
-  useEffect(() => {
-    loadQuotaInfo();
-    // Auto-load current location if location is empty
-    if (!location.trim()) {
-      getCurrentLocation();
-    }
-    loadQuotaInfo();
-  }, [location]); // Add location as dependency
-
-  const loadQuotaInfo = async () => {
+  const loadQuotaInfo = useCallback(async () => {
     try {
       const token = localStorage.getItem("token");
       if (token) {
@@ -402,7 +392,16 @@ const Plan = ({ isEmbedded = false }) => {
     } catch (err) {
       console.error("Failed to load quota info:", err);
     }
-  };
+  }, [resetCountdown]);
+
+  // Load quota info and auto-location on component mount
+  useEffect(() => {
+    loadQuotaInfo();
+    // Auto-load current location if location is empty
+    if (!location.trim()) {
+      getCurrentLocation();
+    }
+  }, [location, loadQuotaInfo]); // Add loadQuotaInfo as dependency
 
   const getCurrentLocation = () => {
     if (navigator.geolocation) {
