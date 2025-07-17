@@ -31,7 +31,7 @@ jobs:
     # --> git push origin --tags
     # subsequent tags created automatically by this workflow
     runs-on: ubuntu-latest
-    timeout-minutes: 3
+    timeout-minutes: 5
     outputs:
       image_tag: ${{ steps.generate-image-tag.outputs.image_tag }}
     steps:
@@ -118,14 +118,6 @@ jobs:
         working-directory: ${{ matrix.path }}
         env:
           IMAGE_TAG: ${{ needs.generate-image-tag.outputs.image_tag }}
-          # Test environment variables
-          JWT_SECRET_KEY: test-secret-key-for-ci
-          POSTGRESQL_USERNAME: postgres
-          POSTGRESQL_PASSWORD: postgres
-          POSTGRESQL_SERVER: localhost
-          POSTGRESQL_PORT: 5432
-          POSTGRESQL_DATABASE: test_microadventures
-          OPENAI_API_KEY: test-api-key-for-ci
         run: |
           echo "Running tests in Docker container for ${{ matrix.path }}"
 
@@ -140,6 +132,13 @@ jobs:
               --target test \
               --build-arg APP_VERSION=${IMAGE_TAG} \
               --build-arg RUN_TESTS=true \
+              --build-arg JWT_SECRET_KEY=test-secret-key-for-ci \
+              --build-arg POSTGRESQL_USERNAME=postgres \
+              --build-arg POSTGRESQL_PASSWORD=postgres \
+              --build-arg POSTGRESQL_SERVER=localhost \
+              --build-arg POSTGRESQL_PORT=5432 \
+              --build-arg POSTGRESQL_DATABASE=test_microadventures \
+              --build-arg OPENAI_API_KEY=test-api-key-for-ci \
               --network host \
               -t hedlaron/microadventures-backend:${IMAGE_TAG}-test \
               --load \

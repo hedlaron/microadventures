@@ -12,19 +12,26 @@ const About = ({ onClose }) => {
           const data = await response.json();
           setBackendVersion(data.version || "unknown");
         } else {
-          // API not available (local development)
-          setBackendVersion("dev-local");
+          console.log(`Version API returned ${response.status}: ${response.statusText}`);
+          setBackendVersion("api-error");
         }
-      } catch {
-        console.log("Version API not available (local development)");
-        setBackendVersion("dev-local");
+      } catch (error) {
+        console.log("Version API not available:", error.message);
+        setBackendVersion("api-unavailable");
       }
     };
 
     // Check if we're in production environment
     const isProduction =
       window.location.hostname !== "localhost" &&
-      window.location.hostname !== "127.0.0.1";
+      window.location.hostname !== "127.0.0.1" &&
+      window.location.hostname !== "0.0.0.0";
+
+    console.log("Environment detection:", {
+      hostname: window.location.hostname,
+      isProduction,
+      origin: window.location.origin
+    });
 
     if (isProduction) {
       // In production, get frontend version from build-time environment variable
