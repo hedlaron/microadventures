@@ -1,6 +1,6 @@
 # Frontend component - Production environment values
 frontend_replicas: 3
-frontend_tag: 1.0.1-18-g7cf6a6d # PRODUCTION_IMAGE_TAG
+frontend_tag: 1.0.1-22-g3db1d1d # PRODUCTION_IMAGE_TAG
 frontend_image_pull_policy: Always
 
 # Environment and secrets
