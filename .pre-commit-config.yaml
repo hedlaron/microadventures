@@ -44,6 +44,11 @@ repos:
         files: ^components/backend/.*\.py$
       - id: ruff-format
         files: ^components/backend/.*\.py$
+  - repo: https://github.com/commitizen-tools/commitizen
+    rev: v3.13.0
+    hooks:
+      - id: commitizen
+        stages: [commit-msg]
 
 # Global exclusions
 exclude: |

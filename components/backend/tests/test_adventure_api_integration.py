@@ -113,7 +113,9 @@ class TestAdventureAPI:
         }
 
         # The AI service has a fallback mechanism, so this should succeed
-        response = client.post("/api/adventures/generate", json=adventure_request, headers=auth_headers)
+        response = client.post(
+            "/api/adventures/generate", json=adventure_request, headers=auth_headers
+        )
 
         # Check that the adventure was generated successfully
         assert response.status_code == 200

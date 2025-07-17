@@ -118,6 +118,14 @@ jobs:
         working-directory: ${{ matrix.path }}
         env:
           IMAGE_TAG: ${{ needs.generate-image-tag.outputs.image_tag }}
+          # Test environment variables
+          JWT_SECRET_KEY: test-secret-key-for-ci
+          POSTGRESQL_USERNAME: postgres
+          POSTGRESQL_PASSWORD: postgres
+          POSTGRESQL_SERVER: localhost
+          POSTGRESQL_PORT: 5432
+          POSTGRESQL_DATABASE: test_microadventures
+          OPENAI_API_KEY: test-api-key-for-ci
         run: |
           echo "Running tests in Docker container for ${{ matrix.path }}"
 

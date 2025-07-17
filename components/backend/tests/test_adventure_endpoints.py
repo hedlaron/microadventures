@@ -3,13 +3,14 @@ from unittest.mock import patch
 import pytest
 from fastapi import status
 from fastapi.testclient import TestClient
+from sqlalchemy.orm import Session
 
 
 @pytest.mark.integration
 class TestAdventureEndpoints:
     """Integration tests for adventure endpoints"""
 
-    @patch("adventure.services.ai_service.generate_adventure_recommendations")
+    @patch("adventure.services.adventure_domain_service.generate_adventure_recommendations")
     def test_generate_adventure_success(
         self, mock_ai_service, client: TestClient, auth_headers: dict, mock_openai_response: dict
     ):
@@ -140,11 +141,12 @@ class TestAdventureEndpoints:
 
         assert response.status_code == status.HTTP_404_NOT_FOUND
 
-    def test_get_shared_adventure(self, client: TestClient, test_adventure):
+    def test_get_shared_adventure(self, client: TestClient, db: Session, test_adventure):
         """Test getting a shared adventure"""
         # Make adventure public first
         test_adventure.is_public = True
         test_adventure.generate_share_token()
+        db.commit()  # Ensure changes are persisted
 
         response = client.get(f"/api/adventures/shared/{test_adventure.share_token}")
 

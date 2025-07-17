@@ -36,13 +36,15 @@ class UserService:
             existing_user = self.user_repo.get_by_email(db, str(user.email))
             if existing_user:
                 raise ValueError(f"User with email {user.email} already exists")
-            
+
             existing_username = self.user_repo.get_by_username(db, user.username)
             if existing_username:
                 raise ValueError(f"User with username {user.username} already exists")
-            
+
             db_user = User(
-                email=str(user.email), username=user.username, password=get_password_hash(user.password)
+                email=str(user.email),
+                username=user.username,
+                password=get_password_hash(user.password),
             )
             return self.user_repo.create(db, db_user)
         except IntegrityError as e:
@@ -53,7 +55,9 @@ class UserService:
             elif "users_username_key" in str(e):
                 raise ValueError(f"User with username {user.username} already exists") from e
             else:
-                raise ValueError("Failed to create user due to database constraint violation") from e
+                raise ValueError(
+                    "Failed to create user due to database constraint violation"
+                ) from e
 
     def update_user(self, db: Session, user: User) -> User:
         """Update a user"""

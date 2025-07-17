@@ -8,6 +8,7 @@ import sys
 # Add the backend directory to Python path
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
+
 def test_imports():
     """Test that we can import our modules"""
     try:
@@ -16,6 +17,7 @@ def test_imports():
     except Exception as e:
         print(f"❌ Import failed: {e}")
         return False
+
 
 def test_repository_instantiation():
     """Test that we can create repository instances"""
@@ -33,6 +35,7 @@ def test_repository_instantiation():
         print(f"❌ Repository instantiation failed: {e}")
         return False
 
+
 def test_service_instantiation():
     """Test that we can create service instances"""
     try:
@@ -47,7 +50,9 @@ def test_service_instantiation():
 
         # These should not fail to instantiate
         _adventure_service = AdventureService()  # Uses default dependencies
-        _adventure_service_with_deps = AdventureService(adventure_repo)  # With explicit dependencies
+        _adventure_service_with_deps = AdventureService(
+            adventure_repo
+        )  # With explicit dependencies
         _user_service = UserService(user_repo)
 
         print("✅ Service instantiation successful")
@@ -56,15 +61,12 @@ def test_service_instantiation():
         print(f"❌ Service instantiation failed: {e}")
         return False
 
+
 def main():
     print("🚀 Running simple verification tests...")
     print("=" * 50)
 
-    tests = [
-        test_imports,
-        test_repository_instantiation,
-        test_service_instantiation
-    ]
+    tests = [test_imports, test_repository_instantiation, test_service_instantiation]
 
     passed = 0
     failed = 0
@@ -85,6 +87,7 @@ def main():
         print("⚠️  Some tests failed. Check the errors above.")
 
     return failed == 0
+
 
 if __name__ == "__main__":
     success = main()

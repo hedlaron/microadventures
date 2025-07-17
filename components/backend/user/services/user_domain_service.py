@@ -3,7 +3,6 @@ Domain service for user business logic.
 This service handles user-related business rules and orchestrates user operations.
 """
 
-
 from sqlalchemy.orm import Session
 
 from auth.utils.auth_utils import get_password_hash, verify_password

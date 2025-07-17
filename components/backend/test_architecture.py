@@ -1,6 +1,7 @@
 """
 Basic test to verify the restructured backend architecture works
 """
+
 import pytest
 
 from adventure.repositories.adventure_repository import AdventureRepository
@@ -17,8 +18,8 @@ def test_repository_classes_exist():
 
     assert adventure_repo is not None
     assert user_repo is not None
-    assert hasattr(adventure_repo, 'create')
-    assert hasattr(user_repo, 'create')
+    assert hasattr(adventure_repo, "create")
+    assert hasattr(user_repo, "create")
 
 
 @pytest.mark.unit
@@ -29,8 +30,8 @@ def test_service_classes_exist():
 
     assert adventure_service is not None
     assert user_service is not None
-    assert hasattr(adventure_service, 'adventure_repo')
-    assert hasattr(user_service, 'user_repo')
+    assert hasattr(adventure_service, "adventure_repo")
+    assert hasattr(user_service, "user_repo")
 
 
 @pytest.mark.unit

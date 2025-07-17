@@ -17,7 +17,7 @@ from user.models.user import User
 class TestAdventureIntegration:
     """Integration tests for adventure domain"""
 
-    def test_create_adventure_with_quota_check(self, db_session: Session, test_user: User):
+    def test_create_adventure_with_quota_check(self, db: Session, test_user: User):
         """Test creating an adventure with quota validation"""
         # Arrange
         adventure_repo = AdventureRepository()
@@ -25,7 +25,7 @@ class TestAdventureIntegration:
         quota_service = AdventureQuotaDomainService(quota_repo)
 
         # Act - Create initial quota
-        quota = quota_service.get_or_create_quota(db_session, test_user.id)
+        quota = quota_service.get_or_create_quota(db, test_user.id)
 
         # Assert initial state
         assert quota.quota_remaining == 10
@@ -79,7 +79,7 @@ class TestAdventureIntegration:
             },
         )
 
-        created_adventure = adventure_repo.create(db_session, adventure)
+        created_adventure = adventure_repo.create(db, adventure)
 
         # Assert adventure creation
         assert created_adventure.id is not None
@@ -87,19 +87,19 @@ class TestAdventureIntegration:
         assert created_adventure.created_by == test_user.id
 
         # Act - Consume quota
-        updated_quota = quota_service.consume_quota(db_session, test_user.id)
+        updated_quota = quota_service.consume_quota(db, test_user.id)
 
         # Assert quota consumption
         assert updated_quota.quota_remaining == 9
 
         # Act - Get user adventures
-        user_adventures = adventure_repo.get_by_user_id(db_session, test_user.id)
+        user_adventures = adventure_repo.get_by_user_id(db, test_user.id)
 
         # Assert user adventures
         assert len(user_adventures) == 1
         assert user_adventures[0].id == created_adventure.id
 
-    def test_adventure_sharing_workflow(self, db_session: Session, test_user: User):
+    def test_adventure_sharing_workflow(self, db: Session, test_user: User):
         """Test complete adventure sharing workflow"""
         # Arrange
         adventure_repo = AdventureRepository()
@@ -119,21 +119,19 @@ class TestAdventureIntegration:
             recommendations={},
         )
 
-        created_adventure = adventure_repo.create(db_session, adventure)
+        created_adventure = adventure_repo.create(db, adventure)
 
         # Act - Make adventure public
         created_adventure.is_public = True
         created_adventure.generate_share_token()
-        updated_adventure = adventure_repo.update(db_session, created_adventure)
+        updated_adventure = adventure_repo.update(db, created_adventure)
 
         # Assert sharing setup
         assert updated_adventure.is_public is True
         assert updated_adventure.share_token is not None
 
         # Act - Get adventure by share token
-        shared_adventure = adventure_repo.get_by_share_token(
-            db_session, updated_adventure.share_token
-        )
+        shared_adventure = adventure_repo.get_by_share_token(db, updated_adventure.share_token)
 
         # Assert public access
         assert shared_adventure is not None
@@ -142,20 +140,18 @@ class TestAdventureIntegration:
 
         # Act - Make adventure private
         updated_adventure.is_public = False
-        private_adventure = adventure_repo.update(db_session, updated_adventure)
+        private_adventure = adventure_repo.update(db, updated_adventure)
 
         # Assert private access
         assert private_adventure.is_public is False
 
         # Act - Try to get private adventure by share token
-        no_access_adventure = adventure_repo.get_by_share_token(
-            db_session, updated_adventure.share_token
-        )
+        no_access_adventure = adventure_repo.get_by_share_token(db, updated_adventure.share_token)
 
         # Assert no access to private adventure
         assert no_access_adventure is None
 
-    def test_quota_reset_workflow(self, db_session: Session, test_user: User):
+    def test_quota_reset_workflow(self, db: Session, test_user: User):
         """Test quota reset workflow"""
         # Arrange
         quota_repo = AdventureQuotaRepository()
@@ -163,22 +159,22 @@ class TestAdventureIntegration:
 
         # Create quota with no remaining quota
         quota = AdventureQuota(user_id=test_user.id, quota_remaining=0)
-        created_quota = quota_repo.create(db_session, quota)
+        created_quota = quota_repo.create(db, quota)
 
         # Assert initial state
         assert created_quota.quota_remaining == 0
-        assert not quota_service.can_generate_adventure(db_session, test_user.id)
+        assert not quota_service.can_generate_adventure(db, test_user.id)
 
         # Act - Simulate quota reset (would happen after 24 hours)
         created_quota.quota_remaining = 10
-        updated_quota = quota_repo.update(db_session, created_quota)
+        updated_quota = quota_repo.update(db, created_quota)
 
         # Assert quota reset
         assert updated_quota.quota_remaining == 10
-        assert quota_service.can_generate_adventure(db_session, test_user.id)
+        assert quota_service.can_generate_adventure(db, test_user.id)
 
         # Act - Get quota status
-        status = quota_service.get_quota_status(db_session, test_user.id)
+        status = quota_service.get_quota_status(db, test_user.id)
 
         # Assert quota status
         assert status["adventures_remaining"] == 10

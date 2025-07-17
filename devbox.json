@@ -25,7 +25,8 @@
     "uv@latest",
     "python@3.13",
     "trufflehog@latest",
-    "pre-commit@latest",
+    "pre-commit@4.8.3",
+    "commitizen@4.8.3",
     "hadolint@latest",
     "yamllint@latest",
     "markdownlint-cli@latest"
@@ -33,7 +34,9 @@
   "shell": {
     "init_hook": [
       "go install sigs.k8s.io/cloud-provider-kind@v0.6.0",
-      "source .venv/bin/activate"
+      "source .venv/bin/activate",
+      "pre-commit install --hook-type commit-msg",
+      "pre-commit install"
     ],
     "scripts": {
       "test": ["echo \"Error: no test specified\" && exit 1"]

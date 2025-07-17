@@ -1,4 +1,3 @@
-
 from datetime import UTC
 
 import pytest
@@ -50,10 +49,11 @@ class TestAdventureService:
         service = AdventureService()
 
         # Create quota with old reset date
+        old_date = datetime.now(UTC) - timedelta(hours=25)
         quota = AdventureQuota(
             user_id=test_user.id,
             quota_remaining=0,
-            last_reset_date=datetime.now(UTC) - timedelta(hours=25),
+            last_reset_date=old_date,
         )
         db.add(quota)
         db.commit()
@@ -62,7 +62,14 @@ class TestAdventureService:
         updated_quota = service.reset_quota_if_needed(db, quota)
 
         assert updated_quota.quota_remaining == 10  # Should be reset
-        assert updated_quota.last_reset_date > quota.last_reset_date
+        # Compare timestamps by normalizing timezone handling
+        old_timestamp = old_date.timestamp()
+        new_date = updated_quota.last_reset_date
+        if new_date.tzinfo is None:
+            # If the date from DB is naive, assume UTC
+            new_date = new_date.replace(tzinfo=UTC)
+        new_timestamp = new_date.timestamp()
+        assert new_timestamp > old_timestamp
 
     def test_reset_quota_if_needed_should_not_reset(self, db: Session, test_user: User):
         """Test not resetting quota when less than 24 hours have passed"""
@@ -82,7 +89,10 @@ class TestAdventureService:
         updated_quota = service.reset_quota_if_needed(db, quota)
 
         assert updated_quota.quota_remaining == 5  # Should not be reset
-        assert updated_quota.last_reset_date == original_date
+        # Since no reset happened, the dates should be equal (allowing for timezone normalization)
+        original_naive = original_date.replace(tzinfo=None)
+        updated_naive = updated_quota.last_reset_date.replace(tzinfo=None)
+        assert updated_naive == original_naive
 
 
 @pytest.mark.integration
