@@ -1,7 +1,7 @@
 # syntax=docker/dockerfile:1.5
 
 # Multi-stage build for React/Vite microadventures frontend
-FROM node:20 AS build
+FROM node:20 AS base
 
 # Build argument for version
 ARG APP_VERSION=dev-local
@@ -20,7 +20,10 @@ RUN --mount=type=cache,target=/usr/src/app/.npm \
 # Copy source code
 COPY . .
 
-# Run tests and linting in CI builds
+# Test stage for CI/CD
+FROM base AS test
+
+# Run tests and linting
 ARG RUN_TESTS=false
 RUN if [ "$RUN_TESTS" = "true" ]; then \
       echo "Running tests and linting..." && \
@@ -30,6 +33,9 @@ RUN if [ "$RUN_TESTS" = "true" ]; then \
     else \
       echo "Skipping tests (RUN_TESTS=false)"; \
     fi
+
+# Build stage
+FROM base AS build
 
 # Set environment variable for Vite build
 ENV VITE_APP_VERSION=${APP_VERSION}
