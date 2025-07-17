@@ -9,6 +9,7 @@ import styled from 'styled-components';
 import { primaryButtonRounded, errorText, errorBg, errorBorder, focusRing } from '../../utils/colors';
 
 const PageWrapper = styled.div`
+  position: relative;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -79,6 +80,214 @@ const PlanContainer = styled.div`
   }
 `;
 
+const LoadingOverlay = styled.div`
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: fadeIn 0.3s ease-out;
+
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+      transform: scale(0.95);
+    }
+    to {
+      opacity: 1;
+      transform: scale(1);
+    }
+  }
+`;
+
+const LoadingCard = styled.div`
+  background: white;
+  border-radius: 20px;
+  border: 2px solid rgba(244, 162, 97, 0.2);
+  box-shadow: 
+    0 25px 50px rgba(0, 0, 0, 0.15), 
+    0 10px 20px rgba(244, 162, 97, 0.1),
+    inset 0 1px 0 rgba(255, 255, 255, 0.8);
+  padding: 3rem 2.5rem;
+  text-align: center;
+  max-width: 500px;
+  width: 90%;
+  backdrop-filter: blur(10px);
+  position: relative;
+`;
+
+const LoadingAnimation = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  margin-bottom: 2.5rem;
+  
+  .adventure-icon {
+    width: 5rem;
+    height: 5rem;
+    background: linear-gradient(135deg, #F4A261 0%, #E76F51 100%);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    animation: bounce 2s infinite ease-in-out;
+    box-shadow: 
+      0 8px 25px rgba(244, 162, 97, 0.4),
+      0 4px 12px rgba(231, 111, 81, 0.2);
+    position: relative;
+    
+    /* Add a subtle pulse ring */
+    &::before {
+      content: '';
+      position: absolute;
+      top: -8px;
+      left: -8px;
+      right: -8px;
+      bottom: -8px;
+      border: 2px solid rgba(244, 162, 97, 0.3);
+      border-radius: 50%;
+      animation: pulse 3s infinite ease-in-out;
+    }
+  }
+  
+  .adventure-icon svg {
+    width: 2.5rem;
+    height: 2.5rem;
+    color: white;
+    filter: drop-shadow(0 2px 4px rgba(0,0,0,0.1));
+  }
+  
+  @keyframes bounce {
+    0%, 20%, 50%, 80%, 100% {
+      transform: translateY(0) scale(1);
+    }
+    40% {
+      transform: translateY(-12px) scale(1.05);
+    }
+    60% {
+      transform: translateY(-6px) scale(1.02);
+    }
+  }
+  
+  @keyframes pulse {
+    0%, 100% {
+      transform: scale(1);
+      opacity: 0.3;
+    }
+    50% {
+      transform: scale(1.1);
+      opacity: 0.6;
+    }
+  }
+  
+  .loading-dots {
+    display: flex;
+    gap: 0.375rem;
+  }
+  
+  .dot {
+    width: 0.625rem;
+    height: 0.625rem;
+    background: linear-gradient(135deg, #F4A261, #E76F51);
+    border-radius: 50%;
+    animation: loadingDots 1.6s infinite ease-in-out both;
+    box-shadow: 0 2px 8px rgba(244, 162, 97, 0.3);
+  }
+  
+  .dot:nth-child(1) { animation-delay: -0.32s; }
+  .dot:nth-child(2) { animation-delay: -0.16s; }
+  .dot:nth-child(3) { animation-delay: 0s; }
+  
+  @keyframes loadingDots {
+    0%, 80%, 100% {
+      transform: scale(0) translateY(0);
+      opacity: 0.5;
+    }
+    40% {
+      transform: scale(1.2) translateY(-8px);
+      opacity: 1;
+    }
+  }
+`;
+
+const LoadingText = styled.div`
+  .main-text {
+    font-size: 1.75rem;
+    font-weight: 800;
+    color: #0c1c17;
+    margin-bottom: 0.75rem;
+    background: linear-gradient(135deg, #F4A261 0%, #E76F51 50%, #F4A261 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    background-size: 200% 100%;
+    animation: shimmer 3s infinite ease-in-out;
+    letter-spacing: -0.02em;
+  }
+  
+  @keyframes shimmer {
+    0%, 100% {
+      background-position: 200% 0;
+    }
+    50% {
+      background-position: -200% 0;
+    }
+  }
+  
+  .sub-text {
+    font-size: 1.1rem;
+    font-weight: 500;
+    color: #4b5563;
+    margin-bottom: 2rem;
+    line-height: 1.6;
+    opacity: 0.9;
+  }
+  
+  .fun-facts {
+    background: linear-gradient(135deg, rgba(244, 162, 97, 0.1), rgba(231, 111, 81, 0.1));
+    border: 1px solid rgba(244, 162, 97, 0.2);
+    border-radius: 12px;
+    padding: 1rem 1.25rem;
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: #374151;
+    transition: all 0.5s ease-in-out;
+    min-height: 3rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    
+    /* Add a subtle icon or decoration */
+    &::before {
+      content: '✨';
+      position: absolute;
+      left: 0.75rem;
+      font-size: 1.1rem;
+      animation: sparkle 2s infinite ease-in-out;
+    }
+    
+    /* Padding to make room for the icon */
+    padding-left: 2.5rem;
+  }
+  
+  @keyframes sparkle {
+    0%, 100% {
+      transform: scale(1) rotate(0deg);
+      opacity: 0.7;
+    }
+    50% {
+      transform: scale(1.2) rotate(180deg);
+      opacity: 1;
+    }
+  }
+`;
+
 const Plan = ({ isEmbedded = false }) => {
   console.log('Plan component rendering', { isEmbedded });
 
@@ -106,6 +315,29 @@ const Plan = ({ isEmbedded = false }) => {
   const [error, setError] = useState(null);
   const [generatedAdventure, setGeneratedAdventure] = useState(null);
   const [quotaInfo, setQuotaInfo] = useState(null);
+
+  // Fun facts for loading screen
+  const [currentFactIndex, setCurrentFactIndex] = useState(0);
+  const funFacts = [
+    "💡 Did you know? The best adventures often happen within 30 minutes of home!",
+    "🌟 Microadventures can boost creativity by up to 60% according to recent studies!",
+    "🚶‍♀️ A 2-hour adventure can be as refreshing as a full day vacation!",
+    "🌍 There are hidden gems within 5 miles of almost every location!",
+    "⏰ Most successful adventurers plan their trips in under 5 minutes!",
+    "🎒 The best adventures require less gear than you think!",
+    "🌅 Early morning adventures often lead to the most surprising discoveries!",
+    "📱 50% of great adventures are found by people who just started exploring!"
+  ];
+
+  // Rotate facts during loading
+  useEffect(() => {
+    if (loading) {
+      const interval = setInterval(() => {
+        setCurrentFactIndex((prev) => (prev + 1) % funFacts.length);
+      }, 3000);
+      return () => clearInterval(interval);
+    }
+  }, [loading, funFacts.length]);
 
   // Countdown timer for quota reset
   const { timeLeft, formatTime, reset: resetCountdown } = useCountdown(0);
@@ -314,7 +546,45 @@ const Plan = ({ isEmbedded = false }) => {
 
   return (
     <PageWrapper className={isEmbedded ? 'home-embedded' : ''}>
-      <PlanFormContainer>
+      {/* Loading Overlay */}
+      {loading && (
+        <LoadingOverlay>
+          <LoadingCard>
+            <LoadingAnimation>
+              <div className="adventure-icon">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                </svg>
+              </div>
+              <div className="loading-dots">
+                <div className="dot"></div>
+                <div className="dot"></div>
+                <div className="dot"></div>
+              </div>
+            </LoadingAnimation>
+            
+            <LoadingText>
+              <div className="main-text">
+                We're working on your adventure!
+              </div>
+              <div className="sub-text">
+                Our AI is exploring the best microadventures just for you...
+              </div>
+              <div className="fun-facts">
+                {funFacts[currentFactIndex]}
+              </div>
+            </LoadingText>
+          </LoadingCard>
+        </LoadingOverlay>
+      )}
+
+      <PlanFormContainer style={{ 
+        filter: loading ? 'blur(8px)' : 'none', 
+        opacity: loading ? 0.3 : 1,
+        pointerEvents: loading ? 'none' : 'auto',
+        transition: 'filter 0.3s ease, opacity 0.3s ease'
+      }}>
         <PlanContainer>
           <div className="relative">
             <h1 className="mb-6 text-[#0c1c17] text-2xl sm:text-3xl font-bold leading-tight text-center tracking-[-0.015em]">
