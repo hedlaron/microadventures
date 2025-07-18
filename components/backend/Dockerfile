@@ -30,7 +30,6 @@ COPY . .
 # But we need to provide PostgreSQL env vars since Settings class validates them
 RUN if [ "$RUN_TESTS" = "true" ]; then \
       echo "Running tests and linting..." && \
-      set -e && \
       export JWT_SECRET_KEY="test-secret-key-for-docker-build" && \
       export OPENAI_API_KEY="test-api-key-for-docker-build" && \
       export POSTGRESQL_USERNAME="test_user" && \
@@ -47,7 +46,8 @@ RUN if [ "$RUN_TESTS" = "true" ]; then \
       echo "🧪 Starting pytest..." && \
       uv run pytest --cov=. --cov-report=term-missing --cov-fail-under=64 -v && \
       echo "✅ Tests passed!" && \
-      echo "Tests and linting completed successfully!"; \
+      echo "🎉 All backend tests and linting completed successfully!" && \
+      echo "✅ Tests passed!"; \
     else \
       echo "Skipping tests (RUN_TESTS=false)"; \
     fi

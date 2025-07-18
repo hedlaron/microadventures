@@ -27,14 +27,14 @@ FROM base AS test
 ARG RUN_TESTS=false
 RUN if [ "$RUN_TESTS" = "true" ]; then \
       echo "Running tests and linting..." && \
-      set -e && \
       echo "🔍 Starting ESLint..." && \
       npm run lint && \
       echo "✅ ESLint passed!" && \
       echo "🧪 Starting tests..." && \
       npm run test:run && \
       echo "✅ Tests passed!" && \
-      echo "Tests and linting completed successfully!"; \
+      echo "🎉 All frontend tests and linting completed successfully!" && \
+      echo "✅ Tests passed!"; \
     else \
       echo "Skipping tests (RUN_TESTS=false)"; \
     fi
