@@ -37,31 +37,31 @@ RUN if [ "$RUN_TESTS" = "true" ]; then \
       export POSTGRESQL_SERVER="localhost" && \
       export POSTGRESQL_PORT="5432" && \
       export POSTGRESQL_DATABASE="test_db" && \
-      echo "🔍 Starting Ruff linting..." && \
+      echo "[LINT] Starting Ruff linting..." && \
       uv run ruff check .; \
       RUFF_EXIT_CODE=$?; \
       if [ $RUFF_EXIT_CODE -ne 0 ]; then \
-        echo "❌ Ruff linting failed with exit code $RUFF_EXIT_CODE"; \
+        echo "[ERROR] Ruff linting failed with exit code $RUFF_EXIT_CODE"; \
         exit 1; \
       fi; \
-      echo "✅ Ruff linting passed!" && \
-      echo "🔍 Starting Black formatting check..." && \
+      echo "[SUCCESS] Ruff linting passed!" && \
+      echo "[LINT] Starting Black formatting check..." && \
       uv run black --check .; \
       BLACK_EXIT_CODE=$?; \
       if [ $BLACK_EXIT_CODE -ne 0 ]; then \
-        echo "❌ Black formatting failed with exit code $BLACK_EXIT_CODE"; \
+        echo "[ERROR] Black formatting failed with exit code $BLACK_EXIT_CODE"; \
         exit 1; \
       fi; \
-      echo "✅ Black formatting passed!" && \
-      echo "🧪 Starting pytest..." && \
+      echo "[SUCCESS] Black formatting passed!" && \
+      echo "[TEST] Starting pytest..." && \
       uv run pytest -v --tb=short; \
       PYTEST_EXIT_CODE=$?; \
       if [ $PYTEST_EXIT_CODE -ne 0 ]; then \
-        echo "❌ Tests failed with exit code $PYTEST_EXIT_CODE"; \
+        echo "[ERROR] Tests failed with exit code $PYTEST_EXIT_CODE"; \
         exit 1; \
       fi; \
-      echo "✅ Tests passed!" && \
-      echo "🎉 All backend tests and linting completed successfully!" && \
+      echo "[SUCCESS] Tests passed!" && \
+      echo "[COMPLETE] All backend tests and linting completed successfully!" && \
       echo "ALL_TESTS_PASSED"; \
     else \
       echo "Skipping tests (RUN_TESTS=false)"; \
