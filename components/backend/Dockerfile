@@ -31,6 +31,11 @@ RUN if [ "$RUN_TESTS" = "true" ]; then \
       echo "Running tests and linting..." && \
       export JWT_SECRET_KEY="test-secret-key-for-docker-build" && \
       export OPENAI_API_KEY="test-api-key-for-docker-build" && \
+      export POSTGRESQL_USERNAME="test_user" && \
+      export POSTGRESQL_PASSWORD="test_password" && \
+      export POSTGRESQL_SERVER="localhost" && \
+      export POSTGRESQL_PORT="5432" && \
+      export POSTGRESQL_DATABASE="test_db" && \
       uv run ruff check . && \
       uv run black --check . && \
       uv run pytest --cov=. --cov-report=term-missing --cov-fail-under=64 -v && \
