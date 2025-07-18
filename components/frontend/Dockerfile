@@ -36,7 +36,7 @@ RUN if [ "$RUN_TESTS" = "true" ]; then \
       fi; \
       echo "[SUCCESS] ESLint passed!" && \
       echo "[TEST] Starting tests..." && \
-      NODE_OPTIONS="--max-old-space-size=1024" npm run test:run -- --reporter=verbose --maxWorkers=1; \
+      NODE_OPTIONS="--max-old-space-size=1024" npm run test:run -- --reporter=verbose; \
       TEST_EXIT_CODE=$?; \
       if [ $TEST_EXIT_CODE -ne 0 ]; then \
         echo "[ERROR] Tests failed with exit code $TEST_EXIT_CODE"; \
