@@ -107,14 +107,35 @@ jobs:
           set -euxo pipefail
           echo "Running tests in Docker container for ${{ matrix.path }}"
 
+          # Debug: Show system resources
+          echo "=== SYSTEM RESOURCES ==="
+          free -h
+          df -h
+          echo "Docker system info:"
+          docker system df
+          echo "========================="
+
+          # Clean up Docker to free memory
+          echo "Cleaning up Docker system..."
+          docker system prune -af --volumes || true
+          echo "After cleanup:"
+          docker system df
+
           # Create a temporary file to capture test output
           TEST_OUTPUT_FILE="/tmp/test_output_${{ matrix.path }}.log"
 
           if [[ "${{ matrix.path }}" == "components/backend" ]]; then
             echo "Building and testing backend in container..."
+
+            # Monitor memory usage during build
+            (while true; do
+              echo "Memory usage: $(free -h | grep '^Mem:' | awk '{print $3 "/" $2}')"
+              sleep 30
+            done) &
+            MONITOR_PID=$!
+
             # Build test stage and run tests, capturing output
             docker buildx build \
-              --no-cache \
               --platform linux/amd64 \
               --target test \
               --build-arg APP_VERSION=${IMAGE_TAG} \
@@ -122,6 +143,9 @@ jobs:
               -t hedlaron/microadventures-backend:${IMAGE_TAG}-test \
               --load \
               . 2>&1 | tee "$TEST_OUTPUT_FILE"
+
+            # Stop memory monitoring
+            kill $MONITOR_PID 2>/dev/null || true
 
             # Check if tests actually ran and passed
             if ! grep -q "ALL_TESTS_PASSED" "$TEST_OUTPUT_FILE"; then
@@ -157,9 +181,16 @@ jobs:
 
           elif [[ "${{ matrix.path }}" == "components/frontend" ]]; then
             echo "Building and testing frontend in container..."
+
+            # Monitor memory usage during build
+            (while true; do
+              echo "Memory usage: $(free -h | grep '^Mem:' | awk '{print $3 "/" $2}')"
+              sleep 30
+            done) &
+            MONITOR_PID=$!
+
             # Build test stage and run tests, capturing output
             docker buildx build \
-              --no-cache \
               --platform linux/amd64 \
               --target test \
               --build-arg APP_VERSION=${IMAGE_TAG} \
@@ -167,6 +198,9 @@ jobs:
               -t hedlaron/microadventures-frontend:${IMAGE_TAG}-test \
               --load \
               . 2>&1 | tee "$TEST_OUTPUT_FILE"
+
+            # Stop memory monitoring
+            kill $MONITOR_PID 2>/dev/null || true
 
             # Check if tests actually ran and passed
             if ! grep -q "ALL_TESTS_PASSED" "$TEST_OUTPUT_FILE"; then
