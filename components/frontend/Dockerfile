@@ -28,13 +28,22 @@ ARG RUN_TESTS=false
 RUN if [ "$RUN_TESTS" = "true" ]; then \
       echo "Running tests and linting..." && \
       echo "🔍 Starting ESLint..." && \
-      npm run lint && \
+      npm run lint; \
+      LINT_EXIT_CODE=$?; \
+      if [ $LINT_EXIT_CODE -ne 0 ]; then \
+        echo "❌ ESLint failed with exit code $LINT_EXIT_CODE"; \
+        exit 1; \
+      fi; \
       echo "✅ ESLint passed!" && \
       echo "🧪 Starting tests..." && \
-      npm run test:run && \
+      npm run test:run -- --reporter=verbose; \
+      TEST_EXIT_CODE=$?; \
+      if [ $TEST_EXIT_CODE -ne 0 ]; then \
+        echo "❌ Tests failed with exit code $TEST_EXIT_CODE"; \
+        exit 1; \
+      fi; \
       echo "✅ Tests passed!" && \
-      echo "🎉 All frontend tests and linting completed successfully!" && \
-      echo "✅ Tests passed!"; \
+      echo "🎉 All frontend tests and linting completed successfully!"; \
     else \
       echo "Skipping tests (RUN_TESTS=false)"; \
     fi

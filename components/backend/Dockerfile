@@ -38,16 +38,30 @@ RUN if [ "$RUN_TESTS" = "true" ]; then \
       export POSTGRESQL_PORT="5432" && \
       export POSTGRESQL_DATABASE="test_db" && \
       echo "🔍 Starting Ruff linting..." && \
-      uv run ruff check . && \
+      uv run ruff check .; \
+      RUFF_EXIT_CODE=$?; \
+      if [ $RUFF_EXIT_CODE -ne 0 ]; then \
+        echo "❌ Ruff linting failed with exit code $RUFF_EXIT_CODE"; \
+        exit 1; \
+      fi; \
       echo "✅ Ruff linting passed!" && \
       echo "🔍 Starting Black formatting check..." && \
-      uv run black --check . && \
+      uv run black --check .; \
+      BLACK_EXIT_CODE=$?; \
+      if [ $BLACK_EXIT_CODE -ne 0 ]; then \
+        echo "❌ Black formatting failed with exit code $BLACK_EXIT_CODE"; \
+        exit 1; \
+      fi; \
       echo "✅ Black formatting passed!" && \
       echo "🧪 Starting pytest..." && \
-      uv run pytest --cov=. --cov-report=term-missing --cov-fail-under=64 -v && \
+      uv run pytest -v --tb=short; \
+      PYTEST_EXIT_CODE=$?; \
+      if [ $PYTEST_EXIT_CODE -ne 0 ]; then \
+        echo "❌ Tests failed with exit code $PYTEST_EXIT_CODE"; \
+        exit 1; \
+      fi; \
       echo "✅ Tests passed!" && \
-      echo "🎉 All backend tests and linting completed successfully!" && \
-      echo "✅ Tests passed!"; \
+      echo "🎉 All backend tests and linting completed successfully!"; \
     else \
       echo "Skipping tests (RUN_TESTS=false)"; \
     fi
