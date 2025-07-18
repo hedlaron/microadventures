@@ -89,21 +89,6 @@ jobs:
       matrix:
         path: ${{ fromJson(needs.determine-components.outputs.components) }}
 
-    services:
-      postgres:
-        image: postgres:15
-        env:
-          POSTGRES_USER: postgres
-          POSTGRES_PASSWORD: postgres
-          POSTGRES_DB: test_microadventures
-        options: >-
-          --health-cmd pg_isready
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
-        ports:
-          - 5432:5432
-
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -132,17 +117,11 @@ jobs:
               --target test \
               --build-arg APP_VERSION=${IMAGE_TAG} \
               --build-arg RUN_TESTS=true \
-              --build-arg JWT_SECRET_KEY=test-secret-key-for-ci \
-              --build-arg POSTGRESQL_USERNAME=postgres \
-              --build-arg POSTGRESQL_PASSWORD=postgres \
-              --build-arg POSTGRESQL_SERVER=localhost \
-              --build-arg POSTGRESQL_PORT=5432 \
-              --build-arg POSTGRESQL_DATABASE=test_microadventures \
-              --build-arg OPENAI_API_KEY=test-api-key-for-ci \
-              --network host \
               -t hedlaron/microadventures-backend:${IMAGE_TAG}-test \
               --load \
               . 2>&1 | tee "$TEST_OUTPUT_FILE"
+
+            echo "Backend tests completed in Docker build"
 
             # Extract test results from Docker build output
             echo "## 🧪 Backend Test Results" >> $GITHUB_STEP_SUMMARY
