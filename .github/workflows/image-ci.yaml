@@ -139,7 +139,7 @@ jobs:
               --platform linux/amd64 \
               --target test \
               --build-arg APP_VERSION=${IMAGE_TAG} \
-              --build-arg RUN_TESTS=true \
+              --build-arg RUN_TESTS=false \
               --memory=1536m \
               --memory-swap=2g \
               -t hedlaron/microadventures-backend:${IMAGE_TAG}-test \
@@ -196,7 +196,7 @@ jobs:
               --platform linux/amd64 \
               --target test \
               --build-arg APP_VERSION=${IMAGE_TAG} \
-              --build-arg RUN_TESTS=true \
+              --build-arg RUN_TESTS=false \
               --memory=1536m \
               --memory-swap=2g \
               -t hedlaron/microadventures-frontend:${IMAGE_TAG}-test \

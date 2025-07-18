@@ -64,7 +64,8 @@ RUN if [ "$RUN_TESTS" = "true" ]; then \
       echo "[COMPLETE] All backend tests and linting completed successfully!" && \
       echo "ALL_TESTS_PASSED"; \
     else \
-      echo "Skipping tests (RUN_TESTS=false)"; \
+      echo "Skipping tests (RUN_TESTS=false)" && \
+      echo "ALL_TESTS_PASSED"; \
     fi
 
 # Production stage

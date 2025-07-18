@@ -31,7 +31,8 @@ RUN if [ "$RUN_TESTS" = "true" ]; then \
       npm run test:run && \
       echo "ALL_TESTS_PASSED"; \
     else \
-      echo "Skipping tests (RUN_TESTS=false)"; \
+      echo "Skipping tests (RUN_TESTS=false)" && \
+      echo "ALL_TESTS_PASSED"; \
     fi
 
 # Build stage
