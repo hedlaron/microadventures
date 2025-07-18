@@ -139,6 +139,15 @@ jobs:
               . 2>&1 | tee "$TEST_OUTPUT_FILE"
 
             # Check if tests actually ran and passed
+            echo "=== DEBUGGING: Checking for ALL_TESTS_PASSED marker ==="
+            echo "File exists: $(test -f "$TEST_OUTPUT_FILE" && echo "YES" || echo "NO")"
+            echo "File size: $(wc -l < "$TEST_OUTPUT_FILE" 2>/dev/null || echo "ERROR")"
+            echo "Last 10 lines of output:"
+            tail -10 "$TEST_OUTPUT_FILE" 2>/dev/null || echo "Cannot read file"
+            echo "Grep result:"
+            grep -n "ALL_TESTS_PASSED" "$TEST_OUTPUT_FILE" || echo "Pattern not found"
+            echo "=== END DEBUGGING ==="
+
             if ! grep -q "ALL_TESTS_PASSED" "$TEST_OUTPUT_FILE"; then
               echo "❌ Backend tests did not run or failed. See log above."
               echo "=== FULL TEST OUTPUT ==="
@@ -192,6 +201,15 @@ jobs:
               . 2>&1 | tee "$TEST_OUTPUT_FILE"
 
             # Check if tests actually ran and passed
+            echo "=== DEBUGGING: Checking for ALL_TESTS_PASSED marker ==="
+            echo "File exists: $(test -f "$TEST_OUTPUT_FILE" && echo "YES" || echo "NO")"
+            echo "File size: $(wc -l < "$TEST_OUTPUT_FILE" 2>/dev/null || echo "ERROR")"
+            echo "Last 10 lines of output:"
+            tail -10 "$TEST_OUTPUT_FILE" 2>/dev/null || echo "Cannot read file"
+            echo "Grep result:"
+            grep -n "ALL_TESTS_PASSED" "$TEST_OUTPUT_FILE" || echo "Pattern not found"
+            echo "=== END DEBUGGING ==="
+
             if ! grep -q "ALL_TESTS_PASSED" "$TEST_OUTPUT_FILE"; then
               echo "❌ Frontend tests did not run or failed. See log above."
               echo "=== FULL TEST OUTPUT ==="
