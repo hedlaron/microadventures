@@ -43,7 +43,8 @@ RUN if [ "$RUN_TESTS" = "true" ]; then \
         exit 1; \
       fi; \
       echo "✅ Tests passed!" && \
-      echo "🎉 All frontend tests and linting completed successfully!"; \
+      echo "🎉 All frontend tests and linting completed successfully!" && \
+      echo "ALL_TESTS_PASSED"; \
     else \
       echo "Skipping tests (RUN_TESTS=false)"; \
     fi

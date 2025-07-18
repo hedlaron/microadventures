@@ -82,7 +82,7 @@ jobs:
 
   build-tag-push:
     runs-on: ubuntu-latest
-    timeout-minutes: 45
+    timeout-minutes: 60
     needs: [generate-image-tag, determine-components]
     strategy:
       fail-fast: false
@@ -104,7 +104,7 @@ jobs:
         env:
           IMAGE_TAG: ${{ needs.generate-image-tag.outputs.image_tag }}
         run: |
-          set -euo pipefail
+          set -euxo pipefail
           echo "Running tests in Docker container for ${{ matrix.path }}"
 
           # Create a temporary file to capture test output
@@ -114,6 +114,7 @@ jobs:
             echo "Building and testing backend in container..."
             # Build test stage and run tests, capturing output
             docker buildx build \
+              --no-cache \
               --platform linux/amd64 \
               --target test \
               --build-arg APP_VERSION=${IMAGE_TAG} \
@@ -123,7 +124,7 @@ jobs:
               . 2>&1 | tee "$TEST_OUTPUT_FILE"
 
             # Check if tests actually ran and passed
-            if ! grep -q "✅ Tests passed!" "$TEST_OUTPUT_FILE"; then
+            if ! grep -q "ALL_TESTS_PASSED" "$TEST_OUTPUT_FILE"; then
               echo "❌ Backend tests did not run or failed. See log above."
               echo "=== FULL TEST OUTPUT ==="
               cat "$TEST_OUTPUT_FILE"
@@ -158,6 +159,7 @@ jobs:
             echo "Building and testing frontend in container..."
             # Build test stage and run tests, capturing output
             docker buildx build \
+              --no-cache \
               --platform linux/amd64 \
               --target test \
               --build-arg APP_VERSION=${IMAGE_TAG} \
@@ -167,7 +169,7 @@ jobs:
               . 2>&1 | tee "$TEST_OUTPUT_FILE"
 
             # Check if tests actually ran and passed
-            if ! grep -q "✅ Tests passed!" "$TEST_OUTPUT_FILE"; then
+            if ! grep -q "ALL_TESTS_PASSED" "$TEST_OUTPUT_FILE"; then
               echo "❌ Frontend tests did not run or failed. See log above."
               echo "=== FULL TEST OUTPUT ==="
               cat "$TEST_OUTPUT_FILE"
