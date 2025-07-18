@@ -27,8 +27,10 @@ COPY . .
 
 # Run tests and linting if RUN_TESTS=true
 # Note: Tests use SQLite for testing, so no external database connection needed
+# But we need to provide PostgreSQL env vars since Settings class validates them
 RUN if [ "$RUN_TESTS" = "true" ]; then \
       echo "Running tests and linting..." && \
+      set -e && \
       export JWT_SECRET_KEY="test-secret-key-for-docker-build" && \
       export OPENAI_API_KEY="test-api-key-for-docker-build" && \
       export POSTGRESQL_USERNAME="test_user" && \
@@ -36,9 +38,15 @@ RUN if [ "$RUN_TESTS" = "true" ]; then \
       export POSTGRESQL_SERVER="localhost" && \
       export POSTGRESQL_PORT="5432" && \
       export POSTGRESQL_DATABASE="test_db" && \
+      echo "🔍 Starting Ruff linting..." && \
       uv run ruff check . && \
+      echo "✅ Ruff linting passed!" && \
+      echo "🔍 Starting Black formatting check..." && \
       uv run black --check . && \
+      echo "✅ Black formatting passed!" && \
+      echo "🧪 Starting pytest..." && \
       uv run pytest --cov=. --cov-report=term-missing --cov-fail-under=64 -v && \
+      echo "✅ Tests passed!" && \
       echo "Tests and linting completed successfully!"; \
     else \
       echo "Skipping tests (RUN_TESTS=false)"; \

@@ -104,6 +104,7 @@ jobs:
         env:
           IMAGE_TAG: ${{ needs.generate-image-tag.outputs.image_tag }}
         run: |
+          set -euo pipefail
           echo "Running tests in Docker container for ${{ matrix.path }}"
 
           # Create a temporary file to capture test output
@@ -120,6 +121,12 @@ jobs:
               -t hedlaron/microadventures-backend:${IMAGE_TAG}-test \
               --load \
               . 2>&1 | tee "$TEST_OUTPUT_FILE"
+
+            # Check if tests actually ran and passed
+            if ! grep -q "✅ Tests passed!" "$TEST_OUTPUT_FILE"; then
+              echo "❌ Backend tests did not run or failed. See log above."
+              exit 1
+            fi
 
             echo "Backend tests completed in Docker build"
 
@@ -155,6 +162,12 @@ jobs:
               -t hedlaron/microadventures-frontend:${IMAGE_TAG}-test \
               --load \
               . 2>&1 | tee "$TEST_OUTPUT_FILE"
+
+            # Check if tests actually ran and passed
+            if ! grep -q "✅ Tests passed!" "$TEST_OUTPUT_FILE"; then
+              echo "❌ Frontend tests did not run or failed. See log above."
+              exit 1
+            fi
 
             # Extract test results from Docker build output
             echo "## 🎨 Frontend Test Results" >> $GITHUB_STEP_SUMMARY
