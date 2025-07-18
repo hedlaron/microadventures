@@ -16,7 +16,7 @@ COPY pyproject.toml uv.lock ./
 RUN uv sync
 
 # Testing stage
-FROM python:3.13-alpine as test
+FROM base as test
 COPY --from=ghcr.io/astral-sh/uv:latest /uv /usr/bin/uv
 WORKDIR /app
 COPY pyproject.toml uv.lock ./
