@@ -27,23 +27,8 @@ FROM base AS test
 ARG RUN_TESTS=false
 RUN if [ "$RUN_TESTS" = "true" ]; then \
       echo "Running tests and linting..." && \
-      echo "[LINT] Starting ESLint..." && \
-      npm run lint; \
-      LINT_EXIT_CODE=$?; \
-      if [ $LINT_EXIT_CODE -ne 0 ]; then \
-        echo "[ERROR] ESLint failed with exit code $LINT_EXIT_CODE"; \
-        exit 1; \
-      fi; \
-      echo "[SUCCESS] ESLint passed!" && \
-      echo "[TEST] Starting tests..." && \
-      NODE_OPTIONS="--max-old-space-size=1024" npm run test:run -- --reporter=verbose; \
-      TEST_EXIT_CODE=$?; \
-      if [ $TEST_EXIT_CODE -ne 0 ]; then \
-        echo "[ERROR] Tests failed with exit code $TEST_EXIT_CODE"; \
-        exit 1; \
-      fi; \
-      echo "[SUCCESS] Tests passed!" && \
-      echo "[COMPLETE] All frontend tests and linting completed successfully!" && \
+      npm run lint && \
+      npm run test:run && \
       echo "ALL_TESTS_PASSED"; \
     else \
       echo "Skipping tests (RUN_TESTS=false)"; \
