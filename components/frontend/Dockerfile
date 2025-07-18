@@ -28,11 +28,9 @@ ARG RUN_TESTS=false
 RUN if [ "$RUN_TESTS" = "true" ]; then \
       echo "Running tests and linting..." && \
       npm run lint && \
-      npm run test:run && \
-      echo "ALL_TESTS_PASSED"; \
+      npm run test:run; \
     else \
-      echo "Skipping tests (RUN_TESTS=false)" && \
-      echo "ALL_TESTS_PASSED"; \
+      echo "Skipping tests (RUN_TESTS=false)"; \
     fi
 
 # Build stage
