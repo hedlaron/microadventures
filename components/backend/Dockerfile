@@ -54,7 +54,7 @@ RUN if [ "$RUN_TESTS" = "true" ]; then \
       fi; \
       echo "[SUCCESS] Black formatting passed!" && \
       echo "[TEST] Starting pytest..." && \
-      uv run pytest -v --tb=short -n 2 --maxfail=1; \
+      uv run pytest -v --tb=short --maxfail=1; \
       PYTEST_EXIT_CODE=$?; \
       if [ $PYTEST_EXIT_CODE -ne 0 ]; then \
         echo "[ERROR] Tests failed with exit code $PYTEST_EXIT_CODE"; \

@@ -1,3 +1,6 @@
+import atexit
+import os
+
 import pytest
 from fastapi.testclient import TestClient
 from sqlalchemy import create_engine
@@ -10,22 +13,48 @@ from auth.utils.auth_utils import get_password_hash
 from core.database import Base, get_db
 from user.models.user import User
 
-# Test database setup
-SQLALCHEMY_DATABASE_URL = "sqlite:///./test.db"
+
+# Test database setup with worker isolation for pytest-xdist
+def get_test_db_url():
+    """Get a unique database URL for each test worker"""
+    worker_id = os.environ.get("PYTEST_XDIST_WORKER", "master")
+    return f"sqlite:///./test_{worker_id}.db"
+
+
+SQLALCHEMY_DATABASE_URL = get_test_db_url()
 
 engine = create_engine(SQLALCHEMY_DATABASE_URL, connect_args={"check_same_thread": False})
 TestingSessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
 
+# Clean up test database files on exit
+def cleanup_test_db():
+    """Clean up test database files"""
+    db_file = SQLALCHEMY_DATABASE_URL.replace("sqlite:///./", "")
+    if os.path.exists(db_file):
+        try:
+            os.remove(db_file)
+        except OSError:
+            # Handle file system errors (permissions, file in use, etc.)
+            pass
+
+
+atexit.register(cleanup_test_db)
+
+
 @pytest.fixture(scope="function")
 def db():
-    """Create a test database session"""
+    """Create a test database session with proper cleanup for parallel execution"""
+    # Ensure clean slate for each test
+    Base.metadata.drop_all(bind=engine)
     Base.metadata.create_all(bind=engine)
+
     db = TestingSessionLocal()
     try:
         yield db
     finally:
         db.close()
+        # Clean up after each test
         Base.metadata.drop_all(bind=engine)
 
 
