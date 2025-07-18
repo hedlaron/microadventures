@@ -104,7 +104,6 @@ jobs:
         env:
           IMAGE_TAG: ${{ needs.generate-image-tag.outputs.image_tag }}
         run: |
-          set -euxo pipefail
           echo "Running tests in Docker container for ${{ matrix.path }}"
 
           # Debug: Show system resources
@@ -127,13 +126,6 @@ jobs:
           if [[ "${{ matrix.path }}" == "components/backend" ]]; then
             echo "Building and testing backend in container..."
 
-            # Monitor memory usage during build
-            (while true; do
-              echo "Memory usage: $(free -h | grep '^Mem:' | awk '{print $3 "/" $2}')"
-              sleep 30
-            done) &
-            MONITOR_PID=$!
-
             # Build test stage and run tests, capturing output
             docker buildx build \
               --platform linux/amd64 \
@@ -146,9 +138,6 @@ jobs:
               --load \
               . 2>&1 | tee "$TEST_OUTPUT_FILE"
 
-            # Stop memory monitoring
-            kill $MONITOR_PID 2>/dev/null || true
-
             # Check if tests actually ran and passed
             if ! grep -q "ALL_TESTS_PASSED" "$TEST_OUTPUT_FILE"; then
               echo "❌ Backend tests did not run or failed. See log above."
@@ -160,36 +149,35 @@ jobs:
 
             echo "Backend tests completed in Docker build"
 
-            # Extract test results from Docker build output
-            echo "## 🧪 Backend Test Results" >> $GITHUB_STEP_SUMMARY
-            echo "" >> $GITHUB_STEP_SUMMARY
-
-            # Look for test summary in the output
-            if grep -q "collected.*items" "$TEST_OUTPUT_FILE"; then
-              echo "### Test Summary" >> $GITHUB_STEP_SUMMARY
-              grep -A 10 -B 2 "collected.*items" "$TEST_OUTPUT_FILE" | sed 's/^/    /' >> $GITHUB_STEP_SUMMARY
-            fi
-
-            # Look for coverage information
-            if grep -q "TOTAL.*%" "$TEST_OUTPUT_FILE"; then
+            # Extract test results from Docker build output (only if tests actually ran)
+            if grep -q "Running tests and linting" "$TEST_OUTPUT_FILE"; then
+              echo "## 🧪 Backend Test Results" >> $GITHUB_STEP_SUMMARY
               echo "" >> $GITHUB_STEP_SUMMARY
-              echo "### Coverage Report" >> $GITHUB_STEP_SUMMARY
-              echo '```' >> $GITHUB_STEP_SUMMARY
-              grep -A 20 "Name.*Stmts.*Miss.*Cover" "$TEST_OUTPUT_FILE" | head -25 >> $GITHUB_STEP_SUMMARY
-              echo '```' >> $GITHUB_STEP_SUMMARY
+
+              # Look for test summary in the output
+              if grep -q "collected.*items" "$TEST_OUTPUT_FILE"; then
+                echo "### Test Summary" >> $GITHUB_STEP_SUMMARY
+                grep -A 10 -B 2 "collected.*items" "$TEST_OUTPUT_FILE" | sed 's/^/    /' >> $GITHUB_STEP_SUMMARY
+              fi
+
+              # Look for coverage information
+              if grep -q "TOTAL.*%" "$TEST_OUTPUT_FILE"; then
+                echo "" >> $GITHUB_STEP_SUMMARY
+                echo "### Coverage Report" >> $GITHUB_STEP_SUMMARY
+                echo '```' >> $GITHUB_STEP_SUMMARY
+                grep -A 20 "Name.*Stmts.*Miss.*Cover" "$TEST_OUTPUT_FILE" | head -25 >> $GITHUB_STEP_SUMMARY
+                echo '```' >> $GITHUB_STEP_SUMMARY
+              fi
+            else
+              echo "## 🧪 Backend Test Results" >> $GITHUB_STEP_SUMMARY
+              echo "" >> $GITHUB_STEP_SUMMARY
+              echo "Tests were skipped (RUN_TESTS=false)" >> $GITHUB_STEP_SUMMARY
             fi
 
             echo "Backend tests completed in Docker build"
 
           elif [[ "${{ matrix.path }}" == "components/frontend" ]]; then
             echo "Building and testing frontend in container..."
-
-            # Monitor memory usage during build
-            (while true; do
-              echo "Memory usage: $(free -h | grep '^Mem:' | awk '{print $3 "/" $2}')"
-              sleep 30
-            done) &
-            MONITOR_PID=$!
 
             # Build test stage and run tests, capturing output
             docker buildx build \
@@ -203,9 +191,6 @@ jobs:
               --load \
               . 2>&1 | tee "$TEST_OUTPUT_FILE"
 
-            # Stop memory monitoring
-            kill $MONITOR_PID 2>/dev/null || true
-
             # Check if tests actually ran and passed
             if ! grep -q "ALL_TESTS_PASSED" "$TEST_OUTPUT_FILE"; then
               echo "❌ Frontend tests did not run or failed. See log above."
@@ -215,28 +200,34 @@ jobs:
               exit 1
             fi
 
-            # Extract test results from Docker build output
-            echo "## 🎨 Frontend Test Results" >> $GITHUB_STEP_SUMMARY
-            echo "" >> $GITHUB_STEP_SUMMARY
-
-            # Look for lint results
-            if grep -q "✖.*problems" "$TEST_OUTPUT_FILE"; then
-              echo "### Linting Results" >> $GITHUB_STEP_SUMMARY
-              echo '```' >> $GITHUB_STEP_SUMMARY
-              grep -A 10 -B 5 "✖.*problems" "$TEST_OUTPUT_FILE" >> $GITHUB_STEP_SUMMARY
-              echo '```' >> $GITHUB_STEP_SUMMARY
-            elif grep -q "eslint" "$TEST_OUTPUT_FILE" && ! grep -q "✖" "$TEST_OUTPUT_FILE"; then
-              echo "### ✅ Linting Results" >> $GITHUB_STEP_SUMMARY
-              echo "All linting checks passed!" >> $GITHUB_STEP_SUMMARY
-            fi
-
-            # Look for test results
-            if grep -q "Test Files.*passed" "$TEST_OUTPUT_FILE"; then
+            # Extract test results from Docker build output (only if tests actually ran)
+            if grep -q "Running tests and linting" "$TEST_OUTPUT_FILE"; then
+              echo "## 🎨 Frontend Test Results" >> $GITHUB_STEP_SUMMARY
               echo "" >> $GITHUB_STEP_SUMMARY
-              echo "### Test Results" >> $GITHUB_STEP_SUMMARY
-              echo '```' >> $GITHUB_STEP_SUMMARY
-              grep -A 5 -B 2 "Test Files.*passed" "$TEST_OUTPUT_FILE" >> $GITHUB_STEP_SUMMARY
-              echo '```' >> $GITHUB_STEP_SUMMARY
+
+              # Look for lint results
+              if grep -q "✖.*problems" "$TEST_OUTPUT_FILE"; then
+                echo "### Linting Results" >> $GITHUB_STEP_SUMMARY
+                echo '```' >> $GITHUB_STEP_SUMMARY
+                grep -A 10 -B 5 "✖.*problems" "$TEST_OUTPUT_FILE" >> $GITHUB_STEP_SUMMARY
+                echo '```' >> $GITHUB_STEP_SUMMARY
+              elif grep -q "eslint" "$TEST_OUTPUT_FILE" && ! grep -q "✖" "$TEST_OUTPUT_FILE"; then
+                echo "### ✅ Linting Results" >> $GITHUB_STEP_SUMMARY
+                echo "All linting checks passed!" >> $GITHUB_STEP_SUMMARY
+              fi
+
+              # Look for test results
+              if grep -q "Test Files.*passed" "$TEST_OUTPUT_FILE"; then
+                echo "" >> $GITHUB_STEP_SUMMARY
+                echo "### Test Results" >> $GITHUB_STEP_SUMMARY
+                echo '```' >> $GITHUB_STEP_SUMMARY
+                grep -A 5 -B 2 "Test Files.*passed" "$TEST_OUTPUT_FILE" >> $GITHUB_STEP_SUMMARY
+                echo '```' >> $GITHUB_STEP_SUMMARY
+              fi
+            else
+              echo "## 🎨 Frontend Test Results" >> $GITHUB_STEP_SUMMARY
+              echo "" >> $GITHUB_STEP_SUMMARY
+              echo "Tests were skipped (RUN_TESTS=false)" >> $GITHUB_STEP_SUMMARY
             fi
 
             echo "Frontend tests completed in Docker build"
