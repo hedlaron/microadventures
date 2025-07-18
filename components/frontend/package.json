@@ -10,8 +10,8 @@
     "preview": "vite preview",
     "test": "vitest",
     "test:ui": "vitest --ui",
-    "test:run": "vitest run --maxWorkers=2",
-    "test:coverage": "vitest run --coverage --maxWorkers=2",
+    "test:run": "vitest run",
+    "test:coverage": "vitest run --coverage",
     "test:watch": "vitest --watch"
   },
   "dependencies": {
