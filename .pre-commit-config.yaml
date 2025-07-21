@@ -2,41 +2,41 @@
 # See https://pre-commit.com/hooks.html for more hooks
 repos:
   - repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v4.4.0
+    rev: v5.0.0
     hooks:
       - id: check-added-large-files
         exclude: |
-            (?x)^(
-                k8s/\.helm-charts/.*
-            )$
+          (?x)^(
+            k8s/\.helm-charts/.*
+          )$
       - id: check-toml
       - id: check-yaml
-        args:
-          - --unsafe
+        args: [--unsafe]
         exclude: |
-            (?x)^(
-                k8s/\.helm-charts/.*
-            )$
+          (?x)^(
+            k8s/\.helm-charts/.*|
+            k8s/Taskfile\.yaml
+          )$
       - id: end-of-file-fixer
-        exclude: |
-            (?x)^(
-                components/frontend/src/client/.*|
-                components/backend/app/email-templates/build/.*|
-                k8s/\.helm-charts/.*
-            )$
+        exclude: |-
+          (?x)^(
+            components/frontend/src/client/.*|
+            components/backend/app/email-templates/build/.*|
+            k8s/\.helm-charts/.*
+          )$
       - id: trailing-whitespace
-        exclude: |
-            (?x)^(
-                components/frontend/src/client/.*|
-                k8s/\.helm-charts/.*
-            )$
+        exclude: |-
+          (?x)^(
+            components/frontend/src/client/.*|
+            k8s/\.helm-charts/.*
+          )$
       - id: check-case-conflict
       - id: check-merge-conflict
       - id: check-json
       - id: debug-statements
       - id: check-docstring-first
   - repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: v0.12.3
+    rev: v0.12.4
     hooks:
       - id: ruff
         args:
@@ -44,8 +44,22 @@ repos:
         files: ^components/backend/.*\.py$
       - id: ruff-format
         files: ^components/backend/.*\.py$
+  - repo: https://github.com/pre-commit/mirrors-prettier
+    rev: v4.0.0-alpha.8
+    hooks:
+      - id: prettier
+        files: ^components/frontend/.*\.(js|jsx|ts|tsx|css|md|json)$
+        args: [--write]
+  - repo: https://github.com/pre-commit/mirrors-eslint
+    rev: v9.31.0
+    hooks:
+      - id: eslint
+        language: system
+        entry: bash -c 'cd components/frontend && npm run lint'
+        pass_filenames: false
+        additional_dependencies: []
   - repo: https://github.com/commitizen-tools/commitizen
-    rev: v3.13.0
+    rev: v4.8.3
     hooks:
       - id: commitizen
         stages: [commit-msg]
@@ -68,5 +82,5 @@ exclude: |
   )$
 
 ci:
-  autofix_commit_msg: 🎨 [pre-commit.ci] Auto format from pre-commit.com hooks
-  autoupdate_commit_msg: ⬆ [pre-commit.ci] pre-commit autoupdate
+  autofix_commit_msg: "🎨 [pre-commit.ci] Auto format from pre-commit.com hooks"
+  autoupdate_commit_msg: "⬆ [pre-commit.ci] pre-commit autoupdate"

@@ -12,10 +12,10 @@ import sys
 
 def run_command(cmd, description):
     """Run a command and handle errors"""
-    print(f"\n{'='*50}")
+    print(f"\n{'=' * 50}")
     print(f"Running: {description}")
     print(f"Command: {' '.join(cmd) if isinstance(cmd, list) else cmd}")
-    print(f"{'='*50}")
+    print(f"{'=' * 50}")
 
     if isinstance(cmd, str):
         result = subprocess.run(cmd, shell=True, cwd=os.path.dirname(os.path.abspath(__file__)))
@@ -124,7 +124,7 @@ def main():
             "All tests with coverage",
         )
 
-    print(f"\n{'='*50}")
+    print(f"\n{'=' * 50}")
     if success:
         print("🎉 All checks passed!")
         sys.exit(0)

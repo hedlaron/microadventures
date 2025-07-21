@@ -12,12 +12,12 @@ export default defineConfig({
     maxWorkers: 2,
     minWorkers: 1,
     // Reduce memory usage by limiting concurrent test files
-    pool: 'threads',
+    pool: "threads",
     poolOptions: {
       threads: {
         maxThreads: 2,
         minThreads: 1,
-      }
+      },
     },
   },
 });

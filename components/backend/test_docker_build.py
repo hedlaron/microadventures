@@ -2,16 +2,17 @@
 """
 Test script to verify multi-stage Docker build
 """
+
 import subprocess
 import sys
 
 
 def run_command(cmd, description):
     """Run a command and check result"""
-    print(f"\n{'='*60}")
+    print(f"\n{'=' * 60}")
     print(f"Testing: {description}")
     print(f"Command: {cmd}")
-    print(f"{'='*60}")
+    print(f"{'=' * 60}")
 
     try:
         result = subprocess.run(cmd, shell=True, capture_output=True, text=True)
@@ -56,9 +57,9 @@ def main():
         else:
             failed += 1
 
-    print(f"\n{'='*60}")
+    print(f"\n{'=' * 60}")
     print("🎯 MULTI-STAGE BUILD TEST RESULTS")
-    print(f"{'='*60}")
+    print(f"{'=' * 60}")
     print(f"✅ Passed: {passed}")
     print(f"❌ Failed: {failed}")
     print(f"Total: {passed + failed}")

@@ -15,7 +15,7 @@ import Navbar from "./components/layout/Navbar";
 import Footer from "./components/layout/Footer";
 import ContactBubble from "./components/ui/ContactBubble";
 import Plan from "./components/features/Plan";
-import HistoryPage from "./components/features/HistoryPage";
+import HistoryPage from "././components/features/HistoryPage";
 import SharedAdventure from "./components/features/SharedAdventure";
 import ProtectedRoute from "./components/layout/ProtectedRoute";
 
@@ -34,7 +34,9 @@ const AppContent = () => {
   return (
     <div className="h-screen flex flex-col">
       <Navbar />
-      <main className={`flex-1 min-h-0 overflow-auto ${error ? 'blur-background' : ''}`}>
+      <main
+        className={`flex-1 min-h-0 overflow-auto ${error ? "blur-background" : ""}`}
+      >
         <Routes>
           <Route
             path="/"

@@ -153,8 +153,8 @@ const AdventureResult = ({
                 {isSharing
                   ? "Updating..."
                   : adventure.is_public
-                  ? "Public"
-                  : "Share"}
+                    ? "Public"
+                    : "Share"}
               </button>
 
               {/* Copy URL Button (only show when public) */}

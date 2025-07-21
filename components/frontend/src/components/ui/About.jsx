@@ -12,7 +12,9 @@ const About = ({ onClose }) => {
           const data = await response.json();
           setBackendVersion(data.version || "unknown");
         } else {
-          console.log(`Version API returned ${response.status}: ${response.statusText}`);
+          console.log(
+            `Version API returned ${response.status}: ${response.statusText}`,
+          );
           setBackendVersion("api-error");
         }
       } catch (error) {
@@ -30,7 +32,7 @@ const About = ({ onClose }) => {
     console.log("Environment detection:", {
       hostname: window.location.hostname,
       isProduction,
-      origin: window.location.origin
+      origin: window.location.origin,
     });
 
     if (isProduction) {
