@@ -1,12 +1,18 @@
 import axios from "axios";
 import { useCallback } from "react";
 
-// Global variable to store logout function
+// Global variables to store logout and error functions
 let globalLogout = null;
+let globalShowError = null;
 
 // Function to set the global logout function
 export const setGlobalLogout = (logoutFn) => {
   globalLogout = logoutFn;
+};
+
+// Function to set the global error handler
+export const setGlobalErrorHandler = (showErrorFn) => {
+  globalShowError = showErrorFn;
 };
 
 // Dynamic API URL detection
@@ -44,20 +50,29 @@ console.log("Environment detection:", {
   detectedApiUrl: API_URL,
 });
 
-// Set up axios response interceptor for global 401 handling
+// Set up axios response interceptor for global error handling
 axios.interceptors.response.use(
   (response) => response,
   (error) => {
+    // Handle 401 Unauthorized
     if (error.response && error.response.status === 401 && globalLogout) {
       console.log("401 detected, logging out user and redirecting to homepage");
-      // Clear token and call logout to update auth state
       localStorage.removeItem("token");
       globalLogout();
-      // Redirect to homepage - use window.location to ensure it works from anywhere
       if (window.location.pathname !== "/") {
         window.location.href = "/";
       }
+      return Promise.reject(error); // Important to reject after handling
     }
+
+    // Handle backend unavailable
+    if (!error.response && globalShowError) {
+      console.error("Network or backend error, displaying global message.");
+      globalShowError(
+        "The backend is currently unavailable. Please try again later.",
+      );
+    }
+
     return Promise.reject(error);
   },
 );

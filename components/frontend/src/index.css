@@ -153,3 +153,8 @@ body {
 *::-webkit-scrollbar-thumb:hover {
   background: #46a080;
 }
+
+.blur-background {
+  filter: blur(5px);
+  transition: filter 0.3s ease-in-out;
+}

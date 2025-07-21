@@ -7,6 +7,8 @@ import {
   Navigate,
 } from "react-router-dom";
 import { AuthProvider } from "./contexts/AuthContext";
+import { ErrorProvider, useError } from "./contexts/ErrorContext";
+import ErrorMessage from "./components/ui/ErrorMessage";
 import HomePage from "./pages/HomePage";
 import AboutPage from "./pages/AboutPage";
 import Navbar from "./components/layout/Navbar";
@@ -27,11 +29,12 @@ console.log("App.jsx loading components:", {
 
 const AppContent = () => {
   const _location = useLocation(); // Keep for future use
+  const { error } = useError(); // Get error state from context
 
   return (
     <div className="h-screen flex flex-col">
       <Navbar />
-      <main className="flex-1 min-h-0 overflow-auto">
+      <main className={`flex-1 min-h-0 overflow-auto ${error ? 'blur-background' : ''}`}>
         <Routes>
           <Route
             path="/"
@@ -73,17 +76,20 @@ const AppContent = () => {
       </main>
       <Footer />
       <ContactBubble />
+      <ErrorMessage />
     </div>
   );
 };
 
 const App = () => {
   return (
-    <AuthProvider>
-      <Router>
-        <AppContent />
-      </Router>
-    </AuthProvider>
+    <ErrorProvider>
+      <AuthProvider>
+        <Router>
+          <AppContent />
+        </Router>
+      </AuthProvider>
+    </ErrorProvider>
   );
 };
 

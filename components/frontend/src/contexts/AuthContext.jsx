@@ -4,7 +4,9 @@ import {
   registerUser,
   fetchUserProfile,
   setGlobalLogout,
+  setGlobalErrorHandler,
 } from "../utils/api";
+import { useError } from "./ErrorContext";
 
 const AuthContext = createContext();
 
@@ -15,6 +17,7 @@ export function AuthProvider({ children }) {
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
   const [showLoginForm, setShowLoginForm] = useState(true);
   const [showSignUpForm, setShowSignUpForm] = useState(false);
+  const { showError } = useError();
 
   // Check if user is already logged in on component mount
   useEffect(() => {
@@ -76,7 +79,8 @@ export function AuthProvider({ children }) {
   // Register logout function with API interceptor
   useEffect(() => {
     setGlobalLogout(logout);
-  }, []);
+    setGlobalErrorHandler(showError);
+  }, [showError]);
 
   const openLoginModal = () => {
     setIsLoginModalOpen(true);
