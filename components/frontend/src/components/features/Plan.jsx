@@ -504,31 +504,8 @@ const Plan = () => {
     setError(null);
   };
 
-  // Sticky header state
-  const [isShrunk, setIsShrunk] = useState(false);
-  const headerRef = useRef(null);
-
-  // Handle scroll event to shrink/expand header
-  const formContainerRef = useRef(null);
-  const handleScroll = useCallback(() => {
-    if (!headerRef.current || !formContainerRef.current) return;
-    const scrollTop = formContainerRef.current.scrollTop;
-    const shrinkThreshold = 40;
-    setIsShrunk((prev) => {
-      const shouldShrink = scrollTop > shrinkThreshold;
-      return prev !== shouldShrink ? shouldShrink : prev;
-    });
-  }, []);
-
-  // Attach scroll event listener to the PlanFormContainer
-  useEffect(() => {
-    const container = formContainerRef.current;
-    if (!container) return;
-    container.addEventListener("scroll", handleScroll);
-    return () => {
-      container.removeEventListener("scroll", handleScroll);
-    };
-  }, [handleScroll]);
+  // Removed unused isShrunk and headerRef, and scroll logic (no longer needed)
+  // (All shrinking/scroll header logic is now removed for static header)
 
   // If adventure is generated, show the result with full-width layout like history
   if (generatedAdventure) {
