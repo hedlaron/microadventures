@@ -153,7 +153,7 @@ jobs:
           echo "component=$COMPONENT" >> $GITHUB_ENV
           echo "image_tag=$IMAGE_TAG" >> $GITHUB_ENV
 
-      - name: Post test summary
+      - name: Post combined summary
         if: always()
         run: |
           echo "" >> $GITHUB_STEP_SUMMARY
@@ -166,6 +166,18 @@ jobs:
           echo "- **Platform**: linux/amd64" >> $GITHUB_STEP_SUMMARY
           echo "- **Status**: ${{ job.status }}" >> $GITHUB_STEP_SUMMARY
           echo "- **Timestamp**: $(date -u '+%Y-%m-%d %H:%M:%S UTC')" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "---" >> $GITHUB_STEP_SUMMARY
+          # Append the detailed test, coverage, and security summary if present
+          if [ -f trivy-image-scan.txt ]; then
+            echo '## 🛡️ Container Image Security Scan' >> $GITHUB_STEP_SUMMARY
+            echo '```' >> $GITHUB_STEP_SUMMARY
+            cat trivy-image-scan.txt >> $GITHUB_STEP_SUMMARY
+            echo '```' >> $GITHUB_STEP_SUMMARY
+          fi
+          if [ -f $GITHUB_WORKSPACE/test-summary.txt ]; then
+            cat $GITHUB_WORKSPACE/test-summary.txt >> $GITHUB_STEP_SUMMARY
+          fi
 
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v3
