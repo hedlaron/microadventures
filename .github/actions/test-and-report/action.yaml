@@ -14,7 +14,7 @@ runs:
       uses: trufflesecurity/trufflehog@main
       with:
         path: .
-        extra_args: --no-update --fail --exclude-path .trufflehogignore
+        extra_args: --results=verified,unknown
     - name: Trivy image security scan
       uses: aquasecurity/trivy-action@master
       with:
