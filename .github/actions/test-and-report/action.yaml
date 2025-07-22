@@ -32,6 +32,7 @@ runs:
           --debug
     - name: Scan Results Status
       if: steps.trufflehog.outcome == 'failure'
+      shell: bash
       run: exit 1
     - name: Trivy image security scan
       uses: aquasecurity/trivy-action@master
