@@ -152,6 +152,14 @@ jobs:
 
       - name: Test, Coverage, and Security Summary
         uses: ./.github/actions/test-and-report
+        env:
+          JWT_SECRET_KEY: dummy_jwt
+          POSTGRESQL_USERNAME: dummy_user
+          POSTGRESQL_PASSWORD: dummy_pass
+          POSTGRESQL_SERVER: dummy_host
+          POSTGRESQL_PORT: 5432
+          POSTGRESQL_DATABASE: dummy_db
+          OPENAI_API_KEY: dummy_openai
         with:
           component: ${{ matrix.path == 'components/backend' && 'backend' || 'frontend' }}
           image_tag: ${{ needs.generate-image-tag.outputs.image_tag }}

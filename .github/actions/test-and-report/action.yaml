@@ -70,14 +70,6 @@ runs:
         ignore-unfixed: true
     - name: Run tests and summarize
       shell: bash
-      env:
-        JWT_SECRET_KEY: ${{ secrets.JWT_SECRET_KEY }}
-        POSTGRESQL_USERNAME: ${{ secrets.POSTGRESQL_USERNAME }}
-        POSTGRESQL_PASSWORD: ${{ secrets.POSTGRESQL_PASSWORD }}
-        POSTGRESQL_SERVER: ${{ secrets.POSTGRESQL_SERVER }}
-        POSTGRESQL_PORT: ${{ secrets.POSTGRESQL_PORT }}
-        POSTGRESQL_DATABASE: ${{ secrets.POSTGRESQL_DATABASE }}
-        OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
       run: |
         set -x
         COMPONENT="${{ inputs.component }}"
