@@ -23,9 +23,6 @@ COPY . .
 # Test stage for CI/CD
 FROM base AS test
 
-RUN npm audit fix
-RUN npm update
-
 # Run tests and linting
 ARG RUN_TESTS=false
 RUN if [ "$RUN_TESTS" = "true" ]; then \
