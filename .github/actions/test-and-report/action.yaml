@@ -28,7 +28,13 @@ runs:
       if: github.event_name == 'pull_request'
       shell: bash
       run: |
-        if [ "${{ github.event.pull_request.base.sha }}" = "${{ github.event.pull_request.head.sha }}" ]; then
+        BASE="${{ github.event.pull_request.base.sha }}"
+        HEAD="${{ github.event.pull_request.head.sha }}"
+        if [ -z "$BASE" ] || [ -z "$HEAD" ]; then
+          echo "BASE or HEAD commit is missing, skipping TruffleHog."
+          exit 0
+        fi
+        if [ "$BASE" = "$HEAD" ]; then
           echo "BASE and HEAD are the same, nothing to scan. Skipping TruffleHog."
           exit 0
         fi
@@ -62,7 +68,6 @@ runs:
         exit-code: '1'
         severity: 'HIGH,CRITICAL'
         ignore-unfixed: true
-        ignorefile: .trivyignore
     - name: Run tests and summarize
       shell: bash
       run: |
