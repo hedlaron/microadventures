@@ -97,8 +97,8 @@ runs:
         IMAGE_TAG="${{ inputs.image_tag }}"
         echo "[DEBUG] COMPONENT: $COMPONENT"
         echo "[DEBUG] IMAGE_TAG: $IMAGE_TAG"
-        # Append TruffleHog scan results
-        if [ -f trufflehog-scan.txt ]; then
+        # Append TruffleHog scan results only if there is a valid finding
+        if [ -f trufflehog-scan.txt ] && grep -q 'Reason: Found' trufflehog-scan.txt; then
           echo '## 🔑 TruffleHog Secret Scan' >> $GITHUB_WORKSPACE/test-summary.txt
           echo '```' >> $GITHUB_WORKSPACE/test-summary.txt
           cat trufflehog-scan.txt >> $GITHUB_WORKSPACE/test-summary.txt
