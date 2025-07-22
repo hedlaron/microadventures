@@ -30,10 +30,10 @@ runs:
         fi
         trivy image --no-progress --exit-code 1 --severity HIGH,CRITICAL --format table "$IMAGE" | tee trivy-image-scan.txt
         TRIVY_EXIT=$?
-        echo '## 🛡️ Container Image Security Scan' >> $GITHUB_STEP_SUMMARY
-        echo '```' >> $GITHUB_STEP_SUMMARY
-        cat trivy-image-scan.txt >> $GITHUB_STEP_SUMMARY
-        echo '```' >> $GITHUB_STEP_SUMMARY
+        echo '## 🛡️ Container Image Security Scan' >> $GITHUB_WORKSPACE/test-summary.txt
+        echo '```' >> $GITHUB_WORKSPACE/test-summary.txt
+        cat trivy-image-scan.txt >> $GITHUB_WORKSPACE/test-summary.txt
+        echo '```' >> $GITHUB_WORKSPACE/test-summary.txt
         echo '::endgroup::'
         if [ $TRIVY_EXIT -ne 0 ]; then
           echo "::error ::High or critical vulnerabilities found in $IMAGE"
@@ -62,93 +62,93 @@ runs:
         COMPONENT="${{ inputs.component }}"
         IMAGE_TAG="${{ inputs.image_tag }}"
         if [[ "$COMPONENT" == "backend" ]]; then
-          echo "✅ Backend Docker build completed successfully"
-          echo "## 🧪 Backend Test Results" >> $GITHUB_STEP_SUMMARY
-          echo '' >> $GITHUB_STEP_SUMMARY
+          echo "✅ Backend Docker build completed successfully" >> $GITHUB_WORKSPACE/test-summary.txt
+          echo "## 🧪 Backend Test Results" >> $GITHUB_WORKSPACE/test-summary.txt
+          echo '' >> $GITHUB_WORKSPACE/test-summary.txt
           BACKEND_TEST_OUTPUT=$(docker run --rm hedlaron/microadventures-backend:${IMAGE_TAG}-test uv run pytest --cov=. --cov-report=term-missing --maxfail=1 --tb=short 2>&1)
           # Extract test summary line (e.g. '=== 12 passed, 1 warning in 0.12s ===')
           BACKEND_TEST_SUMMARY=$(echo "$BACKEND_TEST_OUTPUT" | grep -E '^=+ .+ in .+s =+$' | tail -1)
           # Extract coverage percent (e.g. 'TOTAL ... 95%')
           BACKEND_COV_LINE=$(echo "$BACKEND_TEST_OUTPUT" | grep -E '^TOTAL' | tail -1)
           BACKEND_COV_PCT=$(echo "$BACKEND_COV_LINE" | awk '{print $NF}')
-          echo "**Backend Test Summary:** $BACKEND_TEST_SUMMARY" >> $GITHUB_STEP_SUMMARY
+          echo "**Backend Test Summary:** $BACKEND_TEST_SUMMARY" >> $GITHUB_WORKSPACE/test-summary.txt
           if [ -n "$BACKEND_COV_PCT" ]; then
-            echo "**Backend Coverage:** $BACKEND_COV_PCT" >> $GITHUB_STEP_SUMMARY
+            echo "**Backend Coverage:** $BACKEND_COV_PCT" >> $GITHUB_WORKSPACE/test-summary.txt
           fi
           if echo "$BACKEND_TEST_OUTPUT" | grep -q 'FAILED (errors='; then
-            echo '<details><summary><span style="color:red;font-weight:bold;">❌ Backend Tests Failed (click to expand)</span></summary>' >> $GITHUB_STEP_SUMMARY
-            echo '' >> $GITHUB_STEP_SUMMARY
-            echo '```' >> $GITHUB_STEP_SUMMARY
-            echo "$BACKEND_TEST_OUTPUT" >> $GITHUB_STEP_SUMMARY
-            echo '```' >> $GITHUB_STEP_SUMMARY
-            echo '</details>' >> $GITHUB_STEP_SUMMARY
+            echo '<details><summary><span style="color:red;font-weight:bold;">❌ Backend Tests Failed (click to expand)</span></summary>' >> $GITHUB_WORKSPACE/test-summary.txt
+            echo '' >> $GITHUB_WORKSPACE/test-summary.txt
+            echo '```' >> $GITHUB_WORKSPACE/test-summary.txt
+            echo "$BACKEND_TEST_OUTPUT" >> $GITHUB_WORKSPACE/test-summary.txt
+            echo '```' >> $GITHUB_WORKSPACE/test-summary.txt
+            echo '</details>' >> $GITHUB_WORKSPACE/test-summary.txt
           elif echo "$BACKEND_TEST_OUTPUT" | grep -q 'ValidationError'; then
-            echo '<details open><summary><span style="color:red;font-weight:bold;">❌ Backend Environment Error (click to expand)</span></summary>' >> $GITHUB_STEP_SUMMARY
-            echo '' >> $GITHUB_STEP_SUMMARY
-            echo '```' >> $GITHUB_STEP_SUMMARY
-            echo "$BACKEND_TEST_OUTPUT" >> $GITHUB_STEP_SUMMARY
-            echo '```' >> $GITHUB_STEP_SUMMARY
-            echo '<br><b>❗️ Environment variables missing for backend tests. See error details above.</b>' >> $GITHUB_STEP_SUMMARY
-            echo '</details>' >> $GITHUB_STEP_SUMMARY
+            echo '<details open><summary><span style="color:red;font-weight:bold;">❌ Backend Environment Error (click to expand)</span></summary>' >> $GITHUB_WORKSPACE/test-summary.txt
+            echo '' >> $GITHUB_WORKSPACE/test-summary.txt
+            echo '```' >> $GITHUB_WORKSPACE/test-summary.txt
+            echo "$BACKEND_TEST_OUTPUT" >> $GITHUB_WORKSPACE/test-summary.txt
+            echo '```' >> $GITHUB_WORKSPACE/test-summary.txt
+            echo '<br><b>❗️ Environment variables missing for backend tests. See error details above.</b>' >> $GITHUB_WORKSPACE/test-summary.txt
+            echo '</details>' >> $GITHUB_WORKSPACE/test-summary.txt
           else
-            echo '<details open><summary><span style="color:green;font-weight:bold;">✅ Backend Tests Passed (click to expand)</span></summary>' >> $GITHUB_STEP_SUMMARY
-            echo '' >> $GITHUB_STEP_SUMMARY
-            echo '```' >> $GITHUB_STEP_SUMMARY
-            echo "$BACKEND_TEST_OUTPUT" >> $GITHUB_STEP_SUMMARY
-            echo '```' >> $GITHUB_STEP_SUMMARY
-            echo '</details>' >> $GITHUB_STEP_SUMMARY
+            echo '<details open><summary><span style="color:green;font-weight:bold;">✅ Backend Tests Passed (click to expand)</span></summary>' >> $GITHUB_WORKSPACE/test-summary.txt
+            echo '' >> $GITHUB_WORKSPACE/test-summary.txt
+            echo '```' >> $GITHUB_WORKSPACE/test-summary.txt
+            echo "$BACKEND_TEST_OUTPUT" >> $GITHUB_WORKSPACE/test-summary.txt
+            echo '```' >> $GITHUB_WORKSPACE/test-summary.txt
+            echo '</details>' >> $GITHUB_WORKSPACE/test-summary.txt
           fi
-          echo '' >> $GITHUB_STEP_SUMMARY
-          echo "### Backend Coverage Summary" >> $GITHUB_STEP_SUMMARY
+          echo '' >> $GITHUB_WORKSPACE/test-summary.txt
+          echo "### Backend Coverage Summary" >> $GITHUB_WORKSPACE/test-summary.txt
           BACKEND_COV=$(docker run --rm hedlaron/microadventures-backend:${IMAGE_TAG}-test cat /app/htmlcov/index.html 2>/dev/null | grep -A 10 '<h2>Coverage summary' | head -n 12)
           if [ -z "$BACKEND_COV" ]; then
-            echo '<span style="color:orange;">⚠️ No backend coverage report found.</span>' >> $GITHUB_STEP_SUMMARY
+            echo '<span style="color:orange;">⚠️ No backend coverage report found.</span>' >> $GITHUB_WORKSPACE/test-summary.txt
           else
-            echo '```html' >> $GITHUB_STEP_SUMMARY
-            echo "$BACKEND_COV" >> $GITHUB_STEP_SUMMARY
-            echo '```' >> $GITHUB_STEP_SUMMARY
+            echo '```html' >> $GITHUB_WORKSPACE/test-summary.txt
+            echo "$BACKEND_COV" >> $GITHUB_WORKSPACE/test-summary.txt
+            echo '```' >> $GITHUB_WORKSPACE/test-summary.txt
           fi
         elif [[ "$COMPONENT" == "frontend" ]]; then
-          echo "✅ Frontend Docker build completed successfully"
-          echo "## 🎨 Frontend Test Results" >> $GITHUB_STEP_SUMMARY
-          echo '' >> $GITHUB_STEP_SUMMARY
+          echo "✅ Frontend Docker build completed successfully" >> $GITHUB_WORKSPACE/test-summary.txt
+          echo "## 🎨 Frontend Test Results" >> $GITHUB_WORKSPACE/test-summary.txt
+          echo '' >> $GITHUB_WORKSPACE/test-summary.txt
           FRONTEND_TEST_OUTPUT=$(docker run --rm hedlaron/microadventures-frontend:${IMAGE_TAG}-test npm run test:coverage 2>&1)
           # Extract test summary line (e.g. 'Test Files  3 passed | 0 failed')
           FRONTEND_TEST_SUMMARY=$(echo "$FRONTEND_TEST_OUTPUT" | grep -E 'Test Files|Tests:|Suites:|Snapshots:|Time:')
           # Extract coverage percent (e.g. 'Statements   : 95.00%')
           FRONTEND_COV_PCT=$(echo "$FRONTEND_TEST_OUTPUT" | grep -E 'Statements\s*:' | awk -F: '{print $2}' | awk '{print $1}')
-          echo "**Frontend Test Summary:**" >> $GITHUB_STEP_SUMMARY
-          echo '```' >> $GITHUB_STEP_SUMMARY
-          echo "$FRONTEND_TEST_SUMMARY" >> $GITHUB_STEP_SUMMARY
-          echo '```' >> $GITHUB_STEP_SUMMARY
+          echo "**Frontend Test Summary:**" >> $GITHUB_WORKSPACE/test-summary.txt
+          echo '```' >> $GITHUB_WORKSPACE/test-summary.txt
+          echo "$FRONTEND_TEST_SUMMARY" >> $GITHUB_WORKSPACE/test-summary.txt
+          echo '```' >> $GITHUB_WORKSPACE/test-summary.txt
           if [ -n "$FRONTEND_COV_PCT" ]; then
-            echo "**Frontend Coverage:** $FRONTEND_COV_PCT" >> $GITHUB_STEP_SUMMARY
+            echo "**Frontend Coverage:** $FRONTEND_COV_PCT" >> $GITHUB_WORKSPACE/test-summary.txt
           fi
           if echo "$FRONTEND_TEST_OUTPUT" | grep -q 'FAIL'; then
-            echo '<details><summary><span style="color:red;font-weight:bold;">❌ Frontend Tests Failed (click to expand)</span></summary>' >> $GITHUB_STEP_SUMMARY
-            echo '' >> $GITHUB_STEP_SUMMARY
-            echo '```' >> $GITHUB_STEP_SUMMARY
-            echo "$FRONTEND_TEST_OUTPUT" >> $GITHUB_STEP_SUMMARY
-            echo '```' >> $GITHUB_STEP_SUMMARY
-            echo '</details>' >> $GITHUB_STEP_SUMMARY
+            echo '<details><summary><span style="color:red;font-weight:bold;">❌ Frontend Tests Failed (click to expand)</span></summary>' >> $GITHUB_WORKSPACE/test-summary.txt
+            echo '' >> $GITHUB_WORKSPACE/test-summary.txt
+            echo '```' >> $GITHUB_WORKSPACE/test-summary.txt
+            echo "$FRONTEND_TEST_OUTPUT" >> $GITHUB_WORKSPACE/test-summary.txt
+            echo '```' >> $GITHUB_WORKSPACE/test-summary.txt
+            echo '</details>' >> $GITHUB_WORKSPACE/test-summary.txt
           elif echo "$FRONTEND_TEST_OUTPUT" | grep -q 'No tests found'; then
-            echo '<span style="color:orange;">⚠️ No frontend tests found or executed.</span>' >> $GITHUB_STEP_SUMMARY
+            echo '<span style="color:orange;">⚠️ No frontend tests found or executed.</span>' >> $GITHUB_WORKSPACE/test-summary.txt
           else
-            echo '<details open><summary><span style="color:green;font-weight:bold;">✅ Frontend Tests Passed (click to expand)</span></summary>' >> $GITHUB_STEP_SUMMARY
-            echo '' >> $GITHUB_STEP_SUMMARY
-            echo '```' >> $GITHUB_STEP_SUMMARY
-            echo "$FRONTEND_TEST_OUTPUT" >> $GITHUB_STEP_SUMMARY
-            echo '```' >> $GITHUB_STEP_SUMMARY
-            echo '</details>' >> $GITHUB_STEP_SUMMARY
+            echo '<details open><summary><span style="color:green;font-weight:bold;">✅ Frontend Tests Passed (click to expand)</span></summary>' >> $GITHUB_WORKSPACE/test-summary.txt
+            echo '' >> $GITHUB_WORKSPACE/test-summary.txt
+            echo '```' >> $GITHUB_WORKSPACE/test-summary.txt
+            echo "$FRONTEND_TEST_OUTPUT" >> $GITHUB_WORKSPACE/test-summary.txt
+            echo '```' >> $GITHUB_WORKSPACE/test-summary.txt
+            echo '</details>' >> $GITHUB_WORKSPACE/test-summary.txt
           fi
-          echo '' >> $GITHUB_STEP_SUMMARY
-          echo "### Frontend Coverage Summary" >> $GITHUB_STEP_SUMMARY
+          echo '' >> $GITHUB_WORKSPACE/test-summary.txt
+          echo "### Frontend Coverage Summary" >> $GITHUB_WORKSPACE/test-summary.txt
           FRONTEND_COV=$(docker run --rm hedlaron/microadventures-frontend:${IMAGE_TAG}-test cat /usr/src/app/coverage/coverage-summary.json 2>/dev/null)
           if [ -z "$FRONTEND_COV" ]; then
-            echo '<span style="color:orange;">⚠️ No frontend coverage report found.</span>' >> $GITHUB_STEP_SUMMARY
+            echo '<span style="color:orange;">⚠️ No frontend coverage report found.</span>' >> $GITHUB_WORKSPACE/test-summary.txt
           else
-            echo '```json' >> $GITHUB_STEP_SUMMARY
-            echo "$FRONTEND_COV" >> $GITHUB_STEP_SUMMARY
-            echo '```' >> $GITHUB_STEP_SUMMARY
+            echo '```json' >> $GITHUB_WORKSPACE/test-summary.txt
+            echo "$FRONTEND_COV" >> $GITHUB_WORKSPACE/test-summary.txt
+            echo '```' >> $GITHUB_WORKSPACE/test-summary.txt
           fi
         fi
