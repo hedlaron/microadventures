@@ -120,10 +120,10 @@ jobs:
           echo "After cleanup:"
           docker system df
 
+          COMPONENT=""
           if [[ "${{ matrix.path }}" == "components/backend" ]]; then
+            COMPONENT="backend"
             echo "Building and testing backend in container..."
-
-            # Build test stage - Docker will exit with non-zero code if build fails
             docker buildx build \
               --platform linux/amd64 \
               --target test \
@@ -134,23 +134,9 @@ jobs:
               -t hedlaron/microadventures-backend:${IMAGE_TAG}-test \
               --load \
               .
-
-
-            echo "✅ Backend Docker build completed successfully"
-            echo "## 🧪 Backend Test Results" >> $GITHUB_STEP_SUMMARY
-            echo '```' >> $GITHUB_STEP_SUMMARY
-            docker run --rm hedlaron/microadventures-backend:${IMAGE_TAG}-test uv run pytest --cov=. --cov-report=term-missing --maxfail=1 --tb=short >> $GITHUB_STEP_SUMMARY 2>&1 || true
-            echo '```' >> $GITHUB_STEP_SUMMARY
-            echo "" >> $GITHUB_STEP_SUMMARY
-            echo "### Backend Coverage Summary" >> $GITHUB_STEP_SUMMARY
-            echo '```' >> $GITHUB_STEP_SUMMARY
-            docker run --rm hedlaron/microadventures-backend:${IMAGE_TAG}-test cat /app/htmlcov/index.html | grep -A 10 '<h2>Coverage summary' | head -n 12 >> $GITHUB_STEP_SUMMARY || echo "(Coverage HTML not found)" >> $GITHUB_STEP_SUMMARY
-            echo '```' >> $GITHUB_STEP_SUMMARY
-
           elif [[ "${{ matrix.path }}" == "components/frontend" ]]; then
+            COMPONENT="frontend"
             echo "Building and testing frontend in container..."
-
-            # Build test stage - Docker will exit with non-zero code if build fails
             docker buildx build \
               --platform linux/amd64 \
               --target test \
@@ -161,18 +147,10 @@ jobs:
               -t hedlaron/microadventures-frontend:${IMAGE_TAG}-test \
               --load \
               .
-
-            echo "✅ Frontend Docker build completed successfully"
-            echo "## 🎨 Frontend Test Results" >> $GITHUB_STEP_SUMMARY
-            echo '```' >> $GITHUB_STEP_SUMMARY
-            docker run --rm hedlaron/microadventures-frontend:${IMAGE_TAG}-test npm run test:coverage >> $GITHUB_STEP_SUMMARY 2>&1 || true
-            echo '```' >> $GITHUB_STEP_SUMMARY
-            echo "" >> $GITHUB_STEP_SUMMARY
-            echo "### Frontend Coverage Summary" >> $GITHUB_STEP_SUMMARY
-            echo '```' >> $GITHUB_STEP_SUMMARY
-            docker run --rm hedlaron/microadventures-frontend:${IMAGE_TAG}-test cat /usr/src/app/coverage/coverage-summary.json >> $GITHUB_STEP_SUMMARY || echo "(Coverage summary not found)" >> $GITHUB_STEP_SUMMARY
-            echo '```' >> $GITHUB_STEP_SUMMARY
           fi
+
+          # Run test and coverage summary script
+          bash scripts/ci/test-and-report.sh "$COMPONENT" "$IMAGE_TAG"
 
       - name: Post test summary
         if: always()
