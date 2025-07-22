@@ -150,6 +150,7 @@ jobs:
           fi
 
           # Run test and coverage summary script
+          chmod +x .github/scripts/test-and-report.sh
           bash .github/scripts/test-and-report.sh "$COMPONENT" "$IMAGE_TAG"
 
       - name: Post test summary
