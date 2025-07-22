@@ -4,7 +4,7 @@ updates:
     directory: "/components/frontend/"
     schedule:
       interval: "weekly"
-  - package-ecosystem: "pip"
+  - package-ecosystem: "uv"
     directory: "/components/backend/"
     schedule:
       interval: "weekly"
