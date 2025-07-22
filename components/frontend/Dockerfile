@@ -45,7 +45,11 @@ ENV VITE_APP_VERSION=${APP_VERSION}
 RUN npm run build
 
 # Production stage with nginx
+
 FROM nginxinc/nginx-unprivileged:1.25-alpine
+
+# Upgrade all system packages to fix vulnerabilities
+RUN apk update && apk upgrade
 
 # Copy nginx configuration for microadventures
 COPY --link nginx.conf /etc/nginx/conf.d/default.conf

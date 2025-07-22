@@ -1,4 +1,4 @@
-FROM python:3.13-alpine AS base
+FROM python:3.13-alpine3.22 AS base
 COPY --from=ghcr.io/astral-sh/uv:latest /uv /usr/bin/uv
 
 # Build argument for version
