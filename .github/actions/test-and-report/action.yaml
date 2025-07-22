@@ -10,15 +10,18 @@ inputs:
 runs:
   using: 'composite'
   steps:
-
-
+    - name: Trufflehog secret scan
+      shell: bash
+      run: |
+        echo '::group::Running trufflehog scan'
+        trufflehog filesystem --no-update --fail .
+  steps:
     - name: Trufflehog secret scan
       shell: bash
       run: |
         echo '::group::Running trufflehog scan'
         trufflehog filesystem --no-update --fail .
         echo '::endgroup::'
-
     - name: Trivy image security scan
       shell: bash
       run: |
@@ -39,23 +42,6 @@ runs:
           echo "::error ::High or critical vulnerabilities found in $IMAGE"
           exit 1
         fi
-
-    - name: Security scan image with Trivy
-      shell: bash
-      run: |
-        echo "::group::Running Trivy image scan"
-        if [[ "${{ inputs.component }}" == "backend" ]]; then
-          IMAGE="hedlaron/microadventures-backend:${{ inputs.image_tag }}-test"
-        else
-          IMAGE="hedlaron/microadventures-frontend:${{ inputs.image_tag }}-test"
-        fi
-        trivy image --no-progress --format table "$IMAGE" | tee trivy-image-scan.txt
-        echo '## 🛡️ Container Image Security Scan' >> $GITHUB_STEP_SUMMARY
-        echo '```' >> $GITHUB_STEP_SUMMARY
-        cat trivy-image-scan.txt >> $GITHUB_STEP_SUMMARY
-        echo '```' >> $GITHUB_STEP_SUMMARY
-        echo "::endgroup::"
-
     - name: Run tests and summarize
       shell: bash
       run: |
@@ -75,13 +61,6 @@ runs:
           if [ -n "$BACKEND_COV_PCT" ]; then
             echo "**Backend Coverage:** $BACKEND_COV_PCT" >> $GITHUB_WORKSPACE/test-summary.txt
           fi
-          if echo "$BACKEND_TEST_OUTPUT" | grep -q 'FAILED (errors='; then
-            echo '<details><summary><span style="color:red;font-weight:bold;">❌ Backend Tests Failed (click to expand)</span></summary>' >> $GITHUB_WORKSPACE/test-summary.txt
-            echo '' >> $GITHUB_WORKSPACE/test-summary.txt
-            echo '```' >> $GITHUB_WORKSPACE/test-summary.txt
-            echo "$BACKEND_TEST_OUTPUT" >> $GITHUB_WORKSPACE/test-summary.txt
-            echo '```' >> $GITHUB_WORKSPACE/test-summary.txt
-            echo '</details>' >> $GITHUB_WORKSPACE/test-summary.txt
           elif echo "$BACKEND_TEST_OUTPUT" | grep -q 'ValidationError'; then
             echo '<details open><summary><span style="color:red;font-weight:bold;">❌ Backend Environment Error (click to expand)</span></summary>' >> $GITHUB_WORKSPACE/test-summary.txt
             echo '' >> $GITHUB_WORKSPACE/test-summary.txt
