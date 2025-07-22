@@ -26,7 +26,7 @@ runs:
         fi
     - name: TruffleHog OSS (PR)
       if: github.event_name == 'pull_request'
-      id: trufflehog
+      id: trufflehog_pr
       uses: trufflesecurity/trufflehog@main
       continue-on-error: true
       with:
@@ -36,14 +36,14 @@ runs:
         extra_args: ${{ steps.trufflehog-args.outputs.extra_args }}
     - name: TruffleHog OSS (Push)
       if: github.event_name != 'pull_request'
-      id: trufflehog
+      id: trufflehog_push
       uses: trufflesecurity/trufflehog@main
       continue-on-error: true
       with:
         path: ./
         extra_args: ${{ steps.trufflehog-args.outputs.extra_args }}
     - name: Scan Results Status
-      if: steps.trufflehog.outcome == 'failure'
+      if: (steps.trufflehog_pr.outcome == 'failure') || (steps.trufflehog_push.outcome == 'failure')
       shell: bash
       run: exit 1
     - name: Trivy image security scan
