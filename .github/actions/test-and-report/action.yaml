@@ -10,6 +10,22 @@ inputs:
 runs:
   using: 'composite'
   steps:
+    - name: Install Trivy
+      shell: bash
+      run: |
+        if ! command -v trivy >/dev/null 2>&1; then
+          echo "[INFO] Installing Trivy..."
+          wget -qO- https://github.com/aquasecurity/trivy/releases/latest/download/trivy_$(uname -s)_$(uname -m).tar.gz | tar zxvf - -C /tmp
+          sudo mv /tmp/trivy /usr/local/bin/
+        fi
+    - name: Install TruffleHog
+      shell: bash
+      run: |
+        if ! command -v trufflehog >/dev/null 2>&1; then
+          echo "[INFO] Installing TruffleHog..."
+          pip install --user trufflehog
+          export PATH="$PATH:$HOME/.local/bin"
+        fi
     - name: Set TruffleHog Args
       id: trufflehog-args
       shell: bash
