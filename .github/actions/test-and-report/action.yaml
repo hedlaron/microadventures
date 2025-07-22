@@ -15,12 +15,6 @@ runs:
       run: |
         echo '::group::Running trufflehog scan'
         trufflehog filesystem --no-update --fail .
-  steps:
-    - name: Trufflehog secret scan
-      shell: bash
-      run: |
-        echo '::group::Running trufflehog scan'
-        trufflehog filesystem --no-update --fail .
         echo '::endgroup::'
     - name: Trivy image security scan
       shell: bash
