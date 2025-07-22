@@ -122,7 +122,9 @@ runs:
           echo '' >> $GITHUB_WORKSPACE/test-summary.txt
           echo "### Backend Coverage Summary" >> $GITHUB_WORKSPACE/test-summary.txt
           echo "[DEBUG] Getting backend HTML coverage..."
+          set +e
           BACKEND_COV=$(docker run --rm hedlaron/microadventures-backend:${IMAGE_TAG}-test cat /app/htmlcov/index.html 2>/dev/null | grep -A 10 '<h2>Coverage summary' | head -n 12)
+          set -e
           if [ -z "$BACKEND_COV" ]; then
             echo '<span style="color:orange;">⚠️ No backend HTML coverage report found. This is not fatal if coverage is shown above.</span>' >> $GITHUB_WORKSPACE/test-summary.txt
           else

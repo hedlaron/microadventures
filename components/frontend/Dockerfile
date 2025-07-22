@@ -46,9 +46,6 @@ RUN npm run build
 
 FROM nginxinc/nginx-unprivileged:1.29-alpine
 
-# Upgrade all system packages to fix vulnerabilities
-RUN apk update && apk upgrade
-
 # Copy nginx configuration for microadventures
 COPY --link nginx.conf /etc/nginx/conf.d/default.conf
 
