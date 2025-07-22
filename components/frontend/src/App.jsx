@@ -35,7 +35,7 @@ const AppContent = () => {
     <div className="h-screen flex flex-col">
       <Navbar />
       <main
-        className={`flex-1 min-h-0 overflow-auto ${error ? "blur-background" : ""}`}
+        className={`flex-1 min-h-0 overflow-auto pt-16 px-4 md:px-6 lg:px-8 ${error ? "blur-background" : ""}`}
       >
         <Routes>
           <Route

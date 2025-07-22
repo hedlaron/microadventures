@@ -181,9 +181,9 @@ const History = ({ onBack, onSelectAdventure }) => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-orange-50 to-orange-100/50 font-sans">
+    <div className="h-full bg-gradient-to-br from-orange-50 to-orange-100/50 font-sans flex flex-col">
       {/* Header */}
-      <header className="flex items-center justify-between whitespace-nowrap border-b border-solid border-b-orange-200/50 px-6 sm:px-10 py-3 bg-white">
+      <header className="flex items-center justify-between whitespace-nowrap border-b border-solid border-b-orange-200/50 px-2 sm:px-6 py-3 bg-white flex-shrink-0">
         <button
           onClick={onBack}
           style={{ padding: "0.5rem 1rem", height: "2.5rem" }}
@@ -199,8 +199,8 @@ const History = ({ onBack, onSelectAdventure }) => {
       </header>
 
       {/* Main Content */}
-      <div className="flex-1 overflow-hidden">
-        <div className="px-6 sm:px-40 h-full flex justify-center py-5">
+      <div className="flex-1 overflow-hidden min-h-0">
+        <div className="px-2 sm:px-6 h-full flex justify-center py-4">
           <div className="layout-content-container flex flex-col max-w-[960px] flex-1 min-h-0">
             {error ? (
               <div className="text-center py-12">

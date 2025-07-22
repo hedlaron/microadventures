@@ -114,7 +114,7 @@ const AdventureResult = ({
       {!isSharedView && (
         <header className="border-b border-brand-200/50 bg-white z-10 flex-shrink-0">
           {/* Top row - Back button and title */}
-          <div className="flex items-center justify-between px-6 sm:px-10 py-4">
+          <div className="flex items-center justify-between px-2 sm:px-6 py-4">
             <button
               onClick={onBack}
               className="flex items-center gap-2 text-[#0c1c17] bg-brand-100/50 hover:bg-brand-200/70 transition-colors duration-200 px-4 py-2 rounded-xl font-medium"
@@ -129,7 +129,7 @@ const AdventureResult = ({
           </div>
 
           {/* Bottom row - Action buttons */}
-          <div className="flex items-center justify-between px-6 sm:px-10 py-3 bg-orange-100/30 border-t border-orange-200/50">
+          <div className="flex items-center justify-between px-2 sm:px-6 py-3 bg-orange-100/30 border-t border-orange-200/50">
             <div className="flex items-center gap-3">
               {quotaInfo && (
                 <div className="text-sm text-orange-600 font-medium">
@@ -182,12 +182,12 @@ const AdventureResult = ({
       )}
 
       {/* Main Content - Properly centered card with scrollable content */}
-      <div className="flex-1 flex items-center justify-center p-4 sm:p-6 lg:p-8 min-h-0">
+      <div className="flex-1 flex items-center justify-center p-2 sm:p-4 lg:p-6 min-h-0">
         <div className="w-full max-w-5xl h-full flex flex-col">
           <div className="bg-white rounded-xl border border-orange-200/50 flex-1 overflow-hidden flex flex-col min-h-0">
             {/* Back button for shared view */}
             {isSharedView && (
-              <div className="flex items-center justify-between p-6 border-b border-orange-200/50 bg-orange-100/30 flex-shrink-0">
+              <div className="flex items-center justify-between p-2 sm:p-4 lg:p-6 border-b border-orange-200/50 bg-orange-100/30 flex-shrink-0">
                 <button
                   onClick={onBack}
                   className="flex items-center gap-2 text-[#0c1c17] bg-orange-100/50 hover:bg-orange-200/70 transition-colors duration-200 px-4 py-2 rounded-xl font-medium"
@@ -205,7 +205,7 @@ const AdventureResult = ({
               </div>
             )}
             <div className="flex-1 overflow-y-auto adventure-scroll min-h-0">
-              <div className="p-6 lg:p-8">
+              <div className="p-2 sm:p-4 lg:p-6">
                 {/* Hero Section */}
                 <div className="@container mb-8">
                   <div className="@[480px]:px-0 @[480px]:py-0">

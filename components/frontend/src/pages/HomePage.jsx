@@ -20,6 +20,12 @@ const PageWrapper = styled.div`
   padding: 3rem 0;
   width: 100%;
   background: #ffffff;
+
+  /* Remove padding when showing Plan component */
+  &.plan-mode {
+    padding: 0;
+    align-items: stretch;
+  }
 `;
 
 const HeroContainer = styled.div`
@@ -390,7 +396,7 @@ const HomePage = () => {
   }
 
   return (
-    <PageWrapper>
+    <PageWrapper className={isAuthenticated ? "plan-mode" : ""}>
       {/* Conditionally render Plan component or hero section based on authentication status */}
       {isAuthenticated ? (
         <div className="w-full h-full flex flex-col">

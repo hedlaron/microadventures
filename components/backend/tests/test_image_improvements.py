@@ -29,7 +29,7 @@ def test_image_relevance():
             "activity_type": "nature",
             "location": "Central Park, New York",
             "title": "Peaceful Morning in Central Park",
-            "description": "Take a relaxing walk through Central Park, visit the botanical gardens, and enjoy bird watching near the lake.",
+            "description": "Take a relaxing walk through Central Park, visit the botanical gardens, and enjoy near the lake.",
             "expected_keywords": ["park", "nature", "peaceful", "bird"],
         },
         {

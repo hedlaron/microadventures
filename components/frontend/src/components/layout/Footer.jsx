@@ -2,8 +2,8 @@ import React from "react";
 
 const Footer = () => {
   return (
-    <footer className="bg-transparent border-t border-gray-200/50 py-4 px-6 mt-auto">
-      <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+    <footer className="bg-transparent border-t border-gray-200/50 py-2 px-4 mt-auto">
+      <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-start md:items-center justify-between gap-2">
         {/* Disclaimer text */}
         <div className="text-xs text-gray-500 max-w-2xl flex-1 min-w-0 order-2 md:order-1">
           <p>
@@ -15,7 +15,7 @@ const Footer = () => {
         </div>
 
         {/* Social links */}
-        <div className="flex items-center gap-4 flex-shrink-0 order-1 md:order-2 self-end md:self-auto">
+        <div className="flex items-center gap-3 flex-shrink-0 order-1 md:order-2 self-end md:self-auto">
           <a
             href="https://linkedin.com/in/YOUR_LINKEDIN_USERNAME"
             target="_blank"
@@ -24,7 +24,7 @@ const Footer = () => {
             title="LinkedIn"
           >
             <svg
-              className="w-5 h-5"
+              className="w-4 h-4"
               fill="currentColor"
               viewBox="0 0 20 20"
               xmlns="http://www.w3.org/2000/svg"
@@ -45,7 +45,7 @@ const Footer = () => {
             title="GitHub"
           >
             <svg
-              className="w-5 h-5"
+              className="w-4 h-4"
               fill="currentColor"
               viewBox="0 0 20 20"
               xmlns="http://www.w3.org/2000/svg"

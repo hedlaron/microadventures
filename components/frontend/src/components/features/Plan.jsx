@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect, useCallback, useRef } from "react";
 import { useAuth } from "../../contexts/AuthContext";
 import { createAdventure, fetchAdventureQuota } from "../../utils/api";
 import AdventurousBackground from "./AdventurousBackground";
@@ -17,72 +17,72 @@ import {
 const PageWrapper = styled.div`
   position: relative;
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   justify-content: center;
   min-height: 100%;
   height: 100%;
-  padding: 2rem 1rem 1rem 1rem;
+  padding: 1rem 0;
 
-  /* Add top padding when not embedded in home page */
-  &:not(.home-embedded) {
-    padding-top: 6rem;
-  }
-
-  @media (max-height: 600px) {
-    align-items: flex-start;
-
-    &:not(.home-embedded) {
-      padding-top: 6rem;
-    }
+  @media (max-width: 640px) {
+    padding: 0.5rem 0;
   }
 `;
 
 const PlanFormContainer = styled.div`
   position: relative;
   width: 100%;
-  max-width: 600px;
-  border-radius: 12px;
+  max-width: 800px;
+  border-radius: 18px;
   background: white;
-  border: 1px solid rgba(244, 162, 97, 0.2);
-
-  /* Ensure it fits screen height properly */
-  max-height: calc(100vh - 2rem);
+  border: 2px solid rgba(244, 162, 97, 0.22);
+  box-shadow:
+    0 8px 24px -2px rgba(0, 0, 0, 0.12),
+    0 2px 8px -1px rgba(0, 0, 0, 0.08);
+  max-height: calc(100vh - 5rem);
   overflow-y: auto;
 
   /* Custom scrollbar for the form */
   &::-webkit-scrollbar {
     width: 6px;
   }
-
   &::-webkit-scrollbar-track {
     background: transparent;
   }
-
   &::-webkit-scrollbar-thumb {
     background: #f4a261;
     border-radius: 3px;
   }
-
   &::-webkit-scrollbar-thumb:hover {
     background: #e76f51;
   }
 
-  @media (max-width: 640px) {
-    max-width: 95vw;
+  @media (max-width: 900px) {
+    max-width: 99vw;
     border-radius: 12px;
-    max-height: calc(100vh - 1rem);
+  }
+  @media (max-width: 640px) {
+    max-width: 100vw;
+    border-radius: 8px;
+    max-height: calc(100vh - 2rem);
+  }
+  @media (max-height: 600px) {
+    max-height: calc(100vh - 4rem);
   }
 `;
 
 const PlanContainer = styled.div`
   position: relative;
   width: 100%;
-  padding: 2rem;
+  padding: 1rem;
   display: flex;
   flex-direction: column;
 
-  @media (max-width: 640px) {
+  @media (min-width: 640px) {
     padding: 1.5rem;
+  }
+
+  @media (min-width: 1024px) {
+    padding: 2rem;
   }
 `;
 
@@ -96,18 +96,6 @@ const LoadingOverlay = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
-  animation: fadeIn 0.3s ease-out;
-
-  @keyframes fadeIn {
-    from {
-      opacity: 0;
-      transform: scale(0.95);
-    }
-    to {
-      opacity: 1;
-      transform: scale(1);
-    }
-  }
 `;
 
 const LoadingCard = styled.div`
@@ -141,7 +129,6 @@ const LoadingAnimation = styled.div`
     display: flex;
     align-items: center;
     justify-content: center;
-    animation: bounce 2s infinite ease-in-out;
     box-shadow:
       0 8px 25px rgba(244, 162, 97, 0.4),
       0 4px 12px rgba(231, 111, 81, 0.2);
@@ -157,7 +144,6 @@ const LoadingAnimation = styled.div`
       bottom: -8px;
       border: 2px solid rgba(244, 162, 97, 0.3);
       border-radius: 50%;
-      animation: pulse 3s infinite ease-in-out;
     }
   }
 
@@ -206,31 +192,7 @@ const LoadingAnimation = styled.div`
     height: 0.625rem;
     background: linear-gradient(135deg, #f4a261, #e76f51);
     border-radius: 50%;
-    animation: loadingDots 1.6s infinite ease-in-out both;
     box-shadow: 0 2px 8px rgba(244, 162, 97, 0.3);
-  }
-
-  .dot:nth-child(1) {
-    animation-delay: -0.32s;
-  }
-  .dot:nth-child(2) {
-    animation-delay: -0.16s;
-  }
-  .dot:nth-child(3) {
-    animation-delay: 0s;
-  }
-
-  @keyframes loadingDots {
-    0%,
-    80%,
-    100% {
-      transform: scale(0) translateY(0);
-      opacity: 0.5;
-    }
-    40% {
-      transform: scale(1.2) translateY(-8px);
-      opacity: 1;
-    }
   }
 `;
 
@@ -245,18 +207,7 @@ const LoadingText = styled.div`
     -webkit-text-fill-color: transparent;
     background-clip: text;
     background-size: 200% 100%;
-    animation: shimmer 3s infinite ease-in-out;
     letter-spacing: -0.02em;
-  }
-
-  @keyframes shimmer {
-    0%,
-    100% {
-      background-position: 200% 0;
-    }
-    50% {
-      background-position: -200% 0;
-    }
   }
 
   .sub-text {
@@ -293,28 +244,15 @@ const LoadingText = styled.div`
       position: absolute;
       left: 0.75rem;
       font-size: 1.1rem;
-      animation: sparkle 2s infinite ease-in-out;
     }
 
     /* Padding to make room for the icon */
     padding-left: 2.5rem;
   }
-
-  @keyframes sparkle {
-    0%,
-    100% {
-      transform: scale(1) rotate(0deg);
-      opacity: 0.7;
-    }
-    50% {
-      transform: scale(1.2) rotate(180deg);
-      opacity: 1;
-    }
-  }
 `;
 
-const Plan = ({ isEmbedded = false }) => {
-  console.log("Plan component rendering", { isEmbedded });
+const Plan = () => {
+  console.log("Plan component rendering");
 
   useEffect(() => {
     console.log("Plan component mounted");
@@ -566,6 +504,32 @@ const Plan = ({ isEmbedded = false }) => {
     setError(null);
   };
 
+  // Sticky header state
+  const [isShrunk, setIsShrunk] = useState(false);
+  const headerRef = useRef(null);
+
+  // Handle scroll event to shrink/expand header
+  const formContainerRef = useRef(null);
+  const handleScroll = useCallback(() => {
+    if (!headerRef.current || !formContainerRef.current) return;
+    const scrollTop = formContainerRef.current.scrollTop;
+    const shrinkThreshold = 40;
+    setIsShrunk((prev) => {
+      const shouldShrink = scrollTop > shrinkThreshold;
+      return prev !== shouldShrink ? shouldShrink : prev;
+    });
+  }, []);
+
+  // Attach scroll event listener to the PlanFormContainer
+  useEffect(() => {
+    const container = formContainerRef.current;
+    if (!container) return;
+    container.addEventListener("scroll", handleScroll);
+    return () => {
+      container.removeEventListener("scroll", handleScroll);
+    };
+  }, [handleScroll]);
+
   // If adventure is generated, show the result with full-width layout like history
   if (generatedAdventure) {
     return (
@@ -581,8 +545,9 @@ const Plan = ({ isEmbedded = false }) => {
     );
   }
 
+  // Outer scroll container for edge-to-edge scrollbar
   return (
-    <PageWrapper className={isEmbedded ? "home-embedded" : ""}>
+    <PageWrapper>
       {/* Loading Overlay */}
       {loading && (
         <LoadingOverlay>
@@ -626,26 +591,38 @@ const Plan = ({ isEmbedded = false }) => {
           </LoadingCard>
         </LoadingOverlay>
       )}
-
       <PlanFormContainer
+        ref={formContainerRef}
         style={{
           filter: loading ? "blur(8px)" : "none",
           opacity: loading ? 0.3 : 1,
           pointerEvents: loading ? "none" : "auto",
-          transition: "filter 0.3s ease, opacity 0.3s ease",
         }}
       >
         <PlanContainer>
-          <div className="relative">
-            <h1 className="mb-6 text-[#0c1c17] text-2xl sm:text-3xl font-bold leading-tight text-center tracking-[-0.015em]">
+          {/* Static header and quota */}
+          <div
+            className="bg-white w-full py-6"
+            style={{
+              borderRadius: 18,
+              minHeight: 40,
+              boxShadow: "none",
+              border: "none",
+              width: "100%",
+              margin: 0,
+              maxWidth: "none",
+              left: 0,
+              right: 0,
+            }}
+          >
+            <h1 className="w-full text-[#0c1c17] text-center font-bold leading-tight tracking-[-0.015em] text-2xl mb-2">
               Plan Your Microadventure
             </h1>
-
             {/* Quota Display */}
             {quotaInfo && (
-              <div className="mb-6 p-4 bg-gradient-to-br from-orange-50 to-orange-100/50 rounded-xl border border-orange-200/50">
-                <div className="flex items-center justify-center gap-2 text-sm mb-2">
-                  <span className="text-orange-900 font-medium">
+              <div className="w-full bg-gradient-to-br from-orange-50 to-orange-100/50 rounded-xl border border-orange-200/50 mb-6">
+                <div className="flex items-center justify-center gap-2 font-medium">
+                  <span className="text-orange-900">
                     {quotaInfo.adventures_remaining} adventures remaining today
                   </span>
                 </div>
@@ -663,14 +640,14 @@ const Plan = ({ isEmbedded = false }) => {
                 )}
               </div>
             )}
-
             {/* Error Display */}
             {error && (
-              <div className="mb-6 p-4 bg-orange-50 border border-orange-200 rounded-xl">
-                <p className="text-orange-700 text-sm text-center">{error}</p>
+              <div className="w-full mb-6 p-4 bg-orange-50 border border-orange-200 rounded-xl">
+                <p className="text-orange-700 text-center">{error}</p>
               </div>
             )}
-
+          </div>
+          <div className="relative">
             <form onSubmit={handleSubmit} className="space-y-6">
               <div className="space-y-3">
                 <label className="block text-sm font-semibold text-gray-800">
@@ -681,7 +658,7 @@ const Plan = ({ isEmbedded = false }) => {
                     type="text"
                     value={location}
                     onChange={(e) => setLocation(e.target.value)}
-                    className="flex-1 text-sm bg-white border-2 border-gray-200 text-gray-800 px-3 py-3 rounded-xl focus:border-orange-300 focus:ring-2 focus:ring-orange-200/50 focus:outline-none transition-all duration-200 placeholder-gray-400"
+                    className="flex-1 text-sm bg-white border-2 border-gray-200 text-gray-800 px-3 py-3 rounded-xl focus:border-orange-300 focus:ring-2 focus:ring-orange-200/50 focus:outline-none placeholder-gray-400"
                     placeholder="Where are you starting from?"
                     required
                   />
@@ -689,7 +666,7 @@ const Plan = ({ isEmbedded = false }) => {
                     type="button"
                     onClick={getCurrentLocation}
                     disabled={locationLoading}
-                    className={`border-2 border-gray-200 text-gray-700 rounded-xl hover:bg-gray-50 hover:border-gray-300 transition-colors flex items-center justify-center gap-1 text-xs font-medium px-3 ${
+                    className={`border-2 border-gray-200 text-gray-700 rounded-xl hover:bg-gray-50 hover:border-gray-300 flex items-center justify-center gap-1 text-xs font-medium px-3 ${
                       locationLoading ? "opacity-50 cursor-not-allowed" : ""
                     }`}
                   >
@@ -747,7 +724,7 @@ const Plan = ({ isEmbedded = false }) => {
                       padding: "0 0.75rem",
                       minWidth: "70px",
                     }}
-                    className="border-2 border-orange-300 text-orange-900 rounded-xl hover:bg-orange-50 transition-colors flex items-center justify-center gap-1 text-xs font-medium"
+                    className="border-2 border-orange-300 text-orange-900 rounded-xl hover:bg-orange-50 flex items-center justify-center gap-1 text-xs font-medium"
                   >
                     <svg
                       className="w-3 h-3"
@@ -806,13 +783,13 @@ const Plan = ({ isEmbedded = false }) => {
                     type="text"
                     value={destination}
                     onChange={(e) => setDestination(e.target.value)}
-                    className="flex-1 text-sm bg-white border-2 border-gray-200 text-gray-800 px-3 py-3 rounded-xl focus:border-orange-300 focus:ring-2 focus:ring-orange-200/50 focus:outline-none transition-all duration-200 placeholder-gray-400"
+                    className="flex-1 text-sm bg-white border-2 border-gray-200 text-gray-800 px-3 py-3 rounded-xl focus:border-orange-300 focus:ring-2 focus:ring-orange-200/50 focus:outline-none placeholder-gray-400"
                     placeholder="Where would you like to go?"
                   />
                   <button
                     type="button"
                     onClick={() => setShowEndMapPicker(true)}
-                    className="border-2 border-gray-200 text-gray-700 rounded-xl hover:bg-gray-50 hover:border-gray-300 transition-colors flex items-center justify-center gap-1 text-xs font-medium px-3"
+                    className="border-2 border-gray-200 text-gray-700 rounded-xl hover:bg-gray-50 hover:border-gray-300 flex items-center justify-center gap-1 text-xs font-medium px-3"
                   >
                     <svg
                       className="w-3 h-3"
@@ -850,7 +827,7 @@ const Plan = ({ isEmbedded = false }) => {
                           duration === option.toLowerCase().replace(" ", "-")
                             ? "bg-gradient-to-r from-[#F4A261] to-[#E76F51] text-white border-2 border-orange-300"
                             : "bg-white border-2 border-gray-200 hover:border-orange-300 hover:bg-orange-50 text-gray-700"
-                        } transition-all duration-200 text-sm font-medium`}
+                        } text-sm font-medium`}
                       >
                         {option}
                       </button>
@@ -885,7 +862,6 @@ const Plan = ({ isEmbedded = false }) => {
                     "Picnic",
                     "Photography",
                     "Foodie Trip",
-                    "Bird Watching",
                     "City Tour",
                   ].map((option) => (
                     <button
@@ -899,7 +875,7 @@ const Plan = ({ isEmbedded = false }) => {
                         activityType === option.toLowerCase().replace(" ", "-")
                           ? "bg-gradient-to-r from-[#F4A261] to-[#E76F51] text-white border-orange-300"
                           : "bg-white border-gray-200 hover:border-orange-300 hover:bg-orange-50 text-gray-700"
-                      } transition-all duration-200 text-xs font-medium flex items-center justify-center text-center`}
+                      } text-xs font-medium flex items-center justify-center text-center`}
                     >
                       {option}
                     </button>
@@ -920,7 +896,7 @@ const Plan = ({ isEmbedded = false }) => {
                         activityType === "custom"
                           ? "bg-gradient-to-r from-[#F4A261] to-[#E76F51] text-white shadow-sm border-orange-300"
                           : "bg-white border-gray-200 hover:bg-orange-50 text-gray-700"
-                      } transition-colors duration-200 text-xs font-medium flex items-center justify-center`}
+                      } text-xs font-medium flex items-center justify-center`}
                     >
                       Custom...
                     </button>
@@ -971,7 +947,7 @@ const Plan = ({ isEmbedded = false }) => {
                       !isCustomDate
                         ? "bg-gradient-to-r from-[#F4A261] to-[#E76F51] text-white border-orange-300"
                         : "bg-white border-gray-200 hover:border-orange-300 hover:bg-orange-50 text-gray-700"
-                    } transition-all duration-200 text-sm font-medium flex items-center justify-center`}
+                    } text-sm font-medium flex items-center justify-center`}
                   >
                     🏃‍♂️ Let's go now!
                   </button>
@@ -982,7 +958,7 @@ const Plan = ({ isEmbedded = false }) => {
                       isCustomDate
                         ? "bg-gradient-to-r from-[#F4A261] to-[#E76F51] text-white border-orange-300"
                         : "bg-white border-gray-200 hover:border-orange-300 hover:bg-orange-50 text-gray-700"
-                    } transition-all duration-200 text-sm font-medium flex items-center justify-center gap-2`}
+                    } text-sm font-medium flex items-center justify-center gap-2`}
                   >
                     <svg
                       className="w-4 h-4"
@@ -1046,7 +1022,7 @@ const Plan = ({ isEmbedded = false }) => {
                   !location.trim() ||
                   (quotaInfo && quotaInfo.adventures_remaining === 0)
                 }
-                className="w-full bg-gradient-to-r from-[#F4A261] to-[#E76F51] text-white font-bold text-lg hover:from-[#E76F51] hover:to-[#D84B40] transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-3 border-0 px-8 py-4 rounded-xl mt-6 shadow-lg hover:shadow-xl hover:brightness-110"
+                className="w-full bg-gradient-to-r from-[#F4A261] to-[#E76F51] text-white font-bold text-lg hover:from-[#E76F51] hover:to-[#D84B40] disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-3 border-0 px-8 py-4 rounded-xl mt-6 shadow-lg hover:shadow-xl hover:brightness-110"
               >
                 {loading ? (
                   <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
@@ -1114,7 +1090,6 @@ const Plan = ({ isEmbedded = false }) => {
           </div>
         </PlanContainer>
       </PlanFormContainer>
-
       {/* Map Picker Modals */}
       <MapPicker
         isOpen={showStartMapPicker}
