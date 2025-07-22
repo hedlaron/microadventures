@@ -15,8 +15,7 @@ runs:
       run: |
         if ! command -v trivy >/dev/null 2>&1; then
           echo "[INFO] Installing Trivy..."
-          wget -qO- https://github.com/aquasecurity/trivy/releases/latest/download/trivy_$(uname -s)_$(uname -m).tar.gz | tar zxvf - -C /tmp
-          sudo mv /tmp/trivy /usr/local/bin/
+          curl -sfL https://raw.githubusercontent.com/aquasecurity/trivy/main/contrib/install.sh | sh -s -- -b /usr/local/bin
         fi
     - name: Install TruffleHog
       shell: bash
@@ -59,17 +58,19 @@ runs:
       id: trufflehog_pr
       shell: bash
       run: |
-        trufflehog --debug --base "${{ github.event.pull_request.base.sha }}" --head "${{ github.event.pull_request.head.sha }}" ./ > trufflehog-scan.txt 2>&1 || true
+        trufflehog --debug --base "${{ github.event.pull_request.base.sha }}" --head "${{ github.event.pull_request.head.sha }}" ./ > trufflehog-scan.txt 2>&1 || touch trufflehog-scan.txt
     - name: TruffleHog OSS (Push)
       if: github.event_name != 'pull_request'
       id: trufflehog_push
       shell: bash
       run: |
-        trufflehog --debug ./ > trufflehog-scan.txt 2>&1 || true
+        trufflehog --debug ./ > trufflehog-scan.txt 2>&1 || touch trufflehog-scan.txt
     - name: Scan Results Status
       if: always()
       shell: bash
       run: |
+        # Ensure file exists to avoid grep error
+        touch trufflehog-scan.txt
         if grep -q 'Reason: Found' trufflehog-scan.txt; then
           echo "[ERROR] TruffleHog found secrets!" >> $GITHUB_WORKSPACE/test-summary.txt
           exit 1
