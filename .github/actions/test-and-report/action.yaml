@@ -10,26 +10,38 @@ inputs:
 runs:
   using: 'composite'
   steps:
-    - name: TruffleHog OSS
+    - name: Set TruffleHog Args
+      id: trufflehog-args
+      shell: bash
+      run: |
+        # Set ignore patterns
+        IGNORE_ARGS="--exclude-paths .env --exclude-paths .env.* --exclude-paths node_modules/ --exclude-paths dist/ --exclude-paths build/ --exclude-paths .venv/ --exclude-paths venv/ --exclude-paths .git/ --exclude-paths .github/workflows/ --exclude-paths .github/actions/test-and-report/action.yaml --debug"
+        # Detect event type
+        if [[ "${{ github.event_name }}" == "pull_request" ]]; then
+          echo "mode=pr" >> $GITHUB_OUTPUT
+          echo "extra_args=\"$IGNORE_ARGS\"" >> $GITHUB_OUTPUT
+        else
+          echo "mode=push" >> $GITHUB_OUTPUT
+          echo "extra_args=\"$IGNORE_ARGS\"" >> $GITHUB_OUTPUT
+        fi
+    - name: TruffleHog OSS (PR)
+      if: github.event_name == 'pull_request'
       id: trufflehog
       uses: trufflesecurity/trufflehog@main
       continue-on-error: true
       with:
         path: ./
-        base: "${{ github.event.repository.default_branch }}"
-        head: HEAD
-        extra_args: >-
-          --exclude-paths .env \
-          --exclude-paths .env.* \
-          --exclude-paths node_modules/ \
-          --exclude-paths dist/ \
-          --exclude-paths build/ \
-          --exclude-paths .venv/ \
-          --exclude-paths venv/ \
-          --exclude-paths .git/ \
-          --exclude-paths .github/workflows/ \
-          --exclude-paths .github/actions/test-and-report/action.yaml \
-          --debug
+        base: "${{ github.event.pull_request.base.sha }}"
+        head: "${{ github.event.pull_request.head.sha }}"
+        extra_args: ${{ steps.trufflehog-args.outputs.extra_args }}
+    - name: TruffleHog OSS (Push)
+      if: github.event_name != 'pull_request'
+      id: trufflehog
+      uses: trufflesecurity/trufflehog@main
+      continue-on-error: true
+      with:
+        path: ./
+        extra_args: ${{ steps.trufflehog-args.outputs.extra_args }}
     - name: Scan Results Status
       if: steps.trufflehog.outcome == 'failure'
       shell: bash
