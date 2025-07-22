@@ -28,14 +28,14 @@ runs:
       if: github.event_name == 'pull_request'
       shell: bash
       run: |
-        BASE="${{ github.event.pull_request.base.sha }}"
-        HEAD="${{ github.event.pull_request.head.sha }}"
-        if [ -z "$BASE" ] || [ -z "$HEAD" ]; then
-          echo "BASE or HEAD commit is missing, skipping TruffleHog."
+        base_commit="${{ github.event.pull_request.base.sha }}"
+        head_commit="${{ github.event.pull_request.head.sha }}"
+        if [ -z "$base_commit" ] || [ -z "$head_commit" ]; then
+          echo "[WARNING] BASE or HEAD commit is missing. Skipping TruffleHog scan."
           exit 0
         fi
-        if [ "$BASE" = "$HEAD" ]; then
-          echo "BASE and HEAD are the same, nothing to scan. Skipping TruffleHog."
+        if [ "$base_commit" == "$head_commit" ]; then
+          echo "[WARNING] BASE and HEAD are the same. Skipping TruffleHog scan."
           exit 0
         fi
     - name: TruffleHog OSS (PR)

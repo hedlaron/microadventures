@@ -23,6 +23,9 @@ COPY . .
 # Test stage for CI/CD
 FROM base AS test
 
+RUN npm audit fix
+RUN npm update
+
 # Run tests and linting
 ARG RUN_TESTS=false
 RUN if [ "$RUN_TESTS" = "true" ]; then \
@@ -44,7 +47,7 @@ RUN npm run build
 
 # Production stage with nginx
 
-FROM nginxinc/nginx-unprivileged:1.25-alpine
+FROM nginxinc/nginx-unprivileged:1.29-alpine
 
 # Upgrade all system packages to fix vulnerabilities
 RUN apk update && apk upgrade
