@@ -1,0 +1,11 @@
+# Ignore .env files and common dependency/build folders
+.env
+.env.*
+node_modules/
+dist/
+build/
+.venv/
+venv/
+.git/
+.github/workflows/
+.github/actions/test-and-report/action.yaml

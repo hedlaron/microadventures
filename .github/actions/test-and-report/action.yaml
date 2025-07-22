@@ -10,6 +10,47 @@ inputs:
 runs:
   using: 'composite'
   steps:
+
+
+    - name: Trufflehog secret scan
+      shell: bash
+      run: |
+        echo '::group::Running trufflehog scan'
+        trufflehog filesystem --no-update --fail .
+        echo '::endgroup::'
+
+    - name: Trivy image security scan
+      shell: bash
+      run: |
+        echo '::group::Running Trivy image scan'
+        if [[ "${{ inputs.component }}" == "backend" ]]; then
+          IMAGE="hedlaron/microadventures-backend:${{ inputs.image_tag }}-test"
+        else
+          IMAGE="hedlaron/microadventures-frontend:${{ inputs.image_tag }}-test"
+        fi
+        trivy image --no-progress --format table "$IMAGE" | tee trivy-image-scan.txt
+        echo '## 🛡️ Container Image Security Scan' >> $GITHUB_STEP_SUMMARY
+        echo '```' >> $GITHUB_STEP_SUMMARY
+        cat trivy-image-scan.txt >> $GITHUB_STEP_SUMMARY
+        echo '```' >> $GITHUB_STEP_SUMMARY
+        echo '::endgroup::'
+
+    - name: Security scan image with Trivy
+      shell: bash
+      run: |
+        echo "::group::Running Trivy image scan"
+        if [[ "${{ inputs.component }}" == "backend" ]]; then
+          IMAGE="hedlaron/microadventures-backend:${{ inputs.image_tag }}-test"
+        else
+          IMAGE="hedlaron/microadventures-frontend:${{ inputs.image_tag }}-test"
+        fi
+        trivy image --no-progress --format table "$IMAGE" | tee trivy-image-scan.txt
+        echo '## 🛡️ Container Image Security Scan' >> $GITHUB_STEP_SUMMARY
+        echo '```' >> $GITHUB_STEP_SUMMARY
+        cat trivy-image-scan.txt >> $GITHUB_STEP_SUMMARY
+        echo '```' >> $GITHUB_STEP_SUMMARY
+        echo "::endgroup::"
+
     - name: Run tests and summarize
       shell: bash
       run: |
