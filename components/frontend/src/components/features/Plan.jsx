@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback, useRef } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { useAuth } from "../../contexts/AuthContext";
 import { createAdventure, fetchAdventureQuota } from "../../utils/api";
 import AdventurousBackground from "./AdventurousBackground";
@@ -569,7 +569,6 @@ const Plan = () => {
         </LoadingOverlay>
       )}
       <PlanFormContainer
-        ref={formContainerRef}
         style={{
           filter: loading ? "blur(8px)" : "none",
           opacity: loading ? 0.3 : 1,
