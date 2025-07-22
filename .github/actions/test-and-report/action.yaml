@@ -13,7 +13,8 @@ runs:
     - name: Trufflehog secret scan
       uses: trufflesecurity/trufflehog@main
       with:
-        scanArguments: "filesystem --no-update --fail --exclude-path .trufflehogignore ."
+        path: .
+        extra_args: --no-update --fail --exclude-path .trufflehogignore
     - name: Trivy image security scan
       uses: aquasecurity/trivy-action@master
       with:
