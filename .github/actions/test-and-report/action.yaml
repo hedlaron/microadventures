@@ -41,33 +41,28 @@ runs:
     - name: TruffleHog OSS (PR)
       if: github.event_name == 'pull_request' && github.event.pull_request.base.sha != github.event.pull_request.head.sha
       id: trufflehog_pr
-      uses: trufflesecurity/trufflehog@main
-      continue-on-error: true
-      with:
-        path: ./
-        base: "${{ github.event.pull_request.base.sha }}"
-        head: "${{ github.event.pull_request.head.sha }}"
-        extra_args: ${{ steps.trufflehog-args.outputs.extra_args }}
+      shell: bash
+      run: |
+        trufflehog --debug --base "${{ github.event.pull_request.base.sha }}" --head "${{ github.event.pull_request.head.sha }}" ./ > trufflehog-scan.txt 2>&1 || true
     - name: TruffleHog OSS (Push)
       if: github.event_name != 'pull_request'
       id: trufflehog_push
-      uses: trufflesecurity/trufflehog@main
-      continue-on-error: true
-      with:
-        path: ./
-        extra_args: ${{ steps.trufflehog-args.outputs.extra_args }}
-    - name: Scan Results Status
-      if: (steps.trufflehog_pr.outcome == 'failure') || (steps.trufflehog_push.outcome == 'failure')
       shell: bash
-      run: exit 1
+      run: |
+        trufflehog --debug ./ > trufflehog-scan.txt 2>&1 || true
+    - name: Scan Results Status
+      if: always()
+      shell: bash
+      run: |
+        if grep -q 'Reason: Found' trufflehog-scan.txt; then
+          echo "[ERROR] TruffleHog found secrets!" >> $GITHUB_WORKSPACE/test-summary.txt
+          exit 1
+        fi
     - name: Trivy image security scan
-      uses: aquasecurity/trivy-action@master
-      with:
-        image-ref: ${{ inputs.component == 'backend' && format('hedlaron/microadventures-backend:{0}-test', inputs.image_tag) || format('hedlaron/microadventures-frontend:{0}-test', inputs.image_tag) }}
-        format: 'table'
-        exit-code: '0'
-        severity: 'HIGH,CRITICAL'
-        ignore-unfixed: true
+      shell: bash
+      run: |
+        IMAGE_REF="${{ inputs.component == 'backend' && format('hedlaron/microadventures-backend:{0}-test', inputs.image_tag) || format('hedlaron/microadventures-frontend:{0}-test', inputs.image_tag) }}"
+        trivy image --format table --exit-code 0 --severity HIGH,CRITICAL --ignore-unfixed "$IMAGE_REF" > trivy-image-scan.txt 2>&1 || true
     - name: Run tests and summarize
       shell: bash
       run: |
@@ -76,6 +71,20 @@ runs:
         IMAGE_TAG="${{ inputs.image_tag }}"
         echo "[DEBUG] COMPONENT: $COMPONENT"
         echo "[DEBUG] IMAGE_TAG: $IMAGE_TAG"
+        # Append TruffleHog scan results
+        if [ -f trufflehog-scan.txt ]; then
+          echo '## 🔑 TruffleHog Secret Scan' >> $GITHUB_WORKSPACE/test-summary.txt
+          echo '```' >> $GITHUB_WORKSPACE/test-summary.txt
+          cat trufflehog-scan.txt >> $GITHUB_WORKSPACE/test-summary.txt
+          echo '```' >> $GITHUB_WORKSPACE/test-summary.txt
+        fi
+        # Append Trivy scan results
+        if [ -f trivy-image-scan.txt ]; then
+          echo '## 🛡️ Trivy Image Security Scan' >> $GITHUB_WORKSPACE/test-summary.txt
+          echo '```' >> $GITHUB_WORKSPACE/test-summary.txt
+          cat trivy-image-scan.txt >> $GITHUB_WORKSPACE/test-summary.txt
+          echo '```' >> $GITHUB_WORKSPACE/test-summary.txt
+        fi
         if [[ "$COMPONENT" == "backend" ]]; then
           echo "✅ Backend Docker build completed successfully" >> $GITHUB_WORKSPACE/test-summary.txt
           echo "## 🧪 Backend Test Results" >> $GITHUB_WORKSPACE/test-summary.txt

@@ -19,5 +19,12 @@ export default defineConfig({
         minThreads: 1,
       },
     },
+    coverage: {
+      provider: "v8",
+      reportsDirectory: "coverage",
+      reporter: ["text", "json", "html"],
+      // Always output summary as JSON for CI summary step
+      // (coverage/coverage-summary.json)
+    },
   },
 });
