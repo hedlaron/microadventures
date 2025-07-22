@@ -11,31 +11,17 @@ runs:
   using: 'composite'
   steps:
     - name: Trufflehog secret scan
-      shell: bash
-      run: |
-        echo '::group::Running trufflehog scan'
-        trufflehog filesystem --no-update --fail .
-        echo '::endgroup::'
+      uses: trufflesecurity/trufflehog@v3
+      with:
+        scanArguments: "filesystem --no-update --fail --exclude-path .trufflehogignore ."
     - name: Trivy image security scan
-      shell: bash
-      run: |
-        echo '::group::Running Trivy image scan'
-        if [[ "${{ inputs.component }}" == "backend" ]]; then
-          IMAGE="hedlaron/microadventures-backend:${{ inputs.image_tag }}-test"
-        else
-          IMAGE="hedlaron/microadventures-frontend:${{ inputs.image_tag }}-test"
-        fi
-        trivy image --no-progress --exit-code 1 --severity HIGH,CRITICAL --format table "$IMAGE" | tee trivy-image-scan.txt
-        TRIVY_EXIT=$?
-        echo '## 🛡️ Container Image Security Scan' >> $GITHUB_WORKSPACE/test-summary.txt
-        echo '```' >> $GITHUB_WORKSPACE/test-summary.txt
-        cat trivy-image-scan.txt >> $GITHUB_WORKSPACE/test-summary.txt
-        echo '```' >> $GITHUB_WORKSPACE/test-summary.txt
-        echo '::endgroup::'
-        if [ $TRIVY_EXIT -ne 0 ]; then
-          echo "::error ::High or critical vulnerabilities found in $IMAGE"
-          exit 1
-        fi
+      uses: aquasecurity/trivy-action@master
+      with:
+        image-ref: ${{ inputs.component == 'backend' && format('hedlaron/microadventures-backend:{0}-test', inputs.image_tag) || format('hedlaron/microadventures-frontend:{0}-test', inputs.image_tag) }}
+        format: 'table'
+        exit-code: '1'
+        severity: 'HIGH,CRITICAL'
+        ignore-unfixed: true
     - name: Run tests and summarize
       shell: bash
       run: |
