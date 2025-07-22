@@ -87,7 +87,7 @@ runs:
           BACKEND_TEST_SUMMARY=$(echo "$BACKEND_TEST_OUTPUT" | grep -E '^=+ .+ in .+s =+$' | tail -1)
           # Extract coverage percent (e.g. 'TOTAL ... 95%')
           BACKEND_COV_LINE=$(echo "$BACKEND_TEST_OUTPUT" | grep -E '^TOTAL' | tail -1)
-          BACKEND_COV_PCT=$(echo "$BACKEND_COV_LINE" | awk '{print $NF}')
+          BACKEND_COV_PCT=$(echo "$BACKEND_COV_LINE" | grep -oE '[0-9]+\.?[0-9]*%')
           echo "**Backend Test Summary:** $BACKEND_TEST_SUMMARY" >> $GITHUB_WORKSPACE/test-summary.txt
           if [ -n "$BACKEND_COV_PCT" ]; then
             echo "**Backend Coverage:** $BACKEND_COV_PCT" >> $GITHUB_WORKSPACE/test-summary.txt
@@ -131,7 +131,7 @@ runs:
           # Extract test summary line (e.g. 'Test Files  3 passed | 0 failed')
           FRONTEND_TEST_SUMMARY=$(echo "$FRONTEND_TEST_OUTPUT" | grep -E 'Test Files|Tests:|Suites:|Snapshots:|Time:')
           # Extract coverage percent (e.g. 'Statements   : 95.00%')
-          FRONTEND_COV_PCT=$(echo "$FRONTEND_TEST_OUTPUT" | grep -E 'Statements\s*:' | awk -F: '{print $2}' | awk '{print $1}')
+          FRONTEND_COV_PCT=$(echo "$FRONTEND_TEST_OUTPUT" | grep -E 'Statements\s*:' | grep -oE '[0-9]+\.?[0-9]*%')
           echo "**Frontend Test Summary:**" >> $GITHUB_WORKSPACE/test-summary.txt
           echo '```' >> $GITHUB_WORKSPACE/test-summary.txt
           echo "$FRONTEND_TEST_SUMMARY" >> $GITHUB_WORKSPACE/test-summary.txt
