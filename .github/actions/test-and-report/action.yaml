@@ -14,9 +14,8 @@ runs:
       id: trufflehog-args
       shell: bash
       run: |
-        # Set ignore patterns
-        IGNORE_PATHS=".env,.env.*,node_modules/,dist/,build/,.venv/,venv/,.git/,.github/workflows/,.github/actions/test-and-report/action.yaml"
-        IGNORE_ARGS="--exclude-paths=$IGNORE_PATHS --debug"
+        # No ignore patterns
+        IGNORE_ARGS="--debug"
         # Detect event type
         if [[ "${{ github.event_name }}" == "pull_request" ]]; then
           echo "mode=pr" >> $GITHUB_OUTPUT
