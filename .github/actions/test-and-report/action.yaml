@@ -124,13 +124,14 @@ runs:
           echo "[DEBUG] Getting backend HTML coverage..."
           BACKEND_COV=$(docker run --rm hedlaron/microadventures-backend:${IMAGE_TAG}-test cat /app/htmlcov/index.html 2>/dev/null | grep -A 10 '<h2>Coverage summary' | head -n 12)
           if [ -z "$BACKEND_COV" ]; then
-            echo '<span style="color:orange;">⚠️ No backend coverage report found.</span>' >> $GITHUB_WORKSPACE/test-summary.txt
+            echo '<span style="color:orange;">⚠️ No backend HTML coverage report found. This is not fatal if coverage is shown above.</span>' >> $GITHUB_WORKSPACE/test-summary.txt
           else
             echo '```html' >> $GITHUB_WORKSPACE/test-summary.txt
             echo "$BACKEND_COV" >> $GITHUB_WORKSPACE/test-summary.txt
             echo '```' >> $GITHUB_WORKSPACE/test-summary.txt
           fi
         elif [[ "$COMPONENT" == "frontend" ]]; then
+          set +e
           echo "✅ Frontend Docker build completed successfully" >> $GITHUB_WORKSPACE/test-summary.txt
           echo "## 🎨 Frontend Test Results" >> $GITHUB_WORKSPACE/test-summary.txt
           echo '' >> $GITHUB_WORKSPACE/test-summary.txt
@@ -185,4 +186,5 @@ runs:
             echo "$FRONTEND_COV" >> $GITHUB_WORKSPACE/test-summary.txt
             echo '```' >> $GITHUB_WORKSPACE/test-summary.txt
           fi
+          set -e
         fi
