@@ -213,7 +213,7 @@ jobs:
           task update-production-image-tags NEW_TAG=${IMAGE_TAG}
 
       - name: Create Pull Request
-        uses: peter-evans/create-pull-request@v6
+        uses: peter-evans/create-pull-request@v7
         with:
           base: master
           token: ${{ secrets.MICROADVENTURES_GHA_PAT }}
