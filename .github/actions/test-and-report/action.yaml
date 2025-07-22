@@ -28,12 +28,17 @@ runs:
         else
           IMAGE="hedlaron/microadventures-frontend:${{ inputs.image_tag }}-test"
         fi
-        trivy image --no-progress --format table "$IMAGE" | tee trivy-image-scan.txt
+        trivy image --no-progress --exit-code 1 --severity HIGH,CRITICAL --format table "$IMAGE" | tee trivy-image-scan.txt
+        TRIVY_EXIT=$?
         echo '## 🛡️ Container Image Security Scan' >> $GITHUB_STEP_SUMMARY
         echo '```' >> $GITHUB_STEP_SUMMARY
         cat trivy-image-scan.txt >> $GITHUB_STEP_SUMMARY
         echo '```' >> $GITHUB_STEP_SUMMARY
         echo '::endgroup::'
+        if [ $TRIVY_EXIT -ne 0 ]; then
+          echo "::error ::High or critical vulnerabilities found in $IMAGE"
+          exit 1
+        fi
 
     - name: Security scan image with Trivy
       shell: bash
