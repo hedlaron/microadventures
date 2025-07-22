@@ -62,10 +62,10 @@ docs/
 
 # Testing
 .pytest_cache/
-.coverage
-htmlcov/
+# .coverage
+# htmlcov/
 .tox/
-coverage.xml
+# coverage.xml
 *.cover
 .hypothesis/
 

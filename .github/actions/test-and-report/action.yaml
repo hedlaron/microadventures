@@ -30,7 +30,7 @@ runs:
       shell: bash
       run: |
         # No ignore patterns
-        IGNORE_ARGS="--debug"
+        IGNORE_ARGS=""
         # Detect event type
         if [[ "${{ github.event_name }}" == "pull_request" ]]; then
           echo "mode=pr" >> $GITHUB_OUTPUT
@@ -58,13 +58,13 @@ runs:
       id: trufflehog_pr
       shell: bash
       run: |
-        trufflehog --debug --base "${{ github.event.pull_request.base.sha }}" --head "${{ github.event.pull_request.head.sha }}" ./ > trufflehog-scan.txt 2>&1 || touch trufflehog-scan.txt
+        trufflehog --base "${{ github.event.pull_request.base.sha }}" --head "${{ github.event.pull_request.head.sha }}" ./ > trufflehog-scan.txt 2>&1 || touch trufflehog-scan.txt
     - name: TruffleHog OSS (Push)
       if: github.event_name != 'pull_request'
       id: trufflehog_push
       shell: bash
       run: |
-        trufflehog --debug ./ > trufflehog-scan.txt 2>&1 || touch trufflehog-scan.txt
+        trufflehog ./ > trufflehog-scan.txt 2>&1 || touch trufflehog-scan.txt
     - name: Scan Results Status
       if: always()
       shell: bash
@@ -79,7 +79,16 @@ runs:
       shell: bash
       run: |
         IMAGE_REF="${{ inputs.component == 'backend' && format('hedlaron/microadventures-backend:{0}-test', inputs.image_tag) || format('hedlaron/microadventures-frontend:{0}-test', inputs.image_tag) }}"
-        trivy image --format table --exit-code 0 --severity HIGH,CRITICAL --ignore-unfixed "$IMAGE_REF" > trivy-image-scan.txt 2>&1 || true
+        trivy image --format json --exit-code 0 --severity HIGH,CRITICAL --ignore-unfixed "$IMAGE_REF" > trivy-image-scan-raw.json 2>&1 || true
+        # Only print the list of findings (vulnerabilities)
+        if command -v jq >/dev/null 2>&1; then
+          jq -r '
+            .Results[]? | select(.Vulnerabilities) | "\nImage: "+.Target+"\n" + (.Vulnerabilities[] | "- ["+.Severity+"] "+.VulnerabilityID+" ("+.PkgName+") - "+.Title)
+          ' trivy-image-scan-raw.json > trivy-image-scan.txt || echo "No findings or jq error" > trivy-image-scan.txt
+        else
+          echo "[WARNING] jq not found, printing raw JSON output." > trivy-image-scan.txt
+          cat trivy-image-scan-raw.json >> trivy-image-scan.txt
+        fi
     - name: Run tests and summarize
       shell: bash
       run: |
