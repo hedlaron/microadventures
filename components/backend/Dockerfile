@@ -4,6 +4,9 @@ COPY --from=ghcr.io/astral-sh/uv:latest /uv /usr/bin/uv
 # Build argument for version
 ARG APP_VERSION=dev-local
 
+
+# Upgrade all system packages to fix vulnerabilities
+RUN apk update && apk upgrade
 # Install system dependencies for building Python packages
 RUN apk add --no-cache gcc musl-dev linux-headers python3-dev
 
