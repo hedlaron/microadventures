@@ -149,9 +149,9 @@ jobs:
               .
           fi
 
-          # Run test and coverage summary script
-          chmod +x .github/scripts/test-and-report.sh
-          bash .github/scripts/test-and-report.sh "$COMPONENT" "$IMAGE_TAG"
+          # Run test and coverage summary composite action
+          echo "component=$COMPONENT" >> $GITHUB_ENV
+          echo "image_tag=$IMAGE_TAG" >> $GITHUB_ENV
 
       - name: Post test summary
         if: always()
