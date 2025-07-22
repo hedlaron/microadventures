@@ -98,6 +98,14 @@ Throughout the development of this project, I have intensively used the followin
 
 To get started with this project, please refer to the [Initial Setup README](initial-setup/README.md).
 
+## 📬 Contact
+
+Feel free to reach out to me on [LinkedIn](https://www.linkedin.com/in/hedlaron/).
+
+## 🙏 Acknowledgments
+
+- **Sid from DevOps Directive** ([sidpalas](https://github.com/sidpalas/)) for excellent DevOps and Kubernetes tutorials.
+
 ## 📄 License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
