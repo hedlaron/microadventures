@@ -70,6 +70,14 @@ runs:
         ignore-unfixed: true
     - name: Run tests and summarize
       shell: bash
+      env:
+        JWT_SECRET_KEY: ${{ secrets.JWT_SECRET_KEY }}
+        POSTGRESQL_USERNAME: ${{ secrets.POSTGRESQL_USERNAME }}
+        POSTGRESQL_PASSWORD: ${{ secrets.POSTGRESQL_PASSWORD }}
+        POSTGRESQL_SERVER: ${{ secrets.POSTGRESQL_SERVER }}
+        POSTGRESQL_PORT: ${{ secrets.POSTGRESQL_PORT }}
+        POSTGRESQL_DATABASE: ${{ secrets.POSTGRESQL_DATABASE }}
+        OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
       run: |
         set -x
         COMPONENT="${{ inputs.component }}"
@@ -81,7 +89,16 @@ runs:
           echo "## 🧪 Backend Test Results" >> $GITHUB_WORKSPACE/test-summary.txt
           echo '' >> $GITHUB_WORKSPACE/test-summary.txt
           echo "[DEBUG] Running backend tests..."
-          BACKEND_TEST_OUTPUT=$(docker run --rm hedlaron/microadventures-backend:${IMAGE_TAG}-test uv run pytest --cov=. --cov-report=term-missing --maxfail=1 --tb=short 2>&1)
+          BACKEND_TEST_OUTPUT=$(docker run --rm \
+            -e JWT_SECRET_KEY="$JWT_SECRET_KEY" \
+            -e POSTGRESQL_USERNAME="$POSTGRESQL_USERNAME" \
+            -e POSTGRESQL_PASSWORD="$POSTGRESQL_PASSWORD" \
+            -e POSTGRESQL_SERVER="$POSTGRESQL_SERVER" \
+            -e POSTGRESQL_PORT="$POSTGRESQL_PORT" \
+            -e POSTGRESQL_DATABASE="$POSTGRESQL_DATABASE" \
+            -e OPENAI_API_KEY="$OPENAI_API_KEY" \
+            hedlaron/microadventures-backend:${IMAGE_TAG}-test \
+            uv run pytest --cov=. --cov-report=term-missing --maxfail=1 --tb=short 2>&1)
           echo "[DEBUG] Backend test output captured."
           # Extract test summary line (e.g. '=== 12 passed, 1 warning in 0.12s ===')
           BACKEND_TEST_SUMMARY=$(echo "$BACKEND_TEST_OUTPUT" | grep -E '^=+ .+ in .+s =+$' | tail -1)
@@ -132,12 +149,18 @@ runs:
           FRONTEND_TEST_SUMMARY=$(echo "$FRONTEND_TEST_OUTPUT" | grep -E 'Test Files|Tests:|Suites:|Snapshots:|Time:')
           # Extract coverage percent (e.g. 'Statements   : 95.00%')
           FRONTEND_COV_PCT=$(echo "$FRONTEND_TEST_OUTPUT" | grep -E 'Statements\s*:' | grep -oE '[0-9]+\.?[0-9]*%')
+          if [ -z "$FRONTEND_COV_PCT" ]; then
+            # Try to extract from summary table if not found in Statements line
+            FRONTEND_COV_PCT=$(echo "$FRONTEND_TEST_OUTPUT" | grep -Eo '[0-9]+\.[0-9]+%' | head -1)
+          fi
           echo "**Frontend Test Summary:**" >> $GITHUB_WORKSPACE/test-summary.txt
           echo '```' >> $GITHUB_WORKSPACE/test-summary.txt
           echo "$FRONTEND_TEST_SUMMARY" >> $GITHUB_WORKSPACE/test-summary.txt
           echo '```' >> $GITHUB_WORKSPACE/test-summary.txt
           if [ -n "$FRONTEND_COV_PCT" ]; then
             echo "**Frontend Coverage:** $FRONTEND_COV_PCT" >> $GITHUB_WORKSPACE/test-summary.txt
+          else
+            echo '<span style="color:orange;">⚠️ No frontend coverage percent found in test output.</span>' >> $GITHUB_WORKSPACE/test-summary.txt
           fi
           if echo "$FRONTEND_TEST_OUTPUT" | grep -q 'FAIL'; then
             echo '[DEBUG] Frontend test failure detected.'
