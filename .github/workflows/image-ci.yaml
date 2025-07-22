@@ -135,10 +135,17 @@ jobs:
               --load \
               .
 
+
             echo "✅ Backend Docker build completed successfully"
             echo "## 🧪 Backend Test Results" >> $GITHUB_STEP_SUMMARY
+            echo '```' >> $GITHUB_STEP_SUMMARY
+            docker run --rm hedlaron/microadventures-backend:${IMAGE_TAG}-test uv run pytest --cov=. --cov-report=term-missing --maxfail=1 --tb=short >> $GITHUB_STEP_SUMMARY 2>&1 || true
+            echo '```' >> $GITHUB_STEP_SUMMARY
             echo "" >> $GITHUB_STEP_SUMMARY
-            echo "Tests completed successfully" >> $GITHUB_STEP_SUMMARY
+            echo "### Backend Coverage Summary" >> $GITHUB_STEP_SUMMARY
+            echo '```' >> $GITHUB_STEP_SUMMARY
+            docker run --rm hedlaron/microadventures-backend:${IMAGE_TAG}-test cat /app/htmlcov/index.html | grep -A 10 '<h2>Coverage summary' | head -n 12 >> $GITHUB_STEP_SUMMARY || echo "(Coverage HTML not found)" >> $GITHUB_STEP_SUMMARY
+            echo '```' >> $GITHUB_STEP_SUMMARY
 
           elif [[ "${{ matrix.path }}" == "components/frontend" ]]; then
             echo "Building and testing frontend in container..."
@@ -157,8 +164,14 @@ jobs:
 
             echo "✅ Frontend Docker build completed successfully"
             echo "## 🎨 Frontend Test Results" >> $GITHUB_STEP_SUMMARY
+            echo '```' >> $GITHUB_STEP_SUMMARY
+            docker run --rm hedlaron/microadventures-frontend:${IMAGE_TAG}-test npm run test:coverage >> $GITHUB_STEP_SUMMARY 2>&1 || true
+            echo '```' >> $GITHUB_STEP_SUMMARY
             echo "" >> $GITHUB_STEP_SUMMARY
-            echo "Tests completed successfully" >> $GITHUB_STEP_SUMMARY
+            echo "### Frontend Coverage Summary" >> $GITHUB_STEP_SUMMARY
+            echo '```' >> $GITHUB_STEP_SUMMARY
+            docker run --rm hedlaron/microadventures-frontend:${IMAGE_TAG}-test cat /usr/src/app/coverage/coverage-summary.json >> $GITHUB_STEP_SUMMARY || echo "(Coverage summary not found)" >> $GITHUB_STEP_SUMMARY
+            echo '```' >> $GITHUB_STEP_SUMMARY
           fi
 
       - name: Post test summary
