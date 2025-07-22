@@ -35,7 +35,7 @@ runs:
           exit 0
         fi
         if [ "$base_commit" == "$head_commit" ]; then
-          echo "[WARNING] BASE and HEAD are the same. Skipping TruffleHog scan."
+          echo "[WARNING] BASE and HEAD are identical. No new commits to scan. Skipping TruffleHog scan."
           exit 0
         fi
     - name: TruffleHog OSS (PR)
