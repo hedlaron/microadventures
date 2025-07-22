@@ -11,7 +11,7 @@ runs:
   using: 'composite'
   steps:
     - name: Trufflehog secret scan
-      uses: trufflesecurity/trufflehog@v4
+      uses: trufflesecurity/trufflehog@main
       with:
         scanArguments: "filesystem --no-update --fail --exclude-path .trufflehogignore ."
     - name: Trivy image security scan
