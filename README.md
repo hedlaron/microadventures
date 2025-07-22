@@ -5,6 +5,15 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![GitHub stars](https://img.shields.io/github/stars/hedlaron/microadventures)](https://github.com/hedlaron/microadventures/stargazers)
 
+## ☁️ Production Environment
+
+The application is live at [**microadventures.aronhedl.com**](https://microadventures.aronhedl.com). Feel free to try it out!
+
+In production, **Cloudflare** is used as a reverse proxy, CDN, and for DNS management. This provides:
+- **Performance**: Caching static assets closer to users, reducing latency.
+- **Security**: Protection against DDoS attacks and other malicious traffic.
+- **SSL/TLS**: Free and automated SSL/TLS certificates.
+
 ## ✨ Features
 
 - 🤖 **AI-Powered Planning**: Generate personalized adventure recommendations using OpenAI, Anthropic Sonnet 4, GPT-4.1, and Gemini 2.5.
@@ -54,6 +63,7 @@ This project uses a modern, robust, and high-performance technology stack to sol
 - **GitHub Actions**: For continuous integration and continuous deployment (CI/CD).
 - **Trivy**: For vulnerability scanning of container images.
 - **OpenTelemetry**: For observability and monitoring.
+- **Cloudflare**: For DNS, CDN, and security.
 
 ## 🧑‍💻 Development Lifecycle
 
@@ -75,8 +85,8 @@ This project was developed with a strong emphasis on modern software development
 - **ESLint** and **Prettier**: For linting and formatting JavaScript/React code.
 
 ### CI/CD
-- **GitHub Actions**: Workflows in `.github/workflows` automate the testing, building, and deployment of the application.
-- **Kluctl**: Used for deploying to Kubernetes in a GitOps fashion. The desired state of the cluster is defined in the `k8s` directory and `kluctl` ensures the cluster matches that state.
+- **GitHub Actions**: Chosen for its tight integration with GitHub, making it easy to set up automated workflows. It's used to run tests on every push and pull request, build and push Docker images, and trigger deployments.
+- **Kluctl**: Chosen for its GitOps capabilities. It allows for the desired state of the Kubernetes cluster to be defined declaratively in Git. The CI/CD pipeline uses Kluctl to apply these configurations, ensuring that the cluster always matches the state defined in the repository. This provides a single source of truth and a clear audit trail for all changes.
 
 ### AI-Assisted Development
 Throughout the development of this project, I have intensively used the following AI models to assist with coding, debugging, and documentation:
