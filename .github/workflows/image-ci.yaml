@@ -150,7 +150,7 @@ jobs:
           fi
 
           # Run test and coverage summary script
-          bash scripts/ci/test-and-report.sh "$COMPONENT" "$IMAGE_TAG"
+          bash .github/scripts/test-and-report.sh "$COMPONENT" "$IMAGE_TAG"
 
       - name: Post test summary
         if: always()

@@ -1,12 +1,9 @@
 #!/bin/bash
-# scripts/ci/test-and-report.sh
+# .github/scripts/test-and-report.sh
 # This script runs tests and generates a summary for GitHub Actions
-
 set -e
-
 COMPONENT="$1"
 IMAGE_TAG="$2"
-
 if [[ "$COMPONENT" == "backend" ]]; then
   echo "✅ Backend Docker build completed successfully"
   echo "## 🧪 Backend Test Results" >> $GITHUB_STEP_SUMMARY
