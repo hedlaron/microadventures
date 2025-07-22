@@ -10,12 +10,15 @@ inputs:
 runs:
   using: 'composite'
   steps:
-    - name: Trufflehog secret scan
+    - name: TruffleHog OSS
+      id: trufflehog
       uses: trufflesecurity/trufflehog@main
+      continue-on-error: true
       with:
-        path: .
+        path: ./
+        base: "${{ github.event.repository.default_branch }}"
+        head: HEAD
         extra_args: >-
-          filesystem --no-update --fail \
           --exclude-paths .env \
           --exclude-paths .env.* \
           --exclude-paths node_modules/ \
@@ -26,7 +29,10 @@ runs:
           --exclude-paths .git/ \
           --exclude-paths .github/workflows/ \
           --exclude-paths .github/actions/test-and-report/action.yaml \
-          .
+          --debug
+    - name: Scan Results Status
+      if: steps.trufflehog.outcome == 'failure'
+      run: exit 1
     - name: Trivy image security scan
       uses: aquasecurity/trivy-action@master
       with:
