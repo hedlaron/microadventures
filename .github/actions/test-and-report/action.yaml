@@ -14,7 +14,19 @@ runs:
       uses: trufflesecurity/trufflehog@main
       with:
         path: .
-        extra_args: --results=verified,unknown
+        extra_args: >-
+          filesystem --no-update --fail \
+          --exclude-paths .env \
+          --exclude-paths .env.* \
+          --exclude-paths node_modules/ \
+          --exclude-paths dist/ \
+          --exclude-paths build/ \
+          --exclude-paths .venv/ \
+          --exclude-paths venv/ \
+          --exclude-paths .git/ \
+          --exclude-paths .github/workflows/ \
+          --exclude-paths .github/actions/test-and-report/action.yaml \
+          .
     - name: Trivy image security scan
       uses: aquasecurity/trivy-action@master
       with:
