@@ -19,10 +19,10 @@ runs:
         # Detect event type
         if [[ "${{ github.event_name }}" == "pull_request" ]]; then
           echo "mode=pr" >> $GITHUB_OUTPUT
-          echo "extra_args=\"$IGNORE_ARGS\"" >> $GITHUB_OUTPUT
+          echo "extra_args=$IGNORE_ARGS" >> $GITHUB_OUTPUT
         else
           echo "mode=push" >> $GITHUB_OUTPUT
-          echo "extra_args=\"$IGNORE_ARGS\"" >> $GITHUB_OUTPUT
+          echo "extra_args=$IGNORE_ARGS" >> $GITHUB_OUTPUT
         fi
     - name: TruffleHog OSS (PR)
       if: github.event_name == 'pull_request'
