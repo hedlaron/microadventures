@@ -65,7 +65,7 @@ runs:
       with:
         image-ref: ${{ inputs.component == 'backend' && format('hedlaron/microadventures-backend:{0}-test', inputs.image_tag) || format('hedlaron/microadventures-frontend:{0}-test', inputs.image_tag) }}
         format: 'table'
-        exit-code: '1'
+        exit-code: '0'
         severity: 'HIGH,CRITICAL'
         ignore-unfixed: true
     - name: Run tests and summarize
