@@ -6,6 +6,8 @@ FROM node:20 AS base
 # Build argument for version
 ARG APP_VERSION=dev-local
 
+RUN apk update && apk upgrade
+
 # Set working directory
 WORKDIR /usr/src/app
 
