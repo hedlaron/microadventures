@@ -193,6 +193,30 @@ const LoadingAnimation = styled.div`
     background: linear-gradient(135deg, #f4a261, #e76f51);
     border-radius: 50%;
     box-shadow: 0 2px 8px rgba(244, 162, 97, 0.3);
+    opacity: 0.5;
+    animation: dot-bounce 1.2s infinite;
+  }
+  .dot:nth-child(1) {
+    animation-delay: 0s;
+  }
+  .dot:nth-child(2) {
+    animation-delay: 0.2s;
+  }
+  .dot:nth-child(3) {
+    animation-delay: 0.4s;
+  }
+
+  @keyframes dot-bounce {
+    0%,
+    80%,
+    100% {
+      transform: scale(1);
+      opacity: 0.5;
+    }
+    40% {
+      transform: scale(1.4);
+      opacity: 1;
+    }
   }
 `;
 
