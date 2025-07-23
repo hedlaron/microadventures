@@ -52,6 +52,7 @@ const About = ({ onClose }) => {
       <div
         className="absolute inset-0 backdrop-blur-sm bg-black/30 transition-all duration-300"
         aria-hidden="true"
+        data-testid="about-backdrop"
         onClick={onClose}
         style={{ cursor: "pointer" }}
       ></div>

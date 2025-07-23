@@ -11,18 +11,32 @@ describe("About Component", () => {
     global.fetch.mockRejectedValue(new Error("API not available"));
   });
 
-  it("renders without crashing", () => {
+  it("renders without crashing and shows key elements", () => {
     render(<About onClose={() => {}} />);
-    expect(screen.getByText(/About/i)).toBeInTheDocument();
+    // Title (may appear more than once)
+    expect(screen.getAllByText(/Microadventures/i).length).toBeGreaterThan(0);
+    // LinkedIn button
+    expect(screen.getByRole("link", { name: /LinkedIn/i })).toBeInTheDocument();
+    // GitHub button
+    expect(
+      screen.getByRole("link", { name: /GitHub Repo/i }),
+    ).toBeInTheDocument();
   });
 
   it("calls onClose when close button is clicked", () => {
     const mockClose = vi.fn();
     render(<About onClose={mockClose} />);
-
     const closeButton = screen.getByText("×");
     fireEvent.click(closeButton);
+    expect(mockClose).toHaveBeenCalled();
+  });
 
+  it("calls onClose when clicking outside the modal (backdrop)", () => {
+    const mockClose = vi.fn();
+    render(<About onClose={mockClose} />);
+    // The backdrop is the div with aria-hidden="true"
+    const backdrop = screen.getByTestId("about-backdrop");
+    fireEvent.click(backdrop);
     expect(mockClose).toHaveBeenCalled();
   });
 
