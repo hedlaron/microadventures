@@ -12,6 +12,8 @@ const MapPicker = ({
   const mapRef = useRef(null);
 
   useEffect(() => {
+    // Copy ref to variable at the top of the effect
+    const ref = mapRef.current;
     // Always cleanup map and state before (re)opening
     if (!isOpen) {
       if (map) {
@@ -20,17 +22,17 @@ const MapPicker = ({
       }
       setSelectedLocation(null);
       // Remove any leftover map container content
-      if (mapRef.current) {
-        mapRef.current.innerHTML = "";
+      if (ref) {
+        ref.innerHTML = "";
       }
       return;
     }
 
     // If opening, ensure container is clean
-    if (mapRef.current && mapRef.current._leaflet_id) {
+    if (ref && ref._leaflet_id) {
       // Remove old map instance if any
-      mapRef.current._leaflet_id = null;
-      mapRef.current.innerHTML = "";
+      ref._leaflet_id = null;
+      ref.innerHTML = "";
     }
 
     // Dynamically load Leaflet when the modal opens
@@ -44,9 +46,9 @@ const MapPicker = ({
       }
 
       // Make sure the container is available and not already initialized
-      if (mapRef.current && !mapRef.current._leaflet_id) {
+      if (ref && !ref._leaflet_id) {
         // Initialize map
-        const mapInstance = L.map(mapRef.current, {
+        const mapInstance = L.map(ref, {
           center: [37.7749, -122.4194], // Default to San Francisco
           zoom: 13,
         });
@@ -116,7 +118,6 @@ const MapPicker = ({
 
     // Cleanup function
     return () => {
-      const ref = mapRef.current;
       if (ref && ref._leaflet_id) {
         ref._leaflet_id = null;
         ref.innerHTML = "";
