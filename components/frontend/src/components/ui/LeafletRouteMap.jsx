@@ -62,7 +62,7 @@ const LeafletRouteMap = ({
           setStartCoords(s);
           setEndCoords(e);
         }
-      } catch (err) {
+      } catch {
         if (!cancelled) setError("Could not geocode address");
       } finally {
         if (!cancelled) setLoading(false);
@@ -100,6 +100,7 @@ const LeafletRouteMap = ({
         const leafletMap = mapRef.current;
         leafletMap.fitBounds(route, { padding: [30, 30], maxZoom: 16 });
       }
+      // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [route]);
     return (
       <MapContainer

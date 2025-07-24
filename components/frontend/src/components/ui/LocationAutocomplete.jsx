@@ -30,7 +30,7 @@ const LocationAutocomplete = ({
       const data = await res.json();
       setSuggestions(data);
       setShowSuggestions(true);
-    } catch (err) {
+    } catch {
       setSuggestions([]);
       setShowSuggestions(false);
     }
@@ -58,7 +58,7 @@ const LocationAutocomplete = ({
       />
       {showSuggestions && suggestions.length > 0 && (
         <ul className="absolute z-50 left-0 right-0 bg-white border border-orange-200 rounded-xl mt-1 shadow-lg max-h-60 overflow-auto text-sm">
-          {suggestions.map((s, idx) => (
+          {suggestions.map((s) => (
             <li
               key={s.place_id}
               className="px-4 py-2 cursor-pointer hover:bg-orange-50"

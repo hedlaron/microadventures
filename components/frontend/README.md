@@ -11,7 +11,7 @@ This project uses a modern, component-based architecture to create a rich user e
 - **Tailwind CSS**: A utility-first CSS framework that allows for rapid UI development without leaving your HTML. It's highly customizable and great for building responsive designs.
 - **React Router 7**: The latest version of the standard library for routing in React. It enables the creation of a single-page application with navigation that feels like a native app.
 - **Axios**: A promise-based HTTP client for the browser and Node.js. It makes it easy to send asynchronous HTTP requests to REST endpoints and perform CRUD operations.
-- **Leaflet**: A leading open-source JavaScript library for mobile-friendly interactive maps. It's lightweight, simple, and has a beautiful, easy-to-use API.
+- **Leaflet + OpenStreetMap**: Leading open-source solution for mobile-friendly, interactive maps. No Google Maps required—modern, fast, and privacy-friendly.
 - **Lucide React**: A beautiful and consistent icon toolkit.
 - **Styled Components**: A popular library for styling React applications. It allows you to write actual CSS code to style your components.
 
@@ -22,7 +22,7 @@ This project uses a modern, component-based architecture to create a rich user e
 - **Tailwind CSS**: Utility-first CSS framework for rapid styling
 - **React Router 7**: Client-side routing with nested routes
 - **Axios**: Promise-based HTTP client
-- **Leaflet**: Interactive maps
+- **Leaflet + OpenStreetMap**: Interactive maps (no Google Maps)
 - **Lucide React**: Icon library
 - **Styled Components**: CSS-in-JS
 
