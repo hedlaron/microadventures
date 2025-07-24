@@ -1,4 +1,6 @@
-# 🚀 Microadventures
+# Microadventures
+
+![Demo GIF](screenshots/microadventures_demo.gif)
 
 **AI-powered micro-adventure planning application** that helps you discover short, exciting trips from a few hours to a few days, tailored to your location, time constraints, and current weather conditions. This project is a full-stack application built with a modern, cloud-native architecture, designed to be a portfolio piece showcasing a wide range of skills and technologies.
 
@@ -116,17 +118,9 @@ Here are a few ways users interact with Microadventures:
 
 </details>
 
-## Demo
-
-![Demo GIF](screenshots/demo.gif)
-
 ## Screenshots
 
-| Home | Map | Details | Autocomplete | Mobile |
-|------|-----|---------|--------------|--------|
-| ![Home](screenshots/homepage.png) | ![Map](screenshots/map.png) | ![Details](screenshots/details.png) | ![Autocomplete](screenshots/autocomplete.png) | ![Mobile](screenshots/mobile.png) |
-
-See more in [screenshots/README.md](screenshots/README.md).
+See more screenshots and demo GIFs in [screenshots/README.md](screenshots/README.md).
 
 ## 🏆 CI/CD & Security Pipeline Highlights
 
