@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect } from "react";
 import {
   MapContainer,
   TileLayer,
@@ -82,8 +82,6 @@ const LeafletRouteMap = ({
   }, [start, end, startLabel, endLabel]);
 
   // Memoize start/end values to prevent unnecessary reloads
-  const prevStart = React.useRef();
-  const prevEnd = React.useRef();
 
   useEffect(() => {
     cancelledRef.current = false;

@@ -51,8 +51,6 @@ const AdventureResult = ({
     });
   };
 
-  // Removed unused 'prev' variable
-
   const handleShare = async () => {
     setIsSharing(true);
     try {

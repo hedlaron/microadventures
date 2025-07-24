@@ -116,16 +116,18 @@ const MapPicker = ({
 
     // Cleanup function
     return () => {
+      // Copy ref to variable for cleanup
+      const ref = mapRef.current;
       if (map) {
         map.remove();
         setMap(null);
       }
       setSelectedLocation(null);
-      if (mapRef.current) {
-        mapRef.current.innerHTML = "";
+      if (ref) {
+        ref.innerHTML = "";
       }
     };
-  }, [isOpen]);
+  }, [isOpen, map]);
 
   const handleConfirm = () => {
     if (selectedLocation) {
