@@ -369,14 +369,12 @@ const Plan = () => {
     }
   }, [resetCountdown]);
 
-  // Load quota info and auto-location on component mount
+  // Load quota info and auto-location only once on mount
   useEffect(() => {
     loadQuotaInfo();
-    // Auto-load current location if location is empty
-    if (!location.trim()) {
-      getCurrentLocation();
-    }
-  }, [location, loadQuotaInfo]); // Add loadQuotaInfo as dependency
+    getCurrentLocation();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const getCurrentLocation = () => {
     if (navigator.geolocation) {

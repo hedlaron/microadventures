@@ -1,5 +1,15 @@
 import React, { useState, useEffect, useRef } from "react";
 
+// Debounce helper
+function useDebounce(value, delay) {
+  const [debouncedValue, setDebouncedValue] = useState(value);
+  useEffect(() => {
+    const handler = setTimeout(() => setDebouncedValue(value), delay);
+    return () => clearTimeout(handler);
+  }, [value, delay]);
+  return debouncedValue;
+}
+
 export default function LocationAutocomplete({
   value,
   onChange,
@@ -23,6 +33,9 @@ export default function LocationAutocomplete({
     userChangedRef.current = true;
   };
 
+  // Debounced input for lookup
+  const debouncedInput = useDebounce(inputValue, 250); // 250ms after typing stops
+
   useEffect(() => {
     let active = true;
     // Only trigger suggestions if user has typed (not just value set by geolocation)
@@ -32,7 +45,7 @@ export default function LocationAutocomplete({
       setLoading(false);
       return;
     }
-    if (inputValue.length < 3) {
+    if (debouncedInput.length < 3) {
       setSuggestions([]);
       setShowSuggestions(false);
       setLoading(false);
@@ -40,7 +53,7 @@ export default function LocationAutocomplete({
     }
     setLoading(true);
     fetch(
-      `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(inputValue)}`,
+      `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(debouncedInput)}`,
     )
       .then((res) => res.json())
       .then((data) => {
@@ -58,7 +71,7 @@ export default function LocationAutocomplete({
     return () => {
       active = false;
     };
-  }, [inputValue]);
+  }, [debouncedInput]);
 
   const handleSuggestionClick = (suggestion) => {
     setInputValue(suggestion.display_name);
@@ -96,12 +109,15 @@ export default function LocationAutocomplete({
         className="block w-full rounded-lg border border-gray-300 px-4 py-2 shadow-sm focus:border-orange-500 focus:ring-2 focus:ring-orange-200 focus:ring-opacity-60 transition text-gray-800 bg-white placeholder-gray-400"
       />
       {loading && (
-        <div
-          role="status"
-          aria-live="polite"
-          className="absolute right-3 top-2 text-orange-500 animate-pulse"
-        >
-          <span>Loading...</span>
+        <div className="absolute right-3 top-1/2 -translate-y-1/2">
+          <span
+            className="inline-block h-4 w-4 rounded-full border-2 border-orange-400 border-t-transparent animate-spin"
+            style={{
+              borderWidth: 2,
+              borderStyle: "solid",
+              borderRadius: "50%",
+            }}
+          ></span>
         </div>
       )}
       {showSuggestions && suggestions.length > 0 && (
