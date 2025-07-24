@@ -1,26 +1,29 @@
 import React from "react";
-import { render, screen } from "@testing-library/react";
+import { render, waitFor } from "@testing-library/react";
 import LeafletRouteMap from "../../ui/LeafletRouteMap";
 
 describe("LeafletRouteMap", () => {
   it("renders nothing if start or end is missing", () => {
     const { container } = render(<LeafletRouteMap start={null} end={null} />);
-    expect(container.firstChild).toBeNull();
+    expect(
+      container.querySelector(".leaflet-container"),
+    ).not.toBeInTheDocument();
   });
 
-  it("renders map if start and end are provided", () => {
-    // San Francisco to Oakland
-    const start = [37.7749, -122.4194];
-    const end = [37.8044, -122.2711];
-    render(
+  it("renders map if start and end are provided", async () => {
+    const { container } = render(
       <LeafletRouteMap
-        start={start}
-        end={end}
-        startLabel="SF"
+        start={[37.7749, -122.4194]}
+        end={[37.8044, -122.2712]}
+        startLabel="San Francisco"
         endLabel="Oakland"
       />,
     );
-    expect(screen.getByText("SF")).toBeInTheDocument();
-    expect(screen.getByText("Oakland")).toBeInTheDocument();
+    await waitFor(() => {
+      expect(container.querySelector(".leaflet-container")).toBeInTheDocument();
+      expect(container.querySelectorAll(".leaflet-marker-icon")).toHaveLength(
+        2,
+      );
+    });
   });
 });

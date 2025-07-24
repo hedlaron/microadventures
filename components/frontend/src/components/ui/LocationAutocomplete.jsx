@@ -1,79 +1,116 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useEffect, useRef } from "react";
 
-// Simple OpenStreetMap Nominatim autocomplete
-const NominatimURL =
-  "https://nominatim.openstreetmap.org/search?format=json&q=";
-
-const LocationAutocomplete = ({
+export default function LocationAutocomplete({
   value,
   onChange,
   placeholder = "Enter location...",
-  className = "",
-  ...props
-}) => {
+}) {
+  const [inputValue, setInputValue] = useState(value);
   const [suggestions, setSuggestions] = useState([]);
-  const [showSuggestions, setShowSuggestions] = useState(false);
   const [loading, setLoading] = useState(false);
-  const inputRef = useRef();
+  const [showSuggestions, setShowSuggestions] = useState(false);
+  const listboxRef = useRef(null);
 
-  const handleInputChange = async (e) => {
-    const val = e.target.value;
-    onChange(val);
-    if (val.length < 3) {
+  useEffect(() => {
+    setInputValue(value);
+  }, [value]);
+
+  useEffect(() => {
+    let active = true;
+    if (inputValue.length < 3) {
       setSuggestions([]);
       setShowSuggestions(false);
+      setLoading(false);
       return;
     }
     setLoading(true);
-    try {
-      const res = await fetch(NominatimURL + encodeURIComponent(val));
-      const data = await res.json();
-      setSuggestions(data);
-      setShowSuggestions(true);
-    } catch {
-      setSuggestions([]);
-      setShowSuggestions(false);
-    }
-    setLoading(false);
+    fetch(`/api/location?q=${encodeURIComponent(inputValue)}`)
+      .then((res) => res.json())
+      .then((data) => {
+        if (active) {
+          setSuggestions(data);
+          setShowSuggestions(true);
+        }
+      })
+      .catch(() => {
+        if (active) setSuggestions([]);
+      })
+      .finally(() => {
+        if (active) setLoading(false);
+      });
+    return () => {
+      active = false;
+    };
+  }, [inputValue]);
+
+  const handleInputChange = (e) => {
+    setInputValue(e.target.value);
   };
 
   const handleSuggestionClick = (suggestion) => {
+    setInputValue(suggestion.display_name);
     onChange(suggestion.display_name);
-    setSuggestions([]);
     setShowSuggestions(false);
-    inputRef.current.blur();
   };
+
+  // Hide suggestions on outside click
+  useEffect(() => {
+    function handleClickOutside(event) {
+      if (listboxRef.current && !listboxRef.current.contains(event.target)) {
+        setShowSuggestions(false);
+      }
+    }
+    if (showSuggestions) {
+      document.addEventListener("mousedown", handleClickOutside);
+    }
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [showSuggestions]);
 
   return (
     <div className="relative w-full">
       <input
-        ref={inputRef}
         type="text"
-        value={value}
+        value={inputValue}
         onChange={handleInputChange}
-        className={className}
         placeholder={placeholder}
         autoComplete="off"
-        {...props}
+        aria-autocomplete="list"
+        aria-controls={showSuggestions ? "location-listbox" : undefined}
+        aria-expanded={showSuggestions}
+        role="textbox"
       />
+      {loading && (
+        <div
+          role="status"
+          aria-live="polite"
+          className="absolute right-2 top-2"
+        >
+          <span>Loading...</span>
+        </div>
+      )}
       {showSuggestions && suggestions.length > 0 && (
-        <ul className="absolute z-50 left-0 right-0 bg-white border border-orange-200 rounded-xl mt-1 shadow-lg max-h-60 overflow-auto text-sm">
-          {suggestions.map((s) => (
+        <ul
+          id="location-listbox"
+          role="listbox"
+          ref={listboxRef}
+          className="absolute z-10 bg-white border w-full mt-1"
+        >
+          {suggestions.map((s, idx) => (
             <li
               key={s.place_id}
-              className="px-4 py-2 cursor-pointer hover:bg-orange-50"
+              role="option"
+              aria-selected={inputValue === s.display_name}
+              tabIndex={-1}
               onClick={() => handleSuggestionClick(s)}
+              style={{ cursor: "pointer", padding: "0.5em" }}
             >
               {s.display_name}
             </li>
           ))}
         </ul>
       )}
-      {loading && (
-        <div className="absolute right-3 top-3 w-4 h-4 animate-spin border-2 border-orange-400 border-t-transparent rounded-full"></div>
-      )}
     </div>
   );
-};
-
-export default LocationAutocomplete;
+}
