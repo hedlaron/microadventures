@@ -80,6 +80,7 @@ export default function LocationAutocomplete({
         aria-controls={showSuggestions ? "location-listbox" : undefined}
         aria-expanded={showSuggestions}
         role="textbox"
+        className="block w-full rounded-md border border-gray-300 px-4 py-2 shadow-sm focus:border-orange-400 focus:ring focus:ring-orange-200 focus:ring-opacity-50 transition"
       />
       {loading && (
         <div
