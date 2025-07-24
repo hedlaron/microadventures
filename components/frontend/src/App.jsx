@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import {
   BrowserRouter as Router,
   Routes,
@@ -18,6 +18,8 @@ import Plan from "./components/features/Plan";
 import HistoryPage from "././components/features/HistoryPage";
 import SharedAdventure from "./components/features/SharedAdventure";
 import ProtectedRoute from "./components/layout/ProtectedRoute";
+import About from "./components/ui/About";
+import ContactModal from "./components/ui/ContactModal";
 
 // For debugging
 console.log("App.jsx loading components:", {
@@ -30,6 +32,19 @@ console.log("App.jsx loading components:", {
 const AppContent = () => {
   const _location = useLocation(); // Keep for future use
   const { error } = useError(); // Get error state from context
+  const [showAbout, setShowAbout] = useState(false);
+  const [showContact, setShowContact] = useState(false);
+
+  useEffect(() => {
+    const aboutHandler = () => setShowAbout(true);
+    const contactHandler = () => setShowContact(true);
+    window.addEventListener("open-about-modal", aboutHandler);
+    window.addEventListener("open-contact-modal", contactHandler);
+    return () => {
+      window.removeEventListener("open-about-modal", aboutHandler);
+      window.removeEventListener("open-contact-modal", contactHandler);
+    };
+  }, []);
 
   return (
     <div className="h-screen flex flex-col">
@@ -75,6 +90,8 @@ const AppContent = () => {
           {/* Catch all route - redirect to home */}
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
+        {showAbout && <About onClose={() => setShowAbout(false)} />}
+        {showContact && <ContactModal onClose={() => setShowContact(false)} />}
       </main>
       <Footer />
       <ContactBubble />

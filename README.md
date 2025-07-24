@@ -17,7 +17,7 @@ In production, **Cloudflare** is used as a reverse proxy, CDN, and for DNS manag
 ## ✨ Features
 
 - 🤖 **AI-Powered Planning**: Generate personalized adventure recommendations using OpenAI, Anthropic Sonnet 4, GPT-4.1, and Gemini 2.5.
-- 🗺️ **Interactive Maps**: Visual trip planning with Leaflet integration.
+- 🗺️ **Interactive Maps**: Visual trip planning with Leaflet (OpenStreetMap) integration. No Google Maps required—fully open-source and privacy-friendly.
 - 🌤️ **Weather Integration**: Real-time weather considerations for optimal planning.
 - 📱 **Responsive Design**: Beautiful, mobile-first interface built with React and Tailwind CSS.
 - 👤 **User Authentication**: Secure JWT-based authentication system.
@@ -40,7 +40,7 @@ This project uses a modern, robust, and high-performance technology stack to sol
 - **React 19**: For building a fast, modern, and responsive user interface.
 - **Vite**: As a next-generation frontend build tool for a fast development experience.
 - **Tailwind CSS**: For a utility-first CSS workflow, enabling rapid UI development.
-- **Leaflet**: For interactive maps.
+- **Leaflet + OpenStreetMap**: For interactive, modern, and free maps. No Google Maps API key needed.
 - **Axios**: For making HTTP requests to the backend.
 
 ### Backend
@@ -98,9 +98,50 @@ Throughout the development of this project, I have intensively used the followin
 
 To get started with this project, please refer to the [Initial Setup README](initial-setup/README.md).
 
-## 📬 Contact
+
+## 📸 User Stories & Screenshots
+
+Here are a few ways users interact with Microadventures:
+
+- **"As a busy professional, I want to find a half-day adventure near me, so I can recharge without taking time off work."**
+- **"As a family, we want to discover weekend trips that are safe and fun for kids, with real-time weather info."**
+- **"As an outdoor enthusiast, I want to share my favorite microadventures with friends via a simple link."**
+
+<details>
+<summary>Showcase Screenshots</summary>
+
+![Home page screenshot](screenshots/homepage.png)
+![Adventure details](screenshots/adventure-details.png)
+<!-- Add more screenshots or GIFs as needed -->
+
+</details>
+
+## 🏆 CI/CD & Security Pipeline Highlights
+
+- **Automated Testing:** All backend and frontend tests run on every push and pull request using GitHub Actions.
+- **Test Coverage Reporting:** Coverage results are posted in the GitHub Actions summary for every build.
+- **Secret Scanning:** [TruffleHog](https://github.com/trufflesecurity/trufflehog) scans for secrets in code and PRs, failing the build if any are found (with robust ignore logic).
+- **Container Security:** [Trivy](https://github.com/aquasecurity/trivy) scans Docker images for vulnerabilities, with only actionable findings posted in the summary.
+- **Pre-commit Hooks:** Linting and formatting for Python and JS/React code before every commit.
+- **GitOps Deployments:** All Kubernetes changes are applied declaratively via Kluctl, ensuring a single source of truth and auditability.
+- **Cloudflare Security:** DDoS protection, SSL, and CDN for production traffic.
+
+## � What I Learned / Key Challenges
+
+- **Modern CI/CD:** Built a robust pipeline with test, coverage, secret scanning, and container security, all surfaced in PRs for fast feedback.
+- **Cloud-Native Deployment:** Learned GitOps with Kluctl and managed multi-environment Kubernetes deployments (local, GKE, production).
+- **AI Integration:** Integrated multiple LLMs (OpenAI, Anthropic, Gemini) for adventure generation, handling prompt engineering and API rate limits.
+- **Security Best Practices:** Implemented secret scanning, rate limiting, and secure secret management with External Secrets Operator and GCP Secret Manager.
+- **Developer Experience:** Used Devbox, Tilt, and Task to ensure fast, reproducible local development and onboarding.
+- **Resilience:** Made CI steps robust to missing files, flaky tests, and external API failures, ensuring reliable builds.
+
+
 
 Feel free to reach out to me on [LinkedIn](https://www.linkedin.com/in/hedlaron/).
+
+---
+
+> _This project is designed as a portfolio piece to showcase full-stack, cloud-native, and DevOps skills. For more screenshots, see the [`screenshots/`](screenshots/) folder._
 
 ## 🙏 Acknowledgments
 

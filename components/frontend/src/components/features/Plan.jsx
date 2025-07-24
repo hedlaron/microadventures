@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useCallback } from "react";
+import LocationAutocomplete from "../ui/LocationAutocomplete";
 import { useAuth } from "../../contexts/AuthContext";
 import { createAdventure, fetchAdventureQuota } from "../../utils/api";
 import AdventurousBackground from "./AdventurousBackground";
@@ -654,14 +655,15 @@ const Plan = () => {
                   📍 Start Location
                 </label>
                 <div className="flex gap-2">
-                  <input
-                    type="text"
-                    value={location}
-                    onChange={(e) => setLocation(e.target.value)}
-                    className="flex-1 text-sm bg-white border-2 border-gray-200 text-gray-800 px-3 py-3 rounded-xl focus:border-orange-300 focus:ring-2 focus:ring-orange-200/50 focus:outline-none placeholder-gray-400"
-                    placeholder="Where are you starting from?"
-                    required
-                  />
+                  <div className="w-full">
+                    <LocationAutocomplete
+                      value={location}
+                      onChange={setLocation}
+                      className="w-full text-sm bg-white border-2 border-gray-200 text-gray-800 px-3 py-3 rounded-xl focus:border-orange-300 focus:ring-2 focus:ring-orange-200/50 focus:outline-none placeholder-gray-400"
+                      placeholder="Where are you starting from?"
+                      required
+                    />
+                  </div>
                   <button
                     type="button"
                     onClick={getCurrentLocation}
@@ -779,13 +781,14 @@ const Plan = () => {
                   </button>
                 </div>
                 <div className="flex gap-2">
-                  <input
-                    type="text"
-                    value={destination}
-                    onChange={(e) => setDestination(e.target.value)}
-                    className="flex-1 text-sm bg-white border-2 border-gray-200 text-gray-800 px-3 py-3 rounded-xl focus:border-orange-300 focus:ring-2 focus:ring-orange-200/50 focus:outline-none placeholder-gray-400"
-                    placeholder="Where would you like to go?"
-                  />
+                  <div className="w-full">
+                    <LocationAutocomplete
+                      value={destination}
+                      onChange={setDestination}
+                      className="w-full text-sm bg-white border-2 border-gray-200 text-gray-800 px-3 py-3 rounded-xl focus:border-orange-300 focus:ring-2 focus:ring-orange-200/50 focus:outline-none placeholder-gray-400"
+                      placeholder="Where would you like to go?"
+                    />
+                  </div>
                   <button
                     type="button"
                     onClick={() => setShowEndMapPicker(true)}

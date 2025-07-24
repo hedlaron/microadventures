@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import LeafletRouteMap from "../ui/LeafletRouteMap";
 import {
   MapPin,
   Mountain,
@@ -36,8 +37,17 @@ const AdventureResult = ({
 
   const formatTime = (timeStr) => {
     if (!timeStr) return "";
-    // Keep the time in 24-hour format as received from backend
-    return timeStr;
+    // Convert ISO/UTC time to user's local time in readable format
+    const date = new Date(timeStr);
+    if (isNaN(date)) return timeStr;
+    return date.toLocaleString([], {
+      year: "numeric",
+      month: "short",
+      day: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
+      hour12: false,
+    });
   };
 
   const handleShare = async () => {
@@ -240,37 +250,44 @@ const AdventureResult = ({
                 </div>
 
                 {/* Map */}
-                {adventure.route && adventure.route.map_embed_url && (
-                  <div className="mb-8">
-                    <h2 className="text-[#0c1c17] text-[22px] font-bold leading-tight tracking-[-0.015em] pb-3">
-                      Map
-                    </h2>
-                    <div className="w-full bg-center bg-no-repeat aspect-video bg-cover rounded-xl border border-orange-200/50 overflow-hidden">
-                      {/* Open in Google Maps link */}
-                      <a
-                        href={adventure.route.map_embed_url}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="block w-full h-full bg-gradient-to-br from-orange-50 to-orange-100/50 rounded-xl flex items-center justify-center text-[#0c1c17] hover:bg-orange-100/70 transition-colors duration-300"
-                      >
-                        <div className="text-center">
-                          <div className="text-6xl mb-4">🗺️</div>
-                          <h3 className="text-xl font-bold mb-2">
-                            View Route in Google Maps
-                          </h3>
-                          <p className="text-sm text-orange-600 font-medium">
-                            {adventure.route.estimated_distance &&
-                              `${adventure.route.estimated_distance} • `}
-                            {adventure.route.estimated_travel_time}
-                          </p>
-                          <div className="mt-4 px-4 py-2 bg-white border border-orange-200 rounded-lg inline-block font-medium">
-                            Click to Open Route
+                {adventure.route &&
+                  (() => {
+                    // Fallback logic for history/adventure objects
+                    const start =
+                      adventure.route.start ||
+                      adventure.route.start_coords ||
+                      adventure.route.start_address;
+                    const end =
+                      adventure.route.destination ||
+                      adventure.route.end_coordinates ||
+                      adventure.route.end_address;
+                    const startLabel =
+                      adventure.route.start_label ||
+                      adventure.route.start_address ||
+                      "Start";
+                    const endLabel =
+                      adventure.route.destination_label ||
+                      adventure.route.end_address ||
+                      "Destination";
+                    if (start && end) {
+                      return (
+                        <div className="mb-8">
+                          <h2 className="text-[#0c1c17] text-[22px] font-bold leading-tight tracking-[-0.015em] pb-3">
+                            Map
+                          </h2>
+                          <div className="w-full aspect-video rounded-xl border border-orange-200/50 overflow-hidden mb-2 bg-white">
+                            <LeafletRouteMap
+                              start={start}
+                              end={end}
+                              startLabel={startLabel}
+                              endLabel={endLabel}
+                            />
                           </div>
                         </div>
-                      </a>
-                    </div>
-                  </div>
-                )}
+                      );
+                    }
+                    return null;
+                  })()}
 
                 {/* Weather */}
                 {adventure.weather_forecast && (

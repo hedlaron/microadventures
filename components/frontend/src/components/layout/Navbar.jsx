@@ -46,18 +46,58 @@ const Navbar = () => {
           </div>
 
           <div className="flex items-center gap-9">
-            <Link
-              to="/about"
-              className="text-[#0c1c17] text-sm font-medium leading-normal hover:text-[#F4A261] transition-colors"
+            <button
+              type="button"
+              onClick={() =>
+                window.dispatchEvent(new CustomEvent("open-about-modal"))
+              }
+              className="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg border border-orange-200 bg-orange-50 hover:bg-orange-100 text-orange-700 font-semibold text-xs shadow-sm transition-colors duration-200 animate-pulse-soft focus:outline-none"
+              style={{ animationDuration: "2.2s" }}
+              aria-label="Learn more about this project"
             >
-              About
-            </Link>
-            <Link
-              to="/contact"
-              className="text-[#0c1c17] text-sm font-medium leading-normal hover:text-[#F4A261] transition-colors"
+              <svg
+                className="w-4 h-4 mr-1"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                viewBox="0 0 24 24"
+              >
+                <circle
+                  cx="12"
+                  cy="12"
+                  r="10"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                />
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M12 16v-4m0-4h.01"
+                />
+              </svg>
+              About this project
+            </button>
+            {/* Soft pulse animation for About button */}
+            <style>{`
+        @keyframes pulse-soft {
+          0%, 100% { box-shadow: 0 0 0 0 rgba(244,162,97,0.18); }
+          50% { box-shadow: 0 0 0 6px rgba(244,162,97,0.32); }
+        }
+        .animate-pulse-soft {
+          animation: pulse-soft 2.2s cubic-bezier(0.4,0,0.6,1) infinite;
+        }
+      `}</style>
+            <button
+              type="button"
+              onClick={() =>
+                window.dispatchEvent(new CustomEvent("open-contact-modal"))
+              }
+              className="text-[#0c1c17] text-sm font-medium leading-normal hover:text-[#F4A261] transition-colors bg-transparent border-none p-0 m-0"
+              style={{ background: "none" }}
+              aria-label="Contact"
             >
               Contact
-            </Link>
+            </button>
             {isAuthenticated && (
               <Link
                 to="/plan"

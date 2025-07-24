@@ -31,10 +31,14 @@ const MapPicker = ({
             zoom: 13,
           });
 
-          // Add tile layer
-          L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
-            attribution: "© OpenStreetMap contributors",
-          }).addTo(mapInstance);
+          // Add tile layer (CartoDB Voyager for modern, consistent style)
+          L.tileLayer(
+            "https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png",
+            {
+              attribution:
+                "&copy; <a href='https://carto.com/attributions'>CARTO</a>",
+            },
+          ).addTo(mapInstance);
 
           let marker = null;
 
