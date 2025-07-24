@@ -111,6 +111,8 @@ export default function LocationAutocomplete({
       {loading && (
         <div className="absolute right-3 top-1/2 -translate-y-1/2">
           <span
+            role="status"
+            aria-live="polite"
             className="inline-block h-4 w-4 rounded-full border-2 border-orange-400 border-t-transparent animate-spin"
             style={{
               borderWidth: 2,
