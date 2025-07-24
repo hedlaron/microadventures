@@ -130,7 +130,7 @@ const LeafletRouteMap = ({
             start: s,
             end: e,
           });
-          setCoords((prev) => {
+          setCoords(() => {
             const newCoords = { start: s, end: e };
             console.log(
               "[LeafletRouteMap] setCoords callback, newCoords:",
