@@ -119,6 +119,19 @@ const AdventureResult = ({
     return MapPin; // Default icon
   };
 
+  // Fallback logic for history/adventure objects (for map)
+  const startRaw =
+    adventure.route?.start ||
+    adventure.route?.start_coords ||
+    adventure.route?.start_address;
+  const endRaw =
+    adventure.route?.destination ||
+    adventure.route?.end_coordinates ||
+    adventure.route?.end_address;
+  // Memoize start and end to avoid unnecessary rerenders
+  const start = React.useMemo(() => startRaw, [startRaw]);
+  const end = React.useMemo(() => endRaw, [endRaw]);
+
   return (
     <div className="h-full bg-gradient-to-br from-brand-50 to-brand-100/50 font-sans flex flex-col overflow-hidden">
       {/* Header - only show if not in shared view */}
@@ -251,77 +264,36 @@ const AdventureResult = ({
                 </div>
 
                 {/* Map */}
-                {adventure.route &&
-                  (() => {
-                    // Fallback logic for history/adventure objects
-                    const startRaw =
-                      adventure.route.start ||
-                      adventure.route.start_coords ||
-                      adventure.route.start_address;
-                    const endRaw =
-                      adventure.route.destination ||
-                      adventure.route.end_coordinates ||
-                      adventure.route.end_address;
-                    // Memoize start and end to avoid unnecessary rerenders
-                    const start = React.useMemo(
-                      () => startRaw,
-                      [JSON.stringify(startRaw)],
-                    );
-                    const end = React.useMemo(
-                      () => endRaw,
-                      [JSON.stringify(endRaw)],
-                    );
-                    const startLabel =
-                      adventure.route.start_label ||
-                      adventure.route.start_address ||
-                      "Start";
-                    const endLabel =
-                      adventure.route.destination_label ||
-                      adventure.route.end_address ||
-                      "Destination";
-                    // Debug logging
-
-                    console.log(
-                      "[AdventureResult] adventure.route:",
-                      adventure.route,
-                    );
-
-                    console.log(
-                      "[AdventureResult] start:",
-                      start,
-                      "end:",
-                      end,
-                      "startLabel:",
-                      startLabel,
-                      "endLabel:",
-                      endLabel,
-                    );
-                    if (start && end) {
-                      return (
-                        <div className="mb-8">
-                          <h2 className="text-[#0c1c17] text-[22px] font-bold leading-tight tracking-[-0.015em] pb-3">
-                            Map
-                          </h2>
-                          <div
-                            className="w-full aspect-video rounded-xl border border-orange-200/50 overflow-hidden mb-2 bg-white"
-                            style={{
-                              position: "relative",
-                              zIndex: 1,
-                              maxHeight: 400,
-                            }}
-                          >
-                            <LeafletRouteMap
-                              start={start}
-                              end={end}
-                              startLabel={startLabel}
-                              endLabel={endLabel}
-                            />
-                          </div>
-                        </div>
-                      );
-                    }
-                    return null;
-                  })()}
+                {adventure.route && start && end && (
+                  <div className="mb-8">
+                    <h2 className="text-[#0c1c17] text-[22px] font-bold leading-tight tracking-[-0.015em] pb-3">
+                      Map
+                    </h2>
+                    <div
+                      className="w-full aspect-video rounded-xl border border-orange-200/50 overflow-hidden mb-2 bg-white"
+                      style={{
+                        position: "relative",
+                        zIndex: 1,
+                        maxHeight: 400,
+                      }}
+                    >
+                      <LeafletRouteMap
+                        start={start}
+                        end={end}
+                        startLabel={
+                          adventure.route.start_label ||
+                          adventure.route.start_address ||
+                          "Start"
+                        }
+                        endLabel={
+                          adventure.route.destination_label ||
+                          adventure.route.end_address ||
+                          "Destination"
+                        }
+                      />
+                    </div>
+                  </div>
+                )}
 
                 {/* Weather */}
                 {adventure.weather_forecast && (
