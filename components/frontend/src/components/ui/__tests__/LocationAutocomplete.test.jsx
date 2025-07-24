@@ -27,20 +27,23 @@ describe("LocationAutocomplete", () => {
       ],
     });
     const handleChange = vi.fn();
-    render(<LocationAutocomplete value="Bud" onChange={handleChange} />);
+    render(<LocationAutocomplete value="" onChange={handleChange} />);
     const input = screen.getByRole("textbox");
+    // Simulate user typing each character
+    fireEvent.change(input, { target: { value: "B" } });
+    fireEvent.change(input, { target: { value: "Bu" } });
     fireEvent.change(input, { target: { value: "Bud" } });
 
-    // Wait for the suggestion to appear by role and name
-    const suggestion = await screen.findByRole("option", {
-      name: /Budapest, Hungary/,
-    });
-    fireEvent.click(suggestion);
+    // Wait for all suggestions to appear, then select the correct one
+    const suggestions = await screen.findAllByRole("option");
+    const budapestOption = suggestions.find((el) =>
+      el.textContent.includes("Budapest, Hungary"),
+    );
+    expect(budapestOption).toBeInTheDocument();
+    fireEvent.click(budapestOption);
     expect(handleChange).toHaveBeenCalledWith("Budapest, Hungary");
     await waitFor(() => {
-      expect(
-        screen.queryByRole("option", { name: /Budapest, Hungary/ }),
-      ).not.toBeInTheDocument();
+      expect(screen.queryByRole("option")).not.toBeInTheDocument();
     });
   });
 
@@ -56,11 +59,15 @@ describe("LocationAutocomplete", () => {
 
   it("shows loading spinner when loading", async () => {
     global.fetch = vi.fn(() => new Promise(() => {})); // never resolves
-    render(<LocationAutocomplete value="Bud" onChange={() => {}} />);
+    render(<LocationAutocomplete value="" onChange={() => {}} />);
     const input = screen.getByRole("textbox");
+    fireEvent.change(input, { target: { value: "B" } });
+    fireEvent.change(input, { target: { value: "Bu" } });
     fireEvent.change(input, { target: { value: "Bud" } });
     // Wait for the spinner to appear
-    expect(await screen.findByRole("status")).toBeInTheDocument();
+    await waitFor(() => {
+      expect(screen.getByRole("status")).toBeInTheDocument();
+    });
   });
 
   // New test case for suggestion click
@@ -72,16 +79,19 @@ describe("LocationAutocomplete", () => {
       ],
     });
     const handleChange = vi.fn();
-    render(<LocationAutocomplete value="Bud" onChange={handleChange} />);
+    render(<LocationAutocomplete value="" onChange={handleChange} />);
     const input = screen.getByRole("textbox");
+    fireEvent.change(input, { target: { value: "B" } });
+    fireEvent.change(input, { target: { value: "Bu" } });
     fireEvent.change(input, { target: { value: "Bud" } });
 
-    // Wait for the suggestion to appear
-    const suggestion = await screen.findByRole("option", {
-      name: /Budapest, Hungary/,
-    });
-    fireEvent.click(suggestion);
-
+    // Wait for all suggestions to appear, then select the correct one
+    const suggestions = await screen.findAllByRole("option");
+    const budapestOption = suggestions.find((el) =>
+      el.textContent.includes("Budapest, Hungary"),
+    );
+    expect(budapestOption).toBeInTheDocument();
+    fireEvent.click(budapestOption);
     expect(handleChange).toHaveBeenCalledWith("Budapest, Hungary");
   });
 });
