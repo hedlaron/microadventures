@@ -275,7 +275,14 @@ const AdventureResult = ({
                           <h2 className="text-[#0c1c17] text-[22px] font-bold leading-tight tracking-[-0.015em] pb-3">
                             Map
                           </h2>
-                          <div className="w-full aspect-video rounded-xl border border-orange-200/50 overflow-hidden mb-2 bg-white">
+                          <div
+                            className="w-full aspect-video rounded-xl border border-orange-200/50 overflow-hidden mb-2 bg-white"
+                            style={{
+                              position: "relative",
+                              zIndex: 1,
+                              maxHeight: 400,
+                            }}
+                          >
                             <LeafletRouteMap
                               start={start}
                               end={end}

@@ -38,11 +38,15 @@ const LeafletRouteMap = ({
   startLabel = "Start",
   endLabel = "Destination",
 }) => {
-  const [startCoords, setStartCoords] = useState(null);
-  const [endCoords, setEndCoords] = useState(null);
-  const [route, setRoute] = useState(null);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
+  const [startCoords, setStartCoords] = React.useState(null);
+  const [endCoords, setEndCoords] = React.useState(null);
+  const [route, setRoute] = React.useState(null);
+  const [loading, setLoading] = React.useState(false);
+  const [error, setError] = React.useState(null);
+
+  // Memoize start/end values to prevent unnecessary reloads
+  const prevStart = React.useRef();
+  const prevEnd = React.useRef();
 
   useEffect(() => {
     let cancelled = false;
@@ -68,7 +72,14 @@ const LeafletRouteMap = ({
         if (!cancelled) setLoading(false);
       }
     }
-    if (start && end) {
+    // Only resolve if start/end changed
+    if (
+      start &&
+      end &&
+      (start !== prevStart.current || end !== prevEnd.current)
+    ) {
+      prevStart.current = start;
+      prevEnd.current = end;
       resolveCoords();
     }
     return () => {
@@ -103,57 +114,67 @@ const LeafletRouteMap = ({
       // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [route]);
     return (
-      <MapContainer
-        center={startCoords}
-        zoom={13}
+      <div
         style={{
-          height: "320px",
-          width: "100%",
-          borderRadius: "16px",
-          boxShadow: "0 4px 24px 0 rgba(0,0,0,0.08)",
-        }}
-        scrollWheelZoom={false}
-        whenCreated={(mapInstance) => {
-          mapRef.current = mapInstance;
+          position: "relative",
+          zIndex: 1,
+          borderRadius: 16,
+          overflow: "hidden",
         }}
       >
-        <TileLayer
-          attribution='&copy; <a href="https://carto.com/attributions">CARTO</a>'
-          url="https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png"
-        />
-        <Marker
-          position={startCoords}
-          icon={L.icon({
-            iconUrl:
-              "https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png",
-            iconSize: [28, 44],
-            iconAnchor: [14, 44],
-            popupAnchor: [0, -40],
-          })}
+        <MapContainer
+          center={startCoords}
+          zoom={13}
+          style={{
+            height: "320px",
+            width: "100%",
+            borderRadius: "16px",
+            boxShadow: "0 4px 24px 0 rgba(0,0,0,0.08)",
+            zIndex: 1,
+          }}
+          scrollWheelZoom={false}
+          whenCreated={(mapInstance) => {
+            mapRef.current = mapInstance;
+          }}
         >
-          <Popup>{startLabel}</Popup>
-        </Marker>
-        <Marker
-          position={endCoords}
-          icon={L.icon({
-            iconUrl:
-              "https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png",
-            iconSize: [28, 44],
-            iconAnchor: [14, 44],
-            popupAnchor: [0, -40],
-          })}
-        >
-          <Popup>{endLabel}</Popup>
-        </Marker>
-        {route && (
-          <Polyline
-            positions={route}
-            color="#3b82f6"
-            weight={6}
-            opacity={0.85}
+          <TileLayer
+            attribution='&copy; <a href="https://carto.com/attributions">CARTO</a>'
+            url="https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png"
           />
-        )}
-      </MapContainer>
+          <Marker
+            position={startCoords}
+            icon={L.icon({
+              iconUrl:
+                "https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png",
+              iconSize: [28, 44],
+              iconAnchor: [14, 44],
+              popupAnchor: [0, -40],
+            })}
+          >
+            <Popup>{startLabel}</Popup>
+          </Marker>
+          <Marker
+            position={endCoords}
+            icon={L.icon({
+              iconUrl:
+                "https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png",
+              iconSize: [28, 44],
+              iconAnchor: [14, 44],
+              popupAnchor: [0, -40],
+            })}
+          >
+            <Popup>{endLabel}</Popup>
+          </Marker>
+          {route && (
+            <Polyline
+              positions={route}
+              color="#3b82f6"
+              weight={6}
+              opacity={0.85}
+            />
+          )}
+        </MapContainer>
+      </div>
     );
   };
   return <MapWithFitBounds />;
