@@ -254,14 +254,23 @@ const AdventureResult = ({
                 {adventure.route &&
                   (() => {
                     // Fallback logic for history/adventure objects
-                    const start =
+                    const startRaw =
                       adventure.route.start ||
                       adventure.route.start_coords ||
                       adventure.route.start_address;
-                    const end =
+                    const endRaw =
                       adventure.route.destination ||
                       adventure.route.end_coordinates ||
                       adventure.route.end_address;
+                    // Memoize start and end to avoid unnecessary rerenders
+                    const start = React.useMemo(
+                      () => startRaw,
+                      [JSON.stringify(startRaw)],
+                    );
+                    const end = React.useMemo(
+                      () => endRaw,
+                      [JSON.stringify(endRaw)],
+                    );
                     const startLabel =
                       adventure.route.start_label ||
                       adventure.route.start_address ||

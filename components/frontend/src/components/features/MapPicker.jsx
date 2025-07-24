@@ -8,31 +8,31 @@ const MapPicker = ({
   title = "Select Location",
 }) => {
   const [selectedLocation, setSelectedLocation] = useState(null);
-  const [map, setMap] = useState(null);
+  const mapInstanceRef = useRef(null);
   const mapRef = useRef(null);
 
   useEffect(() => {
-    // Copy ref to variable at the top of the effect
     const ref = mapRef.current;
-    // Always cleanup map and state before (re)opening
-    if (!isOpen) {
-      if (map) {
-        map.remove();
-        setMap(null);
+    // Cleanup any previous map instance and DOM node before anything else
+    if (mapInstanceRef.current) {
+      try {
+        mapInstanceRef.current.remove();
+      } catch {
+        // ignore
       }
-      setSelectedLocation(null);
-      // Remove any leftover map container content
-      if (ref) {
-        ref.innerHTML = "";
-      }
-      return;
+      mapInstanceRef.current = null;
     }
-
-    // If opening, ensure container is clean
     if (ref && ref._leaflet_id) {
-      // Remove old map instance if any
-      ref._leaflet_id = null;
-      ref.innerHTML = "";
+      try {
+        ref._leaflet_id = undefined;
+        ref.innerHTML = "";
+      } catch {
+        // ignore
+      }
+    }
+    if (!isOpen) {
+      setSelectedLocation(null);
+      return;
     }
 
     // Dynamically load Leaflet when the modal opens
@@ -44,16 +44,14 @@ const MapPicker = ({
         link.href = "https://unpkg.com/leaflet@1.9.4/dist/leaflet.css";
         document.head.appendChild(link);
       }
-
-      // Make sure the container is available and not already initialized
-      if (ref && !ref._leaflet_id) {
+      if (ref) {
         // Initialize map
         const mapInstance = L.map(ref, {
-          center: [37.7749, -122.4194], // Default to San Francisco
+          center: [37.7749, -122.4194],
           zoom: 13,
         });
+        mapInstanceRef.current = mapInstance;
 
-        // Add tile layer (CartoDB Voyager for modern, consistent style)
         L.tileLayer(
           "https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png",
           {
@@ -63,20 +61,12 @@ const MapPicker = ({
         ).addTo(mapInstance);
 
         let marker = null;
-
-        // Handle map clicks
         mapInstance.on("click", (e) => {
           const { lat, lng } = e.latlng;
-
-          // Remove existing marker
           if (marker) {
             mapInstance.removeLayer(marker);
           }
-
-          // Add new marker
           marker = L.marker([lat, lng]).addTo(mapInstance);
-
-          // Reverse geocode to get address
           fetch(
             `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}`,
           )
@@ -98,8 +88,6 @@ const MapPicker = ({
               });
             });
         });
-
-        // Try to get user's location
         if (navigator.geolocation) {
           navigator.geolocation.getCurrentPosition(
             (position) => {
@@ -111,24 +99,30 @@ const MapPicker = ({
             },
           );
         }
-
-        setMap(mapInstance);
       }
     });
 
     // Cleanup function
     return () => {
-      if (ref && ref._leaflet_id) {
-        ref._leaflet_id = null;
-        ref.innerHTML = "";
+      if (mapInstanceRef.current) {
+        try {
+          mapInstanceRef.current.remove();
+        } catch {
+          // ignore
+        }
+        mapInstanceRef.current = null;
       }
-      if (map) {
-        map.remove();
-        setMap(null);
+      if (ref && ref._leaflet_id) {
+        try {
+          ref._leaflet_id = undefined;
+          ref.innerHTML = "";
+        } catch {
+          // ignore
+        }
       }
       setSelectedLocation(null);
     };
-  }, [isOpen, map]);
+  }, [isOpen]);
 
   const handleConfirm = () => {
     if (selectedLocation) {
