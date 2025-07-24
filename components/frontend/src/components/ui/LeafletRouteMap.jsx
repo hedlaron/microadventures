@@ -147,14 +147,8 @@ const LeafletRouteMap = ({
         if (!cancelledRef.current) setLoading(false);
       }
     }
-    // Only resolve if start/end changed
-    if (
-      start &&
-      end &&
-      (start !== prevStart.current || end !== prevEnd.current)
-    ) {
-      prevStart.current = start;
-      prevEnd.current = end;
+    // Only resolve if start/end are present
+    if (start && end) {
       resolveCoords();
     }
     return () => {
