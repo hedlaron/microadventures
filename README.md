@@ -116,6 +116,18 @@ Here are a few ways users interact with Microadventures:
 
 </details>
 
+## Demo
+
+![Demo GIF](screenshots/demo.gif)
+
+## Screenshots
+
+| Home | Map | Details | Autocomplete | Mobile |
+|------|-----|---------|--------------|--------|
+| ![Home](screenshots/homepage.png) | ![Map](screenshots/map.png) | ![Details](screenshots/details.png) | ![Autocomplete](screenshots/autocomplete.png) | ![Mobile](screenshots/mobile.png) |
+
+See more in [screenshots/README.md](screenshots/README.md).
+
 ## 🏆 CI/CD & Security Pipeline Highlights
 
 - **Automated Testing:** All backend and frontend tests run on every push and pull request using GitHub Actions.

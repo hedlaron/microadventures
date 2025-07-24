@@ -9,6 +9,7 @@ repos:
           (?x)^(
             k8s/\.helm-charts/.*
           )$
+        args: ['--maxkb=10000']
       - id: check-toml
       - id: check-yaml
         args: [--unsafe]
