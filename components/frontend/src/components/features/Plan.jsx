@@ -276,6 +276,18 @@ const LoadingText = styled.div`
   }
 `;
 
+// Helper to format a Date object as yyyy-MM-ddTHH:mm in local time for datetime-local input
+function toLocalInputValue(date) {
+  if (!date) return "";
+  const pad = (n) => n.toString().padStart(2, "0");
+  const year = date.getFullYear();
+  const month = pad(date.getMonth() + 1);
+  const day = pad(date.getDate());
+  const hours = pad(date.getHours());
+  const minutes = pad(date.getMinutes());
+  return `${year}-${month}-${day}T${hours}:${minutes}`;
+}
+
 const Plan = () => {
   console.log("Plan component rendering");
 
@@ -988,8 +1000,15 @@ const Plan = () => {
                       </span>
                       <input
                         type="datetime-local"
-                        value={startDate.toISOString().slice(0, 16)}
-                        onChange={(e) => setStartDate(new Date(e.target.value))}
+                        value={toLocalInputValue(startDate)}
+                        onChange={(e) => {
+                          const newStart = new Date(e.target.value);
+                          setStartDate(newStart);
+                          // If endDate is before newStart, set endDate = newStart
+                          if (endDate < newStart) {
+                            setEndDate(newStart);
+                          }
+                        }}
                         style={{
                           height: "2.5rem",
                           padding: "0.5rem",
@@ -1004,8 +1023,13 @@ const Plan = () => {
                       </span>
                       <input
                         type="datetime-local"
-                        value={endDate.toISOString().slice(0, 16)}
-                        onChange={(e) => setEndDate(new Date(e.target.value))}
+                        value={toLocalInputValue(endDate)}
+                        min={toLocalInputValue(startDate)}
+                        onChange={(e) => {
+                          const newEnd = new Date(e.target.value);
+                          // If newEnd < startDate, set to startDate
+                          setEndDate(newEnd < startDate ? startDate : newEnd);
+                        }}
                         style={{
                           height: "2.5rem",
                           padding: "0.5rem",
