@@ -97,14 +97,14 @@ export default function LocationAutocomplete({
           ref={listboxRef}
           className="absolute z-10 bg-white border w-full mt-1"
         >
-          {suggestions.map((s, idx) => (
+          {suggestions.map((s) => (
             <li
               key={s.place_id}
               role="option"
               aria-selected={inputValue === s.display_name}
               tabIndex={-1}
               onClick={() => handleSuggestionClick(s)}
-              style={{ cursor: "pointer", padding: "0.5em" }}
+              className="px-4 py-2 cursor-pointer hover:bg-orange-50"
             >
               {s.display_name}
             </li>
