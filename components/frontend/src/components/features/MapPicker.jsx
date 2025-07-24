@@ -116,16 +116,16 @@ const MapPicker = ({
 
     // Cleanup function
     return () => {
-      // Copy ref to variable for cleanup
       const ref = mapRef.current;
+      if (ref && ref._leaflet_id) {
+        ref._leaflet_id = null;
+        ref.innerHTML = "";
+      }
       if (map) {
         map.remove();
         setMap(null);
       }
       setSelectedLocation(null);
-      if (ref) {
-        ref.innerHTML = "";
-      }
     };
   }, [isOpen, map]);
 
