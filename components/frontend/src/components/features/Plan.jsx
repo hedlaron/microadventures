@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect, useCallback, useRef } from "react";
 import LocationAutocomplete from "../ui/LocationAutocomplete";
 import { useAuth } from "../../contexts/AuthContext";
 import { createAdventure, fetchAdventureQuota } from "../../utils/api";
@@ -342,18 +342,25 @@ const Plan = () => {
   // Countdown timer for quota reset
   const { timeLeft, formatTime, reset: resetCountdown } = useCountdown(0);
 
-  // Update countdown when quotaInfo changes
+  // Freeze all effects and state updates when showing AdventureResult
+  const freezeRef = useRef(false);
   useEffect(() => {
+    freezeRef.current = !!generatedAdventure;
+  }, [generatedAdventure]);
+
+  useEffect(() => {
+    if (freezeRef.current) return;
     if (quotaInfo?.time_until_reset) {
       resetCountdown(quotaInfo.time_until_reset);
     }
-  }, [quotaInfo?.time_until_reset, resetCountdown]);
+  }, [quotaInfo?.time_until_reset, resetCountdown, generatedAdventure]);
 
   // Map picker state
   const [showStartMapPicker, setShowStartMapPicker] = useState(false);
   const [showEndMapPicker, setShowEndMapPicker] = useState(false);
 
   const loadQuotaInfo = useCallback(async () => {
+    if (freezeRef.current) return;
     try {
       const token = localStorage.getItem("token");
       if (token) {
@@ -501,9 +508,7 @@ const Plan = () => {
 
       const adventure = await createAdventure(adventureData, token);
       setGeneratedAdventure(adventure);
-
-      // Refresh quota info
-      await loadQuotaInfo();
+      // Do NOT refresh quota info here to avoid re-rendering after adventure is generated
     } catch (err) {
       console.error("Failed to create adventure:", err);
       setError(
@@ -530,28 +535,64 @@ const Plan = () => {
     setStartDate(new Date());
     setEndDate(new Date());
     setIsCustomDate(false);
-    // Refresh quota
+    // Refresh quota only when returning to plan form
     loadQuotaInfo();
   };
 
   const handleBackToForm = () => {
     setGeneratedAdventure(null);
     setError(null);
+    // Refresh quota when returning to plan form
+    loadQuotaInfo();
   };
 
   // Removed unused isShrunk and headerRef, and scroll logic (no longer needed)
   // (All shrinking/scroll header logic is now removed for static header)
 
   // If adventure is generated, show the result with full-width layout like history
+  // Only update generatedAdventure if different (deep compare)
+  function deepEqual(a, b) {
+    if (a === b) return true;
+    if (Array.isArray(a) && Array.isArray(b)) {
+      if (a.length !== b.length) return false;
+      for (let i = 0; i < a.length; i++) {
+        if (!deepEqual(a[i], b[i])) return false;
+      }
+      return true;
+    }
+    if (typeof a === "object" && typeof b === "object" && a && b) {
+      const keysA = Object.keys(a);
+      const keysB = Object.keys(b);
+      if (keysA.length !== keysB.length) return false;
+      for (let key of keysA) {
+        if (!deepEqual(a[key], b[key])) return false;
+      }
+      return true;
+    }
+    return false;
+  }
+
+  const handleAdventureUpdate = (updatedAdventure) => {
+    setGeneratedAdventure((prev) => {
+      if (deepEqual(prev, updatedAdventure)) return prev;
+      return updatedAdventure;
+    });
+  };
+
+  const memoizedAdventure = React.useMemo(
+    () => generatedAdventure,
+    [generatedAdventure],
+  );
   if (generatedAdventure) {
     return (
       <div className="h-full">
         <AdventureResult
-          adventure={generatedAdventure}
+          adventure={memoizedAdventure}
           onBack={handleBackToForm}
           onNewAdventure={handleNewAdventure}
           quotaInfo={quotaInfo}
           backText="Back to Plan"
+          onAdventureUpdate={handleAdventureUpdate}
         />
       </div>
     );

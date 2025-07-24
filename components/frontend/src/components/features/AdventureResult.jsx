@@ -1,5 +1,35 @@
-import React, { useState } from "react";
-import LeafletRouteMap from "../ui/LeafletRouteMap";
+import React, { useState, useMemo } from "react";
+import ReactMemo from "react";
+import LeafletRouteMapOrig from "../ui/LeafletRouteMap";
+
+// Custom deep compare for map props
+function deepEqual(a, b) {
+  if (a === b) return true;
+  if (Array.isArray(a) && Array.isArray(b)) {
+    if (a.length !== b.length) return false;
+    for (let i = 0; i < a.length; i++) {
+      if (!deepEqual(a[i], b[i])) return false;
+    }
+    return true;
+  }
+  if (typeof a === "object" && typeof b === "object" && a && b) {
+    const keysA = Object.keys(a);
+    const keysB = Object.keys(b);
+    if (keysA.length !== keysB.length) return false;
+    for (let key of keysA) {
+      if (!deepEqual(a[key], b[key])) return false;
+    }
+    return true;
+  }
+  return false;
+}
+
+const LeafletRouteMap = ReactMemo.memo(
+  LeafletRouteMapOrig,
+  (prevProps, nextProps) => {
+    return deepEqual(prevProps, nextProps);
+  },
+);
 import {
   MapPin,
   Mountain,
@@ -28,6 +58,7 @@ const AdventureResult = ({
   quotaInfo,
   isSharedView = false,
   backText = "Back",
+  onAdventureUpdate,
 }) => {
   const [isSharing, setIsSharing] = useState(false);
   const [shareUrl, setShareUrl] = useState(
@@ -55,15 +86,24 @@ const AdventureResult = ({
     setIsSharing(true);
     try {
       const result = await shareAdventure(adventure.id, !adventure.is_public);
-
       if (result.success) {
         if (result.share_url) {
           setShareUrl(result.share_url);
-          adventure.is_public = true;
-          adventure.share_token = result.share_url.split("/").pop();
+          if (onAdventureUpdate) {
+            onAdventureUpdate({
+              ...adventure,
+              is_public: true,
+              share_token: result.share_url.split("/").pop(),
+            });
+          }
         } else {
           setShareUrl(null);
-          adventure.is_public = false;
+          if (onAdventureUpdate) {
+            onAdventureUpdate({
+              ...adventure,
+              is_public: false,
+            });
+          }
         }
       }
     } catch (error) {
@@ -119,18 +159,42 @@ const AdventureResult = ({
     return MapPin; // Default icon
   };
 
-  // Fallback logic for history/adventure objects (for map)
+  // Memoize the route object
+
+  // Use useMemo for route, start, end
+  const memoRoute = useMemo(() => adventure.route, [adventure.route]);
   const startRaw =
-    adventure.route?.start ||
-    adventure.route?.start_coords ||
-    adventure.route?.start_address;
+    memoRoute?.start || memoRoute?.start_coords || memoRoute?.start_address;
   const endRaw =
-    adventure.route?.destination ||
-    adventure.route?.end_coordinates ||
-    adventure.route?.end_address;
-  // Memoize start and end to avoid unnecessary rerenders
-  const start = React.useMemo(() => startRaw, [startRaw]);
-  const end = React.useMemo(() => endRaw, [endRaw]);
+    memoRoute?.destination ||
+    memoRoute?.end_coordinates ||
+    memoRoute?.end_address;
+  const start = useMemo(() => startRaw, [startRaw]);
+  const end = useMemo(() => endRaw, [endRaw]);
+
+  // Memoize all map props to prevent rerender
+  const mapProps = useMemo(
+    () => ({
+      start,
+      end,
+      startLabel:
+        adventure.route?.start_label ||
+        adventure.route?.start_address ||
+        "Start",
+      endLabel:
+        adventure.route?.destination_label ||
+        adventure.route?.end_address ||
+        "Destination",
+    }),
+    [
+      start,
+      end,
+      adventure.route?.start_label,
+      adventure.route?.start_address,
+      adventure.route?.destination_label,
+      adventure.route?.end_address,
+    ],
+  );
 
   return (
     <div className="h-full bg-gradient-to-br from-brand-50 to-brand-100/50 font-sans flex flex-col overflow-hidden">
@@ -277,20 +341,7 @@ const AdventureResult = ({
                         maxHeight: 400,
                       }}
                     >
-                      <LeafletRouteMap
-                        start={start}
-                        end={end}
-                        startLabel={
-                          adventure.route.start_label ||
-                          adventure.route.start_address ||
-                          "Start"
-                        }
-                        endLabel={
-                          adventure.route.destination_label ||
-                          adventure.route.end_address ||
-                          "Destination"
-                        }
-                      />
+                      <LeafletRouteMap {...mapProps} />
                     </div>
                   </div>
                 )}
