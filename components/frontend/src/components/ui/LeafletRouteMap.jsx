@@ -15,18 +15,18 @@ const cancelledRef = { current: false };
 async function geocodeAddress(address) {
   const url = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(address)}`;
   const res = await fetch(url);
-  // eslint-disable-next-line no-console
+
   console.log("[geocodeAddress] Geocoding address:", address);
   const data = await res.json();
-  // eslint-disable-next-line no-console
+
   console.log("[geocodeAddress] Geocode result for", address, ":", data);
   if (Array.isArray(data) && data.length > 0 && data[0].lat && data[0].lon) {
     const coords = [parseFloat(data[0].lat), parseFloat(data[0].lon)];
-    // eslint-disable-next-line no-console
+
     console.log(`[geocodeAddress] Using coords for ${address}:`, coords);
     return coords;
   }
-  // eslint-disable-next-line no-console
+
   console.warn(
     "[geocodeAddress] No valid geocode result for address:",
     address,
@@ -38,30 +38,28 @@ async function geocodeAddress(address) {
 // Helper to fetch route polyline from OSRM (Open Source Routing Machine)
 async function fetchRoute(start, end, setRoute, setError) {
   const url = `https://router.project-osrm.org/route/v1/driving/${start[1]},${start[0]};${end[1]},${end[0]}?overview=full&geometries=geojson`;
-  // eslint-disable-next-line no-console
+
   console.log("[fetchRoute] Fetching route:", url);
   try {
     const res = await fetch(url);
-    // eslint-disable-next-line no-console
+
     console.log("[fetchRoute] Response status:", res.status);
     const data = await res.json();
-    // eslint-disable-next-line no-console
+
     console.log("[fetchRoute] Route fetch result:", data);
     if (data.routes && data.routes[0]) {
       const poly = data.routes[0].geometry.coordinates.map(([lng, lat]) => [
         lat,
         lng,
       ]);
-      // eslint-disable-next-line no-console
+
       console.log("[fetchRoute] Setting route polyline:", poly);
       setRoute(poly);
     } else {
-      // eslint-disable-next-line no-console
       console.warn("[fetchRoute] No route found in response:", data);
       setError("Could not fetch route between locations");
     }
   } catch (err) {
-    // eslint-disable-next-line no-console
     console.error("[fetchRoute] Route fetch error:", err);
     setError("Could not fetch route between locations");
   }
@@ -80,7 +78,6 @@ const LeafletRouteMap = ({
 
   // Debug log for incoming props
   useEffect(() => {
-    // eslint-disable-next-line no-console
     console.log("LeafletRouteMap props:", { start, end, startLabel, endLabel });
   }, [start, end, startLabel, endLabel]);
 
@@ -168,7 +165,6 @@ const LeafletRouteMap = ({
   }, [start, end]);
 
   useEffect(() => {
-    // eslint-disable-next-line no-console
     console.log("[LeafletRouteMap] coords effect run, coords:", coords);
     if (coords.start && coords.end) {
       console.log(
@@ -183,7 +179,6 @@ const LeafletRouteMap = ({
         coords,
       );
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [coords]);
 
   // Timeout fallback: if loading for more than 10s, show error

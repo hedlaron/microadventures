@@ -270,12 +270,12 @@ const AdventureResult = ({
                       adventure.route.end_address ||
                       "Destination";
                     // Debug logging
-                    // eslint-disable-next-line no-console
+
                     console.log(
                       "[AdventureResult] adventure.route:",
                       adventure.route,
                     );
-                    // eslint-disable-next-line no-console
+
                     console.log(
                       "[AdventureResult] start:",
                       start,
