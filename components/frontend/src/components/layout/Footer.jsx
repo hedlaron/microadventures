@@ -17,7 +17,7 @@ const Footer = () => {
         {/* Social links */}
         <div className="flex items-center gap-3 flex-shrink-0 order-1 md:order-2 self-end md:self-auto">
           <a
-            href="https://linkedin.com/in/YOUR_LINKEDIN_USERNAME"
+            href="https://www.linkedin.com/in/hedlaron/"
             target="_blank"
             rel="noopener noreferrer"
             className="text-gray-400 hover:text-[#F4A261] transition-colors duration-200"
@@ -38,7 +38,7 @@ const Footer = () => {
           </a>
 
           <a
-            href="https://github.com/YOUR_GITHUB_USERNAME"
+            href="https://github.com/hedlaron"
             target="_blank"
             rel="noopener noreferrer"
             className="text-gray-400 hover:text-[#F4A261] transition-colors duration-200"
