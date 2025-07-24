@@ -33,6 +33,7 @@ const AdventureResult = ({
   const [shareUrl, setShareUrl] = useState(
     adventure.is_public ? `/shared/${adventure.share_token}` : null,
   );
+
   const [copied, setCopied] = useState(false);
 
   const formatTime = (timeStr) => {
@@ -49,6 +50,8 @@ const AdventureResult = ({
       hour12: false,
     });
   };
+
+  // Removed unused 'prev' variable
 
   const handleShare = async () => {
     setIsSharing(true);
