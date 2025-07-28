@@ -112,8 +112,8 @@ Here are a few ways users interact with Microadventures:
 <details>
 <summary>Showcase Screenshots</summary>
 
-![Home page screenshot](screenshots/homepage.png)
-![Adventure details](screenshots/adventure-details.png)
+![Home page screenshot](screenshots/homepage.jpg)
+![Adventure details](screenshots/adventure_result.jpg)
 <!-- Add more screenshots or GIFs as needed -->
 
 </details>
