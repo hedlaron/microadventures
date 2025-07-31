@@ -4,7 +4,7 @@ targets:
     args:
       cluster_name: production
     # Adding a context to .kluctl.yaml helps prevent accidentally deploying to the wrong cluster!
-    context: gke_microadventures_europe-west3-a_microadventures
+    context: gke_microadventures-467613_europe-west3-a_microadventures
 
 args:
   # This allows us to deploy the GitOps deployment to different clusters. It is used to include dedicated deployment

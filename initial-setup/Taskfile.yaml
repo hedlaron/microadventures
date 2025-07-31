@@ -54,7 +54,7 @@ tasks:
     desc: "Create GKE cluster"
     vars:
       # set the project id to the one you created in the GCP console
-      GCP_PROJECT_ID: microadventures
+      GCP_PROJECT_ID: microadventures-467613
     cmds:
       - |
         gcloud container clusters create ${CLUSTER_NAME} \

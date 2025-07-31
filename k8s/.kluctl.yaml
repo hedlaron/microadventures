@@ -6,7 +6,7 @@ targets:
       environmentType: non-prod
 
   - name: production
-    context: gke_microadventures_europe-west3-a_microadventures
+    context: gke_microadventures-467613_europe-west3-a_microadventures
     args:
       environment: production
       environmentType: prod
