@@ -18,7 +18,7 @@ In production, **Cloudflare** is used as a reverse proxy, CDN, and for DNS manag
 
 ## ✨ Features
 
-- 🤖 **AI-Powered Planning**: Generate personalized adventure recommendations using OpenAI, Anthropic Sonnet 4, GPT-4.1, and Gemini 2.5.
+- 🤖 **AI-Powered Planning**: Generate personalized adventure recommendations using OpenAI GPT-3.5-turbo.
 - 🗺️ **Interactive Maps**: Visual trip planning with Leaflet (OpenStreetMap) integration. No Google Maps required—fully open-source and privacy-friendly.
 - 🌤️ **Weather Integration**: Real-time weather considerations for optimal planning.
 - 📱 **Responsive Design**: Beautiful, mobile-first interface built with React and Tailwind CSS.

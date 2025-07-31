@@ -171,7 +171,7 @@ const About = ({ onClose }) => {
               </li>
               <li>
                 <span className="font-semibold">AI Integration:</span> OpenAI,
-                Anthropic Sonnet 4, GPT-4.1, Gemini 2.5
+                GPT-3.5-turbo
               </li>
               <li>
                 <span className="font-semibold">DevOps & Cloud:</span> Docker,

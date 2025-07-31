@@ -13,7 +13,7 @@ This project intentionally uses a modern, robust, and high-performance technolog
 - **Alembic**: A lightweight database migration tool for SQLAlchemy. It allows for the management of database schema changes in a structured and repeatable way.
 - **Pydantic**: For data validation and settings management using Python type annotations. It enforces type hints at runtime, and provides user-friendly errors when data is invalid.
 - **JWT (JSON Web Tokens)**: A compact, URL-safe means of representing claims to be transferred between two parties. It's a standard for stateless authentication, which is perfect for a decoupled frontend-backend architecture.
-- **OpenAI, Anthropic Sonnet 4, GPT-4.1, and Gemini 2.5**: To provide the core functionality of the application - AI-powered adventure generation.
+- **OpenAI, GPT-3.5-turbo**: To provide the core functionality of the application - AI-powered adventure generation.
 - **Uvicorn**: A lightning-fast ASGI server, for running the FastAPI application in production.
 - **Docker**: For containerizing the application, ensuring a consistent environment for development, testing, and production.
 - **OpenTelemetry**: For instrumenting the application to provide observability data (metrics, traces, and logs).
@@ -27,7 +27,7 @@ This project intentionally uses a modern, robust, and high-performance technolog
 - **Alembic**: Database migration tool
 - **Pydantic**: Data validation using Python type annotations
 - **JWT**: JSON Web Tokens for authentication
-- **OpenAI, Anthropic Sonnet 4, GPT-4.1, and Gemini 2.5**: For AI-powered features
+- **OpenAI GPT-3.5-turbo**: For AI-powered features
 - **uvicorn**: ASGI server for production deployment
 - **Requests**: Elegant and simple HTTP library for Python.
 - **Svix**: for sending webhooks.
