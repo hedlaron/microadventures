@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import { useAuth } from "../contexts/AuthContext";
 import HomePlan from "../components/features/HomePlan";
-import styled from "styled-components";
 import {
   primaryButtonLarge as _PRIMARY_BUTTON_LARGE,
   brandGradientText as _BRAND_GRADIENT_TEXT,
@@ -9,53 +8,6 @@ import {
   cardAccent as _CARD_ACCENT,
   legacyColors,
 } from "../utils/colors";
-
-// Styled components
-const PageWrapper = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  min-height: 100%;
-  height: 100%;
-  padding: 3rem 0;
-  width: 100%;
-  background: #ffffff;
-
-  /* Remove padding when showing Plan component */
-  &.plan-mode {
-    padding: 0;
-    align-items: stretch;
-  }
-`;
-
-const HeroContainer = styled.div`
-  max-width: 1200px;
-  width: 90%;
-  margin: 0 auto;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 4rem;
-
-  @media (max-width: 768px) {
-    flex-direction: column;
-    text-align: center;
-    gap: 2rem;
-  }
-`;
-
-const HeroContent = styled.div`
-  flex: 1;
-  max-width: 500px;
-`;
-
-const HeroVisual = styled.div`
-  flex: 1;
-  max-width: 600px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-`;
 
 const AdventureSVG = () => (
   <svg
@@ -389,44 +341,42 @@ const HomePage = () => {
     }
   };
 
-  // Check if styled components are defined properly
-  if (!PageWrapper || !HeroContainer) {
-    console.error("Styled components not defined properly");
-    return <div className="p-8">Error loading styled components</div>;
-  }
-
   return (
-    <PageWrapper className={isAuthenticated ? "plan-mode" : ""}>
+    <div
+      className={`flex flex-col flex-grow w-full bg-white ${
+        isAuthenticated ? "items-stretch" : ""
+      }`}
+    >
       {/* Conditionally render Plan component or hero section based on authentication status */}
       {isAuthenticated ? (
         <div className="w-full h-full flex flex-col">
           <HomePlan />
         </div>
       ) : (
-        <HeroContainer>
-          <HeroContent>
-            <div className="space-y-8">
-              <div className="space-y-6">
-                <h1 className="text-6xl font-bold text-gray-900 leading-tight tracking-tight">
-                  Plan your next{" "}
-                  <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#F4A261] to-[#E76F51] font-extrabold">
-                    microadventure
-                  </span>
-                </h1>
-                <p className="text-2xl text-gray-700 leading-relaxed font-light max-w-lg">
-                  Discover amazing local experiences and create unforgettable
-                  memories with our intelligent adventure planning platform.
-                </p>
-              </div>
+        <div className="flex-1 flex items-center justify-center py-12">
+          <div className="max-w-7xl w-11/12 mx-auto flex items-center justify-between gap-16 md:flex-row flex-col text-center md:text-left">
+            <div className="flex-1 max-w-lg">
+              <div className="space-y-8">
+                <div className="space-y-6 text-center md:text-left">
+                  <h1 className="text-5xl sm:text-6xl md:text-7xl font-bold text-gray-900 leading-tight tracking-tight break-words max-w-2xl mx-auto md:mx-0">
+                    Plan your next{" "}
+                    <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#F4A261] to-[#E76F51] font-extrabold">
+                      microadventure
+                    </span>
+                  </h1>
+                  <p className="text-lg sm:text-xl md:text-2xl text-gray-700 leading-relaxed font-light max-w-2xl mx-auto md:mx-0 mt-2">
+                    Discover amazing local experiences and create unforgettable
+                    memories with our intelligent adventure planning platform.
+                  </p>
+                </div>
 
-              <div className="space-y-6 pt-4">
-                <div className="inline-block">
+                <div className="flex flex-col items-center md:items-start pt-4">
                   <button
                     onClick={openLoginModal}
-                    className="inline-flex items-center justify-center px-12 py-6 text-xl font-semibold text-white bg-gradient-to-r from-[#F4A261] to-[#E76F51] hover:from-[#E76F51] hover:to-[#D84B40] transition-[background,box-shadow] duration-200 shadow-xl hover:shadow-2xl border-0 rounded-2xl focus:ring-4 focus:ring-orange-300/25 min-w-[280px]"
+                    className="inline-flex items-center justify-center px-10 py-5 text-xl font-semibold text-white bg-gradient-to-r from-[#F4A261] to-[#E76F51] hover:from-[#E76F51] hover:to-[#D84B40] transition-[background,box-shadow] duration-200 shadow-xl hover:shadow-2xl border-0 rounded-2xl focus:ring-4 focus:ring-orange-300/25 w-full sm:w-auto"
                   >
                     <svg
-                      className="w-6 h-6 mr-4"
+                      className="w-6 h-6 mr-3"
                       fill="none"
                       stroke="currentColor"
                       viewBox="0 0 24 24"
@@ -440,60 +390,64 @@ const HomePage = () => {
                     </svg>
                     Start Your Adventure
                   </button>
-                </div>
-
-                <div className="flex items-center space-x-8 text-base text-gray-500 pt-2">
-                  <div className="flex items-center">
-                    <svg
-                      className="w-5 h-5 mr-2 text-[#F4A261]"
-                      fill="currentColor"
-                      viewBox="0 0 20 20"
-                    >
-                      <path
-                        fillRule="evenodd"
-                        d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
-                        clipRule="evenodd"
-                      />
-                    </svg>
-                    Free to start
-                  </div>
-                  <div className="flex items-center">
-                    <svg
-                      className="w-5 h-5 mr-2 text-[#F4A261]"
-                      fill="currentColor"
-                      viewBox="0 0 20 20"
-                    >
-                      <path
-                        fillRule="evenodd"
-                        d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
-                        clipRule="evenodd"
-                      />
-                    </svg>
-                    AI-powered planning
-                  </div>
-                  <div className="flex items-center">
-                    <svg
-                      className="w-5 h-5 mr-2 text-[#F4A261]"
-                      fill="currentColor"
-                      viewBox="0 0 20 20"
-                    >
-                      <path
-                        fillRule="evenodd"
-                        d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
-                        clipRule="evenodd"
-                      />
-                    </svg>
-                    Local discoveries
+                  <div className="flex flex-row items-center gap-6 text-base text-gray-500 mt-6">
+                    <div className="flex items-center">
+                      <svg
+                        className="w-5 h-5 mr-2 text-[#F4A261]"
+                        fill="currentColor"
+                        viewBox="0 0 20 20"
+                      >
+                        <path
+                          fillRule="evenodd"
+                          d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                          clipRule="evenodd"
+                        />
+                      </svg>
+                      Free to start
+                    </div>
+                    <div className="flex items-center">
+                      <svg
+                        className="w-5 h-5 mr-2 text-[#F4A261]"
+                        fill="currentColor"
+                        viewBox="0 0 20 20"
+                      >
+                        <path
+                          fillRule="evenodd"
+                          d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                          clipRule="evenodd"
+                        />
+                      </svg>
+                      AI-powered planning
+                    </div>
+                    <div className="flex items-center">
+                      <svg
+                        className="w-5 h-5 mr-2 text-[#F4A261]"
+                        fill="currentColor"
+                        viewBox="0 0 20 20"
+                      >
+                        <path
+                          fillRule="evenodd"
+                          d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                          clipRule="evenodd"
+                        />
+                      </svg>
+                      Local discoveries
+                    </div>
                   </div>
                 </div>
               </div>
             </div>
-          </HeroContent>
 
-          <HeroVisual>
-            <AdventureSVG />
-          </HeroVisual>
-        </HeroContainer>
+            <div className="flex-1 max-w-2xl flex justify-center items-center">
+              <img
+                src={"/microadventures_demo.gif"}
+                alt="Microadventures Demo"
+                className="w-full h-auto max-w-[700px] object-contain rounded-xl shadow-2xl mx-auto"
+                style={{ minWidth: "320px", minHeight: "220px" }}
+              />
+            </div>
+          </div>
+        </div>
       )}
 
       {/* Login/Signup Modal */}
@@ -760,7 +714,7 @@ const HomePage = () => {
           </div>
         </div>
       )}
-    </PageWrapper>
+    </div>
   );
 };
 

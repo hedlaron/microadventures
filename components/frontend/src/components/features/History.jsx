@@ -201,7 +201,7 @@ const History = ({ onBack, onSelectAdventure }) => {
       {/* Main Content */}
       <div className="flex-1 overflow-hidden min-h-0">
         <div className="px-2 sm:px-6 h-full flex justify-center py-4">
-          <div className="layout-content-container flex flex-col max-w-[960px] flex-1 min-h-0">
+          <div className="layout-content-container flex flex-col max-w-xs sm:max-w-md md:max-w-[960px] flex-1 min-h-0 mx-auto w-full">
             {error ? (
               <div className="text-center py-12">
                 <div className="bg-orange-50 border border-orange-200 rounded-lg p-6 max-w-md mx-auto">
@@ -251,12 +251,12 @@ const History = ({ onBack, onSelectAdventure }) => {
 
                 {/* Adventure Grid - Scrollable */}
                 <div className="flex-1 overflow-y-auto adventure-scroll min-h-0">
-                  <div className="adventure-grid grid gap-6 md:grid-cols-2 lg:grid-cols-3 pb-6">
+                  <div className="adventure-grid grid gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 pb-6">
                     {currentAdventures.map((adventure) => (
                       <div
                         key={adventure.id}
                         onClick={() => onSelectAdventure(adventure)}
-                        className="bg-white rounded-xl overflow-hidden border border-orange-200/50 hover:shadow-lg transition-all cursor-pointer group"
+                        className="bg-white rounded-xl overflow-hidden border border-orange-200/50 hover:shadow-lg transition-all cursor-pointer group max-w-sm w-full mx-auto"
                       >
                         <div className="relative h-48 bg-gradient-to-br from-[#F4A261] to-[#E76F51]">
                           {adventure.image_url && (

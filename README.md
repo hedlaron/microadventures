@@ -64,7 +64,7 @@ This project uses a modern, robust, and high-performance technology stack to sol
 - **Pre-commit**: For running linters and formatters before committing code.
 - **GitHub Actions**: For continuous integration and continuous deployment (CI/CD).
 - **Trivy**: For vulnerability scanning of container images.
-- **OpenTelemetry**: For observability and monitoring.
+
 - **Cloudflare**: For DNS, CDN, and security.
 
 ## 🧑‍💻 Development Lifecycle

@@ -176,7 +176,7 @@ const About = ({ onClose }) => {
               <li>
                 <span className="font-semibold">DevOps & Cloud:</span> Docker,
                 Kubernetes (K8s), GKE, Kluctl (GitOps), Devbox, Task, GitHub
-                Actions, Trivy, OpenTelemetry, Cloudflare
+                Actions, Trivy, Cloudflare
               </li>
               <li>
                 <span className="font-semibold">Testing & Quality:</span>{" "}

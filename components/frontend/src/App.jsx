@@ -47,10 +47,10 @@ const AppContent = () => {
   }, []);
 
   return (
-    <div className="h-screen flex flex-col">
+    <div className="flex flex-col min-h-screen">
       <Navbar />
       <main
-        className={`flex-1 min-h-0 overflow-auto pt-16 px-4 md:px-6 lg:px-8 ${error ? "blur-background" : ""}`}
+        className={`flex-grow overflow-auto pt-16 px-4 md:px-6 lg:px-8 ${error ? "blur-background" : ""}`}
       >
         <Routes>
           <Route

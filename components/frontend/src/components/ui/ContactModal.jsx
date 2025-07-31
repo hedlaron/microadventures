@@ -2,7 +2,7 @@ import React from "react";
 
 const ContactModal = ({ onClose }) => {
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-2 sm:p-6">
       <div
         className="absolute inset-0 backdrop-blur-sm bg-black/30 transition-all duration-300"
         aria-hidden="true"
@@ -10,11 +10,11 @@ const ContactModal = ({ onClose }) => {
         style={{ cursor: "pointer" }}
       ></div>
       <div
-        className="relative bg-white rounded-2xl p-8 max-w-3xl w-full mx-2 md:mx-8 shadow-xl border border-orange-200 flex flex-col gap-6 animate-fade-in contact-modal-scroll"
+        className="relative bg-white rounded-2xl p-4 sm:p-8 max-w-md sm:max-w-2xl w-full mx-auto shadow-xl border border-orange-200 flex flex-col gap-6 animate-fade-in contact-modal-scroll"
         style={{
-          maxHeight: "85vh",
-          marginTop: "32px",
-          marginBottom: "32px",
+          maxHeight: "90vh",
+          marginTop: "16px",
+          marginBottom: "16px",
           overflowY: "auto",
         }}
         onClick={(e) => e.stopPropagation()}

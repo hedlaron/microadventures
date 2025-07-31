@@ -31,7 +31,7 @@ This project intentionally uses a modern, robust, and high-performance technolog
 - **uvicorn**: ASGI server for production deployment
 - **Requests**: Elegant and simple HTTP library for Python.
 - **Svix**: for sending webhooks.
-- **OpenTelemetry**: For observability.
+
 
 ## 🚀 Getting Started
 

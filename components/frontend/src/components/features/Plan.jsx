@@ -2,279 +2,9 @@ import React, { useState, useEffect, useCallback, useRef } from "react";
 import LocationAutocomplete from "../ui/LocationAutocomplete";
 import { useAuth } from "../../contexts/AuthContext";
 import { createAdventure, fetchAdventureQuota } from "../../utils/api";
-import AdventurousBackground from "./AdventurousBackground";
 import AdventureResult from "./AdventureResult";
 import MapPicker from "./MapPicker";
 import { useCountdown } from "../../hooks/useCountdown";
-import styled from "styled-components";
-import {
-  primaryButtonRounded as _PRIMARY_BUTTON_ROUNDED,
-  errorText as _ERROR_TEXT,
-  errorBg as _ERROR_BG,
-  errorBorder as _ERROR_BORDER,
-  focusRing as _FOCUS_RING,
-} from "../../utils/colors";
-
-const PageWrapper = styled.div`
-  position: relative;
-  display: flex;
-  align-items: flex-start;
-  justify-content: center;
-  min-height: 100%;
-  height: 100%;
-  padding: 1rem 0;
-
-  @media (max-width: 640px) {
-    padding: 0.5rem 0;
-  }
-`;
-
-const PlanFormContainer = styled.div`
-  position: relative;
-  width: 100%;
-  max-width: 800px;
-  border-radius: 18px;
-  background: white;
-  border: 2px solid rgba(244, 162, 97, 0.22);
-  box-shadow:
-    0 8px 24px -2px rgba(0, 0, 0, 0.12),
-    0 2px 8px -1px rgba(0, 0, 0, 0.08);
-  max-height: calc(100vh - 5rem);
-  overflow-y: auto;
-
-  /* Custom scrollbar for the form */
-  &::-webkit-scrollbar {
-    width: 6px;
-  }
-  &::-webkit-scrollbar-track {
-    background: transparent;
-  }
-  &::-webkit-scrollbar-thumb {
-    background: #f4a261;
-    border-radius: 3px;
-  }
-  &::-webkit-scrollbar-thumb:hover {
-    background: #e76f51;
-  }
-
-  @media (max-width: 900px) {
-    max-width: 99vw;
-    border-radius: 12px;
-  }
-  @media (max-width: 640px) {
-    max-width: 100vw;
-    border-radius: 8px;
-    max-height: calc(100vh - 2rem);
-  }
-  @media (max-height: 600px) {
-    max-height: calc(100vh - 4rem);
-  }
-`;
-
-const PlanContainer = styled.div`
-  position: relative;
-  width: 100%;
-  padding: 1rem;
-  display: flex;
-  flex-direction: column;
-
-  @media (min-width: 640px) {
-    padding: 1.5rem;
-  }
-
-  @media (min-width: 1024px) {
-    padding: 2rem;
-  }
-`;
-
-const LoadingOverlay = styled.div`
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  z-index: 100;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-`;
-
-const LoadingCard = styled.div`
-  background: white;
-  border-radius: 20px;
-  border: 2px solid rgba(244, 162, 97, 0.2);
-  box-shadow:
-    0 25px 50px rgba(0, 0, 0, 0.15),
-    0 10px 20px rgba(244, 162, 97, 0.1),
-    inset 0 1px 0 rgba(255, 255, 255, 0.8);
-  padding: 3rem 2.5rem;
-  text-align: center;
-  max-width: 500px;
-  width: 90%;
-  backdrop-filter: blur(10px);
-  position: relative;
-`;
-
-const LoadingAnimation = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 1rem;
-  margin-bottom: 2.5rem;
-
-  .adventure-icon {
-    width: 5rem;
-    height: 5rem;
-    background: linear-gradient(135deg, #f4a261 0%, #e76f51 100%);
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    box-shadow:
-      0 8px 25px rgba(244, 162, 97, 0.4),
-      0 4px 12px rgba(231, 111, 81, 0.2);
-    position: relative;
-
-    /* Add a subtle pulse ring */
-    &::before {
-      content: "";
-      position: absolute;
-      top: -8px;
-      left: -8px;
-      right: -8px;
-      bottom: -8px;
-      border: 2px solid rgba(244, 162, 97, 0.3);
-      border-radius: 50%;
-    }
-  }
-
-  .adventure-icon svg {
-    width: 2.5rem;
-    height: 2.5rem;
-    color: white;
-    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
-  }
-
-  @keyframes bounce {
-    0%,
-    20%,
-    50%,
-    80%,
-    100% {
-      transform: translateY(0) scale(1);
-    }
-    40% {
-      transform: translateY(-12px) scale(1.05);
-    }
-    60% {
-      transform: translateY(-6px) scale(1.02);
-    }
-  }
-
-  @keyframes pulse {
-    0%,
-    100% {
-      transform: scale(1);
-      opacity: 0.3;
-    }
-    50% {
-      transform: scale(1.1);
-      opacity: 0.6;
-    }
-  }
-
-  .loading-dots {
-    display: flex;
-    gap: 0.375rem;
-  }
-
-  .dot {
-    width: 0.625rem;
-    height: 0.625rem;
-    background: linear-gradient(135deg, #f4a261, #e76f51);
-    border-radius: 50%;
-    box-shadow: 0 2px 8px rgba(244, 162, 97, 0.3);
-    opacity: 0.5;
-    animation: dot-bounce 1.2s infinite;
-  }
-  .dot:nth-child(1) {
-    animation-delay: 0s;
-  }
-  .dot:nth-child(2) {
-    animation-delay: 0.2s;
-  }
-  .dot:nth-child(3) {
-    animation-delay: 0.4s;
-  }
-
-  @keyframes dot-bounce {
-    0%,
-    80%,
-    100% {
-      transform: scale(1);
-      opacity: 0.5;
-    }
-    40% {
-      transform: scale(1.4);
-      opacity: 1;
-    }
-  }
-`;
-
-const LoadingText = styled.div`
-  .main-text {
-    font-size: 1.75rem;
-    font-weight: 800;
-    color: #0c1c17;
-    margin-bottom: 0.75rem;
-    background: linear-gradient(135deg, #f4a261 0%, #e76f51 50%, #f4a261 100%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-    background-size: 200% 100%;
-    letter-spacing: -0.02em;
-  }
-
-  .sub-text {
-    font-size: 1.1rem;
-    font-weight: 500;
-    color: #4b5563;
-    margin-bottom: 2rem;
-    line-height: 1.6;
-    opacity: 0.9;
-  }
-
-  .fun-facts {
-    background: linear-gradient(
-      135deg,
-      rgba(244, 162, 97, 0.1),
-      rgba(231, 111, 81, 0.1)
-    );
-    border: 1px solid rgba(244, 162, 97, 0.2);
-    border-radius: 12px;
-    padding: 1rem 1.25rem;
-    font-size: 0.95rem;
-    font-weight: 600;
-    color: #374151;
-    transition: all 0.5s ease-in-out;
-    min-height: 3rem;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    position: relative;
-
-    /* Add a subtle icon or decoration */
-    &::before {
-      content: "✨";
-      position: absolute;
-      left: 0.75rem;
-      font-size: 1.1rem;
-    }
-
-    /* Padding to make room for the icon */
-    padding-left: 2.5rem;
-  }
-`;
 
 // Helper to format a Date object as yyyy-MM-ddTHH:mm in local time for datetime-local input
 function toLocalInputValue(date) {
@@ -507,8 +237,8 @@ const Plan = () => {
       }
 
       const adventure = await createAdventure(adventureData, token);
+      await loadQuotaInfo();
       setGeneratedAdventure(adventure);
-      // Do NOT refresh quota info here to avoid re-rendering after adventure is generated
     } catch (err) {
       console.error("Failed to create adventure:", err);
       setError(
@@ -546,10 +276,6 @@ const Plan = () => {
     loadQuotaInfo();
   };
 
-  // Removed unused isShrunk and headerRef, and scroll logic (no longer needed)
-  // (All shrinking/scroll header logic is now removed for static header)
-
-  // If adventure is generated, show the result with full-width layout like history
   // Only update generatedAdventure if different (deep compare)
   function deepEqual(a, b) {
     if (a === b) return true;
@@ -585,7 +311,7 @@ const Plan = () => {
   );
   if (generatedAdventure) {
     return (
-      <div className="h-full">
+      <div className="h-full w-full">
         <AdventureResult
           adventure={memoizedAdventure}
           onBack={handleBackToForm}
@@ -598,20 +324,20 @@ const Plan = () => {
     );
   }
 
-  // Outer scroll container for edge-to-edge scrollbar
   return (
-    <PageWrapper>
+    <div className="relative flex items-start justify-center min-h-full h-full py-4 sm:py-2">
       {/* Loading Overlay */}
       {loading && (
-        <LoadingOverlay>
-          <LoadingCard>
-            <LoadingAnimation>
-              <div className="adventure-icon">
+        <div className="absolute top-0 left-0 right-0 bottom-0 z-50 flex items-center justify-center bg-white/50 backdrop-blur-sm">
+          <div className="bg-white rounded-2xl border-2 border-orange-200/20 shadow-2xl p-12 text-center max-w-lg w-11/12 relative">
+            <div className="flex items-center justify-center gap-4 mb-10">
+              <div className="w-20 h-20 bg-gradient-to-r from-[#F4A261] to-[#E76F51] rounded-full flex items-center justify-center shadow-lg relative before:content-[''] before:absolute before:-top-2 before:-left-2 before:-right-2 before:-bottom-2 before:border-2 before:border-orange-300/30 before:rounded-full">
                 <svg
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
                   xmlns="http://www.w3.org/2000/svg"
+                  className="w-10 h-10 text-brand-50 drop-shadow-md"
                 >
                   <path
                     strokeLinecap="round"
@@ -627,46 +353,39 @@ const Plan = () => {
                   />
                 </svg>
               </div>
-              <div className="loading-dots">
-                <div className="dot"></div>
-                <div className="dot"></div>
-                <div className="dot"></div>
+              <div className="flex gap-1.5">
+                <div className="w-2.5 h-2.5 bg-gradient-to-r from-[#F4A261] to-[#E76F51] rounded-full shadow-md animate-dot-bounce opacity-50"></div>
+                <div className="w-2.5 h-2.5 bg-gradient-to-r from-[#F4A261] to-[#E76F51] rounded-full shadow-md animate-dot-bounce opacity-50 [animation-delay:0.2s]"></div>
+                <div className="w-2.5 h-2.5 bg-gradient-to-r from-[#F4A261] to-[#E76F51] rounded-full shadow-md animate-dot-bounce opacity-50 [animation-delay:0.4s]"></div>
               </div>
-            </LoadingAnimation>
+            </div>
 
-            <LoadingText>
-              <div className="main-text">We're working on your adventure!</div>
-              <div className="sub-text">
+            <div>
+              <div className="text-3xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-[#F4A261] via-[#E76F51] to-[#F4A261] bg-200% animate-gradient-x mb-3 tracking-tight">
+                We're working on your adventure!
+              </div>
+              <div className="text-lg font-medium text-gray-600 mb-8 leading-relaxed opacity-90">
                 Our AI is exploring the best microadventures just for you...
               </div>
-              <div className="fun-facts">{funFacts[currentFactIndex]}</div>
-            </LoadingText>
-          </LoadingCard>
-        </LoadingOverlay>
+              <div className="bg-gradient-to-r from-orange-100/30 to-orange-100/30 border border-orange-200/50 rounded-lg px-5 py-4 text-base font-semibold text-gray-800 relative pl-10 min-h-12 flex items-center justify-center">
+                <span className="absolute left-3 text-lg">✨</span>
+                {funFacts[currentFactIndex]}
+              </div>
+            </div>
+          </div>
+        </div>
       )}
-      <PlanFormContainer
+      <div
+        className="relative w-full max-w-4xl rounded-2xl bg-white border-2 border-orange-200/30 shadow-xl max-h-[calc(100vh-5rem)] overflow-y-auto sm:max-w-full md:max-w-3xl lg:max-w-4xl xl:max-w-5xl 2xl:max-w-6xl sm:rounded-lg md:rounded-xl lg:rounded-2xl xl:rounded-3xl"
         style={{
           filter: loading ? "blur(8px)" : "none",
           opacity: loading ? 0.3 : 1,
           pointerEvents: loading ? "none" : "auto",
         }}
       >
-        <PlanContainer>
+        <div className="relative w-full p-4 sm:p-6 lg:p-8 flex flex-col">
           {/* Static header and quota */}
-          <div
-            className="bg-white w-full py-6"
-            style={{
-              borderRadius: 18,
-              minHeight: 40,
-              boxShadow: "none",
-              border: "none",
-              width: "100%",
-              margin: 0,
-              maxWidth: "none",
-              left: 0,
-              right: 0,
-            }}
-          >
+          <div className="bg-white w-full py-6">
             <h1 className="w-full text-[#0c1c17] text-center font-bold leading-tight tracking-[-0.015em] text-2xl mb-2">
               Plan Your Microadventure
             </h1>
@@ -1154,8 +873,8 @@ const Plan = () => {
               </button>
             </form>
           </div>
-        </PlanContainer>
-      </PlanFormContainer>
+        </div>
+      </div>
       {/* Map Picker Modals */}
       <MapPicker
         isOpen={showStartMapPicker}
@@ -1169,7 +888,7 @@ const Plan = () => {
         onLocationSelect={handleEndLocationFromMap}
         title="Select Destination"
       />
-    </PageWrapper>
+    </div>
   );
 };
 

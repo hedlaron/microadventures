@@ -1,3 +1,5 @@
+import { List } from "lucide-react";
+
 import React, { useState, useMemo } from "react";
 import ReactMemo from "react";
 import LeafletRouteMapOrig from "../ui/LeafletRouteMap";
@@ -60,6 +62,7 @@ const AdventureResult = ({
   backText = "Back",
   onAdventureUpdate,
 }) => {
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [isSharing, setIsSharing] = useState(false);
   const [shareUrl, setShareUrl] = useState(
     adventure.is_public ? `/shared/${adventure.share_token}` : null,
@@ -197,27 +200,124 @@ const AdventureResult = ({
   );
 
   return (
-    <div className="h-full bg-gradient-to-br from-brand-50 to-brand-100/50 font-sans flex flex-col overflow-hidden">
+    <div className="min-h-screen bg-gradient-to-br from-brand-50 to-brand-100/50 font-sans flex flex-col overflow-hidden">
+      {/* Mobile Hamburger Menu Drawer */}
+      <div
+        className={`fixed inset-0 z-50 bg-black/40 transition-opacity duration-300 ${mobileMenuOpen ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"}`}
+        onClick={() => setMobileMenuOpen(false)}
+      >
+        <div
+          className={`fixed top-0 right-0 h-full w-64 bg-white shadow-xl transition-transform duration-300 ${mobileMenuOpen ? "translate-x-0" : "translate-x-full"}`}
+          onClick={(e) => e.stopPropagation()}
+        >
+          <div className="flex items-center justify-between px-4 py-4 border-b border-orange-200">
+            <h2 className="text-xl font-bold text-[#0c1c17]">Menu</h2>
+            <button
+              onClick={() => setMobileMenuOpen(false)}
+              className="text-2xl text-orange-500 font-bold"
+              aria-label="Close menu"
+            >
+              ×
+            </button>
+          </div>
+          <div className="flex flex-col gap-4 p-4">
+            {quotaInfo && (
+              <div className="text-sm text-orange-600 font-medium">
+                {quotaInfo.adventures_remaining} left today
+              </div>
+            )}
+            <button
+              onClick={() => {
+                setMobileMenuOpen(false);
+                handleShare();
+              }}
+              disabled={isSharing}
+              className={`flex items-center gap-2 text-sm font-medium px-4 py-2 rounded-xl transition-colors duration-200 ${
+                adventure.is_public
+                  ? "bg-success-100 text-success-700 hover:bg-success-200"
+                  : "bg-brand-100/50 text-brand-700 hover:bg-brand-200/70"
+              } ${isSharing ? "opacity-50 cursor-not-allowed" : ""}`}
+            >
+              <Share2 size={16} />
+              {isSharing ? "..." : adventure.is_public ? "Public" : "Share"}
+            </button>
+            {adventure.is_public && shareUrl && (
+              <button
+                onClick={() => {
+                  setMobileMenuOpen(false);
+                  copyToClipboard();
+                }}
+                className="flex items-center gap-2 text-sm font-medium bg-brand-50 text-brand-700 hover:bg-brand-100 transition-colors duration-200 px-4 py-2 rounded-xl"
+                title="Copy share link"
+              >
+                {copied ? <Check size={16} /> : <Copy size={16} />}
+                {copied ? "Copied!" : "Copy"}
+              </button>
+            )}
+            <button
+              onClick={() => {
+                setMobileMenuOpen(false);
+                onNewAdventure();
+              }}
+              className="flex items-center gap-2 text-sm font-medium bg-gradient-to-r from-[#F4A261] to-[#E76F51] hover:from-[#E76F51] hover:to-[#D84B40] text-white transition-all duration-300 shadow-lg hover:shadow-xl hover:brightness-110 border-0 rounded-xl px-4 py-2"
+            >
+              <RotateCcw size={16} />
+              New Adventure
+            </button>
+            {/* Remove user avatar from mobile menu drawer */}
+          </div>
+        </div>
+      </div>
       {/* Header - only show if not in shared view */}
       {!isSharedView && (
         <header className="border-b border-brand-200/50 bg-white z-10 flex-shrink-0">
-          {/* Top row - Back button and title */}
+          {/* Top row - Back button and title, mobile: compact, desktop: full */}
           <div className="flex items-center justify-between px-2 sm:px-6 py-4">
-            <button
-              onClick={onBack}
-              className="flex items-center gap-2 text-[#0c1c17] bg-brand-100/50 hover:bg-brand-200/70 transition-colors duration-200 px-4 py-2 rounded-xl font-medium"
-            >
-              <ArrowLeft size={20} />
-              <span className="text-sm">{backText}</span>
-            </button>
-            <h2 className="text-[#0c1c17] text-xl font-bold leading-tight">
-              Your Adventure
-            </h2>
-            <div className="w-24"> {/* Spacer for balance */}</div>
+            {/* Mobile: title, avatar, hamburger. Desktop: back button, title, spacer. */}
+            <div className="flex items-center justify-between w-full">
+              {/* Desktop: back button */}
+              <div className="hidden sm:flex items-center gap-2">
+                <button
+                  onClick={onBack}
+                  className="flex items-center gap-2 text-[#0c1c17] bg-brand-100/50 hover:bg-brand-200/70 transition-colors duration-200 px-4 py-2 rounded-xl font-medium"
+                >
+                  <ArrowLeft size={20} />
+                  <span className="text-sm">{backText}</span>
+                </button>
+              </div>
+              {/* Title always visible */}
+              <h2 className="text-[#0c1c17] text-xl font-bold leading-tight mx-auto sm:mx-0">
+                Your Adventure
+              </h2>
+              {/* Mobile: avatar and hamburger, Desktop: spacer */}
+              <div className="flex items-center">
+                {/* Show avatar only on mobile, always visible */}
+                <div className="sm:hidden flex items-center ml-2">
+                  {adventure.user && (
+                    <div className="w-8 h-8 bg-gradient-to-r from-[#F4A261] to-[#E76F51] rounded-full flex items-center justify-center">
+                      <span className="text-white font-semibold text-sm">
+                        {adventure.user?.charAt(0)?.toUpperCase()}
+                      </span>
+                    </div>
+                  )}
+                  <button
+                    onClick={() => setMobileMenuOpen(true)}
+                    className="p-2 rounded-xl text-[#F4A261] hover:bg-orange-100 focus:outline-none ml-2"
+                    aria-label="Open menu"
+                  >
+                    <List size={28} />
+                  </button>
+                </div>
+                <div className="hidden sm:block w-24">
+                  {" "}
+                  {/* Spacer for balance */}
+                </div>
+              </div>
+            </div>
           </div>
 
-          {/* Bottom row - Action buttons */}
-          <div className="flex items-center justify-between px-2 sm:px-6 py-3 bg-orange-100/30 border-t border-orange-200/50">
+          {/* Desktop action buttons, hidden on mobile */}
+          <div className="hidden sm:flex items-center justify-between px-2 sm:px-6 py-3 bg-orange-100/30 border-t border-orange-200/50">
             <div className="flex items-center gap-3">
               {quotaInfo && (
                 <div className="text-sm text-orange-600 font-medium">
@@ -225,7 +325,6 @@ const AdventureResult = ({
                 </div>
               )}
             </div>
-
             <div className="flex items-center gap-3">
               {/* Share Button */}
               <button
@@ -244,7 +343,6 @@ const AdventureResult = ({
                     ? "Public"
                     : "Share"}
               </button>
-
               {/* Copy URL Button (only show when public) */}
               {adventure.is_public && shareUrl && (
                 <button
@@ -256,7 +354,6 @@ const AdventureResult = ({
                   {copied ? "Copied!" : "Copy"}
                 </button>
               )}
-
               <button
                 onClick={onNewAdventure}
                 className="flex items-center gap-2 text-sm font-medium bg-gradient-to-r from-[#F4A261] to-[#E76F51] hover:from-[#E76F51] hover:to-[#D84B40] text-white transition-all duration-300 shadow-lg hover:shadow-xl hover:brightness-110 border-0 rounded-xl px-4 py-2"
@@ -270,9 +367,9 @@ const AdventureResult = ({
       )}
 
       {/* Main Content - Properly centered card with scrollable content */}
-      <div className="flex-1 flex items-center justify-center p-2 sm:p-4 lg:p-6 min-h-0">
-        <div className="w-full max-w-5xl h-full flex flex-col">
-          <div className="bg-white rounded-xl border border-orange-200/50 flex-1 overflow-hidden flex flex-col min-h-0">
+      <div className="flex-1 flex items-center justify-center px-2 sm:px-4 lg:px-6 min-h-0 w-full">
+        <div className="w-full max-w-4xl h-full flex flex-col mx-auto">
+          <div className="bg-white rounded-xl border border-orange-200/50 flex-1 overflow-hidden flex flex-col min-h-0 w-full mx-auto px-2">
             {/* Back button for shared view */}
             {isSharedView && (
               <div className="flex items-center justify-between p-2 sm:p-4 lg:p-6 border-b border-orange-200/50 bg-orange-100/30 flex-shrink-0">
@@ -295,9 +392,9 @@ const AdventureResult = ({
             <div className="flex-1 overflow-y-auto adventure-scroll min-h-0">
               <div className="p-2 sm:p-4 lg:p-6">
                 {/* Hero Section */}
-                <div className="@container mb-8">
-                  <div className="@[480px]:px-0 @[480px]:py-0">
-                    <div className="bg-cover bg-center flex flex-col justify-end overflow-hidden bg-gradient-to-br from-orange-50 to-orange-100/50 rounded-xl min-h-80 relative border border-orange-200/50">
+                <div className="mb-8">
+                  <div className="px-0 py-0">
+                    <div className="bg-cover bg-center flex flex-col justify-end overflow-hidden bg-gradient-to-br from-orange-50 to-orange-100/50 rounded-xl min-h-48 sm:min-h-80 relative border border-orange-200/50">
                       {adventure.image_url ? (
                         <img
                           src={adventure.image_url}
@@ -339,9 +436,12 @@ const AdventureResult = ({
                         position: "relative",
                         zIndex: 1,
                         maxHeight: 400,
+                        minHeight: 180,
                       }}
                     >
-                      <LeafletRouteMap {...mapProps} />
+                      <div className="w-full h-full">
+                        <LeafletRouteMap {...mapProps} />
+                      </div>
                     </div>
                   </div>
                 )}
