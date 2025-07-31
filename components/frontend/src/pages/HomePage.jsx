@@ -232,6 +232,7 @@ const HomePage = () => {
   // Local state for the form handling
   const [loginSuccess, setLoginSuccess] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [showGifModal, setShowGifModal] = useState(false);
   const modalRef = useRef();
 
   // For debugging
@@ -442,8 +443,10 @@ const HomePage = () => {
               <img
                 src={"/microadventures_demo.gif"}
                 alt="Microadventures Demo"
-                className="w-full h-auto max-w-[700px] object-contain rounded-xl shadow-2xl mx-auto"
+                className="w-full h-auto max-w-[700px] object-contain rounded-xl shadow-2xl mx-auto cursor-pointer transition-transform duration-200 hover:scale-105"
                 style={{ minWidth: "320px", minHeight: "220px" }}
+                onClick={() => setShowGifModal(true)}
+                title="Click to enlarge demo"
               />
             </div>
           </div>
@@ -711,6 +714,35 @@ const HomePage = () => {
                 </div>
               </>
             )}
+          </div>
+        </div>
+      )}
+
+      {/* GIF Demo Modal */}
+      {showGifModal && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm"
+          onClick={() => setShowGifModal(false)}
+        >
+          <div className="relative" onClick={(e) => e.stopPropagation()}>
+            <img
+              src="/microadventures_demo.gif"
+              alt="Microadventures Demo Large"
+              className="rounded-2xl shadow-2xl border-4 border-orange-200"
+              style={{
+                maxWidth: "90vw",
+                maxHeight: "80vh",
+                background: "#fff",
+              }}
+            />
+            <button
+              onClick={() => setShowGifModal(false)}
+              className="absolute top-2 right-2 text-white bg-orange-500 hover:bg-orange-600 rounded-full w-10 h-10 flex items-center justify-center text-2xl font-bold shadow-lg border-none"
+              aria-label="Close"
+              style={{ zIndex: 100 }}
+            >
+              ×
+            </button>
           </div>
         </div>
       )}
