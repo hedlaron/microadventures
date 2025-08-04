@@ -38,7 +38,7 @@ const Footer = () => {
           </a>
 
           <a
-            href="https://github.com/hedlaron"
+            href="https://github.com/hedlaron/microadventures"
             target="_blank"
             rel="noopener noreferrer"
             className="text-gray-400 hover:text-[#F4A261] transition-colors duration-200"

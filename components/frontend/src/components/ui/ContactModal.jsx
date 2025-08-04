@@ -103,7 +103,7 @@ const ContactModal = ({ onClose }) => {
                 <span>LinkedIn</span>
               </a>
               <a
-                href="https://github.com/hedlaron"
+                href="https://github.com/hedlaron/microadventures"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg border border-gray-200 bg-gray-50 hover:bg-gray-100 text-gray-800 font-medium text-sm transition-colors"
