@@ -70,7 +70,7 @@ const ContactModal = ({ onClose }) => {
               monitor services, develop internal tools, and empower teams.
               <br />
               <span className="font-semibold">Other skills:</span> React,
-              FastAPI, JavaScript, SQL, Flask, styled-components.
+              FastAPI, JavaScript, SQL, Flask.
               <br />
               <span className="font-semibold">Certs:</span> BSc Business
               Informatics, Red Hat Delivery Specialist.
