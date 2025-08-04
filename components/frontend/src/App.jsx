@@ -20,6 +20,7 @@ import SharedAdventure from "./components/features/SharedAdventure";
 import ProtectedRoute from "./components/layout/ProtectedRoute";
 import About from "./components/ui/About";
 import ContactModal from "./components/ui/ContactModal";
+import BrowserNotification from "./components/ui/BrowserNotification";
 
 // For debugging
 console.log("App.jsx loading components:", {
@@ -48,6 +49,7 @@ const AppContent = () => {
 
   return (
     <div className="flex flex-col min-h-screen">
+      <BrowserNotification />
       <Navbar />
       <main
         className={`flex-grow overflow-auto pt-16 px-4 md:px-6 lg:px-8 ${error ? "blur-background" : ""}`}
