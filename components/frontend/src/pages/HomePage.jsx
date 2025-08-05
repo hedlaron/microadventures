@@ -31,6 +31,12 @@ const GifPlayer = ({
     originalSrc.current = src;
   }, [src]);
 
+  const getSourceWithCacheBuster = (source) => {
+    // Remove existing cache buster if present
+    const cleanSrc = source.split("?")[0];
+    return `${cleanSrc}?v=${Date.now()}`;
+  };
+
   const showControlsWithDelay = () => {
     if (hideTimeoutRef.current) {
       clearTimeout(hideTimeoutRef.current);
@@ -72,7 +78,7 @@ const GifPlayer = ({
       }
     } else {
       // Play: restore original GIF source
-      imgRef.current.src = originalSrc.current + "?t=" + Date.now(); // Add timestamp to force reload
+      imgRef.current.src = getSourceWithCacheBuster(originalSrc.current);
     }
 
     setIsPlaying(!isPlaying);
@@ -601,7 +607,7 @@ const HomePage = () => {
 
             <div className="flex-1 max-w-2xl flex justify-center items-center">
               <GifPlayer
-                src={"/microadventures_demo.gif"}
+                src={`/microadventures_demo.gif?v=${Date.now()}`}
                 alt="Microadventures Demo"
                 className="w-full h-auto max-w-[700px] object-contain rounded-xl shadow-2xl mx-auto transition-transform duration-200 hover:scale-105"
                 style={{ minWidth: "320px", minHeight: "220px" }}
@@ -890,7 +896,7 @@ const HomePage = () => {
             onClick={(e) => e.stopPropagation()}
           >
             <GifPlayer
-              src="/microadventures_demo.gif"
+              src={`/microadventures_demo.gif?v=${Date.now()}`}
               alt="Microadventures Demo - Enlarged View"
               className="rounded-2xl shadow-2xl border-4 border-orange-200 max-w-full max-h-full object-contain"
               style={{
