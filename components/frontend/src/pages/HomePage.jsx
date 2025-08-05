@@ -9,6 +9,159 @@ import {
   legacyColors,
 } from "../utils/colors";
 
+// GIF Player Component with pause/play functionality
+const GifPlayer = ({
+  src,
+  alt,
+  className,
+  style,
+  onClick,
+  title,
+  showEnlargeHint = false,
+}) => {
+  const [isPlaying, setIsPlaying] = useState(true);
+  const [showControls, setShowControls] = useState(false);
+  const imgRef = useRef(null);
+  const canvasRef = useRef(null);
+  const originalSrc = useRef(src);
+  const hideTimeoutRef = useRef(null);
+
+  useEffect(() => {
+    // Store the original GIF source
+    originalSrc.current = src;
+  }, [src]);
+
+  const showControlsWithDelay = () => {
+    if (hideTimeoutRef.current) {
+      clearTimeout(hideTimeoutRef.current);
+    }
+    setShowControls(true);
+  };
+
+  const hideControlsWithDelay = () => {
+    hideTimeoutRef.current = setTimeout(() => {
+      setShowControls(false);
+    }, 100); // Very short delay before hiding
+  };
+
+  useEffect(() => {
+    return () => {
+      if (hideTimeoutRef.current) {
+        clearTimeout(hideTimeoutRef.current);
+      }
+    };
+  }, []);
+
+  const togglePlayPause = (e) => {
+    e.stopPropagation();
+
+    if (isPlaying) {
+      // Pause: capture current frame and replace with static image
+      const canvas = canvasRef.current;
+      const img = imgRef.current;
+
+      if (canvas && img) {
+        const ctx = canvas.getContext("2d");
+        canvas.width = img.naturalWidth || img.width;
+        canvas.height = img.naturalHeight || img.height;
+        ctx.drawImage(img, 0, 0);
+
+        // Convert canvas to data URL and set as image source
+        const staticFrame = canvas.toDataURL();
+        img.src = staticFrame;
+      }
+    } else {
+      // Play: restore original GIF source
+      imgRef.current.src = originalSrc.current + "?t=" + Date.now(); // Add timestamp to force reload
+    }
+
+    setIsPlaying(!isPlaying);
+  };
+
+  const handleClick = (e) => {
+    // Only trigger onClick if the click wasn't on the play/pause button
+    if (onClick && e.target.closest("button") === null) {
+      onClick(e);
+    }
+  };
+
+  return (
+    <div
+      className="relative inline-block group"
+      onMouseEnter={showControlsWithDelay}
+      onMouseLeave={hideControlsWithDelay}
+    >
+      <img
+        ref={imgRef}
+        src={src}
+        alt={alt}
+        className={`${className} ${onClick ? "cursor-pointer" : ""}`}
+        style={style}
+        onClick={handleClick}
+        title={title}
+      />
+      <canvas ref={canvasRef} style={{ display: "none" }} />
+
+      {/* Play/Pause Controls Overlay */}
+      <div
+        className={`absolute inset-0 flex items-center justify-center transition-opacity duration-75 pointer-events-none ${
+          showControls ? "opacity-100" : "opacity-0"
+        }`}
+        onMouseEnter={showControlsWithDelay}
+        onMouseLeave={hideControlsWithDelay}
+      >
+        <button
+          onClick={togglePlayPause}
+          className="bg-black/60 hover:bg-black/80 text-white rounded-full p-3 transition-all duration-100 backdrop-blur-sm border-2 border-white/30 hover:border-white/50 pointer-events-auto shadow-lg"
+          aria-label={isPlaying ? "Pause GIF" : "Play GIF"}
+        >
+          {isPlaying ? (
+            // Pause icon
+            <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
+              <path
+                fillRule="evenodd"
+                d="M6 4a1 1 0 011 1v10a1 1 0 11-2 0V5a1 1 0 011-1zM13 4a1 1 0 011 1v10a1 1 0 11-2 0V5a1 1 0 011-1z"
+                clipRule="evenodd"
+              />
+            </svg>
+          ) : (
+            // Play icon
+            <svg
+              className="w-6 h-6 ml-0.5"
+              fill="currentColor"
+              viewBox="0 0 20 20"
+            >
+              <path
+                fillRule="evenodd"
+                d="M6.3 2.841A1.5 1.5 0 004 4.11v11.78a1.5 1.5 0 002.3 1.269l9.344-5.89a1.5 1.5 0 000-2.538L6.3 2.84z"
+                clipRule="evenodd"
+              />
+            </svg>
+          )}
+        </button>
+      </div>
+
+      {/* Enlarge hint - shows on hover if onClick is provided */}
+      {showEnlargeHint && onClick && (
+        <div
+          className={`absolute bottom-2 left-2 bg-black/60 text-white text-xs px-2 py-1 rounded-md transition-opacity duration-75 pointer-events-none ${
+            showControls ? "opacity-100" : "opacity-0"
+          }`}
+        >
+          Click to enlarge
+        </div>
+      )}
+
+      {/* Small indicator in corner when paused */}
+      {!isPlaying && (
+        <div className="absolute top-2 right-2 bg-orange-500 text-white text-xs px-2 py-1 rounded-full font-medium shadow-lg pointer-events-none">
+          Paused
+        </div>
+      )}
+    </div>
+  );
+};
+
 const AdventureSVG = () => (
   <svg
     width="500"
@@ -256,7 +409,11 @@ const HomePage = () => {
   useEffect(() => {
     const handleEscKey = (event) => {
       if (event.key === "Escape") {
-        closeLoginModal();
+        if (showGifModal) {
+          setShowGifModal(false);
+        } else if (isLoginModalOpen) {
+          closeLoginModal();
+        }
       }
     };
 
@@ -266,8 +423,11 @@ const HomePage = () => {
       }
     };
 
-    if (isLoginModalOpen) {
+    if (isLoginModalOpen || showGifModal) {
       document.addEventListener("keydown", handleEscKey);
+    }
+
+    if (isLoginModalOpen) {
       document.addEventListener("mousedown", handleClickOutside);
     }
 
@@ -275,7 +435,7 @@ const HomePage = () => {
       document.removeEventListener("keydown", handleEscKey);
       document.removeEventListener("mousedown", handleClickOutside);
     };
-  }, [isLoginModalOpen, closeLoginModal]);
+  }, [isLoginModalOpen, showGifModal, closeLoginModal]);
 
   // Show loading indicator while checking authentication status
   if (loading) {
@@ -440,13 +600,14 @@ const HomePage = () => {
             </div>
 
             <div className="flex-1 max-w-2xl flex justify-center items-center">
-              <img
+              <GifPlayer
                 src={"/microadventures_demo.gif"}
                 alt="Microadventures Demo"
-                className="w-full h-auto max-w-[700px] object-contain rounded-xl shadow-2xl mx-auto cursor-pointer transition-transform duration-200 hover:scale-105"
+                className="w-full h-auto max-w-[700px] object-contain rounded-xl shadow-2xl mx-auto transition-transform duration-200 hover:scale-105"
                 style={{ minWidth: "320px", minHeight: "220px" }}
                 onClick={() => setShowGifModal(true)}
                 title="Click to enlarge demo"
+                showEnlargeHint={true}
               />
             </div>
           </div>
@@ -718,31 +879,40 @@ const HomePage = () => {
         </div>
       )}
 
-      {/* GIF Demo Modal */}
+      {/* GIF Demo Modal - Enlarged View */}
       {showGifModal && (
         <div
-          className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm"
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4"
           onClick={() => setShowGifModal(false)}
         >
-          <div className="relative" onClick={(e) => e.stopPropagation()}>
-            <img
+          <div
+            className="relative max-w-[95vw] max-h-[95vh] flex items-center justify-center"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <GifPlayer
               src="/microadventures_demo.gif"
-              alt="Microadventures Demo Large"
-              className="rounded-2xl shadow-2xl border-4 border-orange-200"
+              alt="Microadventures Demo - Enlarged View"
+              className="rounded-2xl shadow-2xl border-4 border-orange-200 max-w-full max-h-full object-contain"
               style={{
-                maxWidth: "90vw",
-                maxHeight: "80vh",
                 background: "#fff",
+                minWidth: "600px",
+                minHeight: "400px",
               }}
             />
+
+            {/* Close button */}
             <button
               onClick={() => setShowGifModal(false)}
-              className="absolute top-2 right-2 text-white bg-orange-500 hover:bg-orange-600 rounded-full w-10 h-10 flex items-center justify-center text-2xl font-bold shadow-lg border-none"
-              aria-label="Close"
-              style={{ zIndex: 100 }}
+              className="absolute -top-4 -right-4 text-white bg-orange-500 hover:bg-orange-600 rounded-full w-12 h-12 flex items-center justify-center text-2xl font-bold shadow-xl border-2 border-white transition-all duration-200 hover:scale-110"
+              aria-label="Close enlarged view"
             >
               ×
             </button>
+
+            {/* Instructions */}
+            <div className="absolute -bottom-12 left-1/2 transform -translate-x-1/2 text-white/80 text-sm text-center">
+              <p>Click outside or press ESC to close</p>
+            </div>
           </div>
         </div>
       )}
